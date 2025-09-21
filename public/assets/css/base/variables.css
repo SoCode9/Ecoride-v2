@@ -1,0 +1,21 @@
+:root {
+  --border-radius: 15px;
+
+  --col-very-light-grey: #f5f5f5;
+  --col-light-grey: #ededed;
+  --col-grey: #ccc;
+  --col-dark-grey: #666666;
+  --col-very-dark-grey: #333333;
+
+  --col-very-light-green: #d6f0e0;
+  --col-light-green: #68c990;
+  --col-green: #4d9856;
+  --col-dark-green: #2f6f45;
+  --col-very-dark-green: #155724;
+
+  --col-orange: #f2c674;
+
+  --col-light-red: #f8d7da;
+  --col-red: #e08282;
+  --col-dark-red: #721c24;
+}

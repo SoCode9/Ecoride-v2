@@ -1,3 +1,16 @@
-body {
-  background: aqua;
-}
+@import url("./base/variables.css");
+@import url("./base/reset.css");
+@import url("./base/typography.css");
+@import url("./base/colors.css");
+@import url("./layout/grid.css");
+@import url("./layout/responsive.css");
+@import url("./layout/spacing.css");
+@import url("./components/button_tabs.css");
+@import url("./components/card.css");
+
+@import url("./pages/login.css");
+@import url("./pages/carpool_search.css");
+@import url("./pages/carpool_details.css");
+@import url("./pages/user_space.css");
+@import url("./pages/header_footer.css");
+@import url("./pages/home_page.css");

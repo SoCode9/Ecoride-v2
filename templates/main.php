@@ -7,21 +7,51 @@
     <title>Document</title>
 
     <link rel="stylesheet" href="<?php echo ASSETS_PATH ?>css/style.css">
+    <script src="<?= ASSETS_PATH ?>js/burger_menu.js" defer></script>
 </head>
 
 <body>
     <header>
-        <nav>
-            <ul>
-                <li><a href="">Lien 1</a></li>
-                <li><a href="">Lien 2</a></li>
-                <li><a href="">Lien 3</a></li>
-                <li><a href="">Lien 4</a></li>
-                <li><a href="">Lien 5</a></li>
-                <li><a href="">Lien 6</a></li>
-            </ul>
+        <div class="header">
+            <a href="<?= ASSETS_PATH ?>/index.php">
+                <img src="<?= ASSETS_PATH ?>icons/Logo.png" alt="Logo" style=" width: 100px;">
+            </a>
 
-        </nav>
+            <!--Navigation display for big screens-->
+            <nav >
+                <ul class="navigation">
+                    <li><a href="<?= BASE_URL ?>/" id='home-page'>Accueil</a></li>
+                    <li><a href="" id='carpool-button'>Covoiturages</a></li>
+                    <li><a href="" id='contact-button'>Contact</a></li>
+                    <li><a href="" id='user-space' class='btn border-white'>Espace Utilisateur</a></li>
+                    <li><a href="" id='login-button'>Connexion</a></li>
+                </ul>
+            </nav>
+
+            <!--Navigation display for small screens-->
+            <div id="my-sidenav" class="sidenav" style="display: none;">
+                <a id="close-btn" href="#" class="close">×</a>
+                <ul>
+                    <?php /* @TODO  renderNavigationLinks(true); */ ?>
+
+                    <li><a href="<?= BASE_URL ?>/" id='home-page'>Accueil</a></li>
+                    <li><a href="" id='carpool-button'>Covoiturages</a></li>
+                    <li><a href="" id='contact-button'>Contact</a></li>
+                    <li><a href="" id='user-space' class='btn border-white'>Espace Utilisateur</a></li>
+                    <li><a href="" id='login-button'>Connexion</a></li>
+                </ul>
+            </div>
+
+            <div class="current-tab hidden" id="current-tab-mobile"></div>
+
+            <a href="#" id="open-btn" style="display: none;">
+                <span class="burger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </a>
+        </div>
     </header>
 
     <main>
@@ -32,5 +62,4 @@
         Copyright
     </footer>
 </body>
-
 </html>
