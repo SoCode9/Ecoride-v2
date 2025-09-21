@@ -1,0 +1,150 @@
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: var(--border-radius);
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover,
+.tab-btn:hover,
+.main-tab-btn:hover {
+  filter: brightness(90%);
+}
+
+.main-tab-btn {
+  width: fit-content;
+  min-width: 150px;
+  padding: 10px 10px;
+  min-height: 30px;
+  text-align: center;
+  border-radius: var(--border-radius);
+  background-color: #bbc7be;
+  color: var(--col-dark-green);
+  justify-content: center;
+}
+
+.main-tab-btn.active {
+  background-color: var(--col-green);
+  color: white;
+  display: flex;
+  text-align: center;
+}
+
+.tab-btn {
+  width: fit-content;
+  min-width: 150px;
+  padding: 0px 10px;
+  min-height: 30px;
+  text-align: center;
+  border-radius: var(--border-radius);
+  background-color: white;
+  color: black;
+  justify-content: center;
+}
+
+.tab-btn.active {
+  background-color: var(--col-dark-grey);
+  color: white;
+  display: flex;
+  text-align: center;
+}
+
+.active {
+  display: inline-block;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+}
+
+.tab-content,
+.main-tab-content {
+  display: none;
+  /* Hide default sections */
+}
+
+.tab-content.active,
+.main-tab-content.active {
+  display: block;
+  /* Display only the active tab  */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.action-btn {
+  border-radius: var(--border-radius);
+  background-color: var(--col-orange);
+  gap: 10px;
+  cursor: pointer;
+}
+
+.btn-desactivated {
+  background-color: var(--col-grey);
+  color: var(--col-dark-grey);
+  cursor: not-allowed;
+}
+
+.return-btn {
+  border: 2px solid var(--col-green);
+  background-color: var(--col-light-grey);
+}
+
+.border-white {
+  border: 1px solid white;
+}
+
+.border-black {
+  border: 2px solid black;
+}
+
+.col-back-grey-btn:hover {
+  background-color: var(--col-grey);
+}
+
+/* Hide native radio buttons */
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--col-grey);
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  background-color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Style when button is selected */
+input[type="radio"]:checked {
+  border-color: var(--col-grey);
+  background-color: var(--col-grey);
+}
+
+@media (max-width: 767px) {
+  .tabs {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .main-tab-btn,
+  .tab-btn {
+    width: 100%;
+    min-width: fit-content;
+    padding: 0px 10px;
+  }
+}

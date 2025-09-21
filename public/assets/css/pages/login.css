@@ -1,0 +1,54 @@
+.login-blocks {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.login-block {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 520px;
+  align-items: center;
+  border-radius: var(--border-radius);
+  padding: 14px 26px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 16px 24px;
+  width: 100%;
+}
+
+.field-connexion {
+  background-color: var(--col-grey);
+  color: var(--col-dark-grey);
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: var(--border-radius);
+}
+
+/*RESPONSIVE*/
+
+@media (min-width: 767px) and (max-width: 1024px) {
+  .login-block {
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .login-block {
+    width: 100%;
+    gap: 20px;
+  }
+
+  .login-blocks {
+    gap: 10px;
+  }
+
+  .login-form {
+    gap: 20px;
+  }
+}

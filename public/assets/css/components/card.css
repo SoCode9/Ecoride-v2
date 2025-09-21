@@ -1,0 +1,127 @@
+/*Un "card" est une boîte de contenu stylisée, souvent utilisée pour des fiches, blocs de résultats, etc. 
+Dans ton cas, par exemple, chaque trajet affiché (.travel) dans la recherche de covoiturage est une carte.*/
+
+.block-light-grey {
+  background-color: var(--col-light-grey);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  height: fit-content;
+}
+
+.block-white {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+}
+
+.block-column-g20 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.date-field {
+  appearance: none;
+  /* Removes the native icon (for Chrome, Safari, ...) */
+  -webkit-appearance: none;
+  /* Specific for Safari */
+  -moz-appearance: none;
+  /* Specific for Firefox */
+  color: var(--col-dark-grey);
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+}
+
+.date-field::-webkit-calendar-picker-indicator {
+  display: none;
+  /* Removes the native icon (Chrome, Safari) */
+}
+
+.date-field::-moz-calendar-picker-indicator {
+  display: none;
+  /* Removes the native icon (Firefox) */
+}
+
+.photo-100 {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+  background-color: var(--col-very-light-grey);
+}
+
+/*POPUP*/
+
+div.popup {
+  display: none;
+  background-color: #fff;
+  border: 2px solid var(--col-very-dark-grey);
+  padding: 15px;
+  width: 400px;
+  max-width: 80%;
+  height: fit-content;
+  position: absolute;
+  align-self: anchor-center;
+  justify-self: anchor-center;
+  z-index: 1000;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius);
+}
+
+.popup h3 {
+  margin-top: 0;
+}
+
+/*Success message or Error message*/
+
+.message {
+  width: 100%;
+  background-color: var(--col-very-light-green);
+  color: var(--col-dark-green);
+  padding: 15px;
+  text-align: center;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+
+  transition: opacity 0.5s ease-in-out;
+}
+
+@media (max-width: 767px) {
+  .block-white {
+    padding: 10px;
+  }
+
+  .block-light-grey {
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .photo-100 {
+    width: 75px;
+    height: 75px;
+  }
+
+  .message {
+    width: 90%;
+    font-size: 14px;
+    padding: 5px;
+  }
+}

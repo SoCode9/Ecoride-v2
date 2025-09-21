@@ -1,0 +1,209 @@
+/*SEARCH TRAVEL BLOCK */
+
+.block-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.search-field {
+  padding: 5px 10px;
+  border: var(--col-green) solid 1.5px;
+  border-radius: var(--border-radius);
+  position: relative;
+  /* Ensures proper positioning of the list without affecting appearance */
+  width: auto;
+}
+
+.search-field input {
+  color: var(--col-dark-grey);
+  border: none;
+  padding: unset;
+  width: auto;
+}
+
+/*SEARCH FILTERS BLOCK*/
+
+.block-filter-details {
+  display: grid;
+  grid-template-columns: 30% 70%;
+}
+
+/*DETAILS OF AVAILABLE'S CARPOOL BLOCK*/
+
+.travel {
+  align-items: center;
+  display: grid;
+  grid-template-columns: 10% 20% 27.5% 27.5% 15%;
+  grid-template-rows: 10px 30px 30px 10px;
+  padding: 15px;
+  border-radius: var(--border-radius);
+  background-color: white;
+  box-sizing: border-box;
+  position: relative;
+  /* Necessary to position the watermark inside */
+  overflow: hidden;
+}
+
+.travel:hover {
+  background-color: #eaf5ee;
+}
+
+.travel:active {
+  filter: brightness(90%);
+}
+
+.watermark-complet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  font-size: 3rem;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.07);
+  z-index: 1;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.photo-user-container {
+  grid-row: 2/4;
+  grid-column: 1/2;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  /* square automatically*/
+  position: relative;
+  overflow: hidden;
+}
+
+.photo-user {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.pseudo-user {
+  grid-column: 2/3;
+  grid-row: 2/3;
+  padding-left: 10px;
+}
+
+.driver-rating {
+  grid-column: 2/3;
+  grid-row: 3/4;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  gap: 5px;
+}
+
+.date-travel {
+  grid-column: 3/4;
+  grid-row: 2/3;
+}
+
+.hours-travel {
+  grid-column: 3/4;
+  grid-row: 3/4;
+}
+
+.seats-available {
+  grid-column: 4/5;
+  grid-row: 2/3;
+}
+
+.criteria-eco-div {
+  grid-column: 4/5;
+  grid-row: 3/4;
+}
+
+.criteria-eco {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--col-green);
+}
+
+.travel-price {
+  grid-column: 5/6;
+  grid-row: 2/3;
+  text-align: right;
+  padding-right: 10px;
+}
+
+/* Suggestions container */
+.suggestions-list {
+  position: absolute;
+  /* Allows placing the list below the input field */
+  left: 0;
+  /* Aligns with the input field */
+  top: 100%;
+  /* Positions the list right below the field */
+  background: white;
+  border: 1px solid var(--col-grey);
+  border-top: none;
+  /* Avoids double border with the input field */
+  width: calc(100% - 2px);
+  /* Same width as the input field */
+  max-height: 200px;
+  overflow-y: auto;
+  /* Adds vertical scroll if needed */
+  z-index: 1000;
+  /* Places the list above other elements */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  /* Adds a subtle shadow for visual effect */
+  border-radius: 10px;
+  display: none;
+  /* Hidden by default */
+}
+
+/* Style for individual suggestion items */
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  background: white;
+  border-bottom: 1px solid #eee;
+  /* Separator between items */
+}
+
+.suggestion-item:hover {
+  background: var(--col-very-light-grey);
+}
+
+/*RESPONSIVE*/
+
+@media (max-width: 1023px) {
+  .search-field {
+    width: 100%;
+  }
+
+  #search-btn {
+    width: 100%;
+  }
+
+  #filter-toggle {
+    width: fit-content;
+    height: 35px;
+    justify-self: right;
+  }
+
+  #filter-icon {
+    display: block !important;
+    justify-content: right;
+  }
+
+  #filter-block {
+    display: none;
+  }
+
+   .travel {
+    padding: 12px;
+    gap: 10px;
+  } 
+}

@@ -1,0 +1,38 @@
+.italic {
+  font-style: italic;
+}
+
+.font-size-very-small {
+  font-size: calc(100% - 3px);
+}
+
+.font-size-small {
+  font-size: calc(100% - 1.5px);
+}
+
+.font-size-big {
+  font-size: calc(100% + 3px);
+}
+.font-size-very-big {
+  font-size: calc(100% + 5px);
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+a {
+  color: inherit;
+}
+
+.text-breakable {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.text-error {
+  color: var(--col-dark-red);
+  font-style: italic;
+  font-size: calc(100% - 3px);
+}
