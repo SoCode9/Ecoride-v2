@@ -8,6 +8,6 @@ class UserController extends BaseController
 {
     public function list()
     {
-        return $this->render('pages/users/list.php', []);
+        return $this->render('pages/users/list.php', 'Utilisateurs', []);
     }
 }

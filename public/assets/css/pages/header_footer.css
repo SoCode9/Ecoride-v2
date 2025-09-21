@@ -29,6 +29,16 @@
   letter-spacing: 1px;
 }
 
+.navigation a.active {
+  color: var(--col-orange);
+}
+
+.navigation a.activeBtn {
+  background-color: var(--col-orange);
+  color: black;
+  border: var(--col-orange);
+}
+
 a {
   text-decoration: none;
 }
@@ -53,6 +63,10 @@ a {
 
 @media (max-width: 767px) {
   .navigation {
+    display: none;
+  }
+
+  nav {
     display: none;
   }
 

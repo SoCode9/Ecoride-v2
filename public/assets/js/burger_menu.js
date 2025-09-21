@@ -3,13 +3,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentPage = window.location.pathname.split("/").pop();
 
     const labels = {
-        "index.php": "Accueil",
-        "carpool_search.php": "Covoiturages",
-        "carpool_details.php": "Covoiturages",
-        "login.php": "Connexion",
-        "user_space.php": "Mon espace",
-        "employee_space.php": "Mon espace",
-        "admin_space.php": "Mon espace"
+        "": "Accueil",
+        "Covoiturages": "Covoiturages",
+        "Detail-covoiturage": "Covoiturages",
+        "Connexion": "Connexion",
+        "Espace-utilisateur": "Mon espace",
+        "Espace-employe": "Mon espace",
+        "Espace-administratuer": "Mon espace"
     };
 
     if (labels[currentPage]) {

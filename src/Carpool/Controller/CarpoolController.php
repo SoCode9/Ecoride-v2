@@ -20,7 +20,7 @@ class CarpoolController extends BaseController
         //renvoyer le résultat et donner un template à utiliser
         //on voudra retourner un tableau
 
-        return $this->render('pages/carpools/list.php', [
+        return $this->render('pages/carpools/list.php', 'Covoiturages', [
             'carpools' => $carpools
         ]);
     }

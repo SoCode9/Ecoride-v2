@@ -42,7 +42,7 @@ class Router
             throw new \LogicException('Le controller ' . $controller . ' n\'existe pas.');
         }
 
-        $controller = new $controller();
+        $controller = new $controller($this);
 
 
         if (!method_exists($controller, $action)) {
@@ -52,6 +52,8 @@ class Router
         if (!in_array($this->method, $routeInfo['method'])) {
             throw new \Exception($this->method . ' n\'est pas autorisée pour cette URL');
         }
+
+   //     die($this->getCurrentPage());
 
         return $controller->$action(); //ici va dans méthode du controller list p.ex
     }
@@ -64,6 +66,11 @@ class Router
     public function getTemplate(): string
     {
         return $this->template;
+    }
+
+    public function getCurrentPage()
+    {
+        return $this->normalizePath($this->uri);
     }
 
     /** Normalise un chemin: enlève le base path (/2coursPhp/public), la query string, gère les slashs. */
