@@ -1,0 +1,10 @@
+{
+    "name": "tenni/ecoride-v2",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {}
+}
