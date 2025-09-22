@@ -67,18 +67,18 @@
             <input type="hidden" name="action" value="filters"> <!--identify filters-->
 
             <div class="flex-row">
-                <input id="eco" name="eco" type="radio" <?= isset($_SESSION['eco']) ? 'checked' : '' ?>>
+                <input id="eco" name="eco" type="radio" <?= !empty($filters['eco']) ? 'checked' : ''  ?>>
                 <label for="eco">Voyage écologique</label>
             </div>
             <div class="flex-row">
                 <label for="max-price">Prix (max)</label>
                 <input type="number" id="max-price" name="max-price" class="short-field" min="1"
-                    value="<?= isset($_SESSION['max-price']) ? htmlspecialchars($_SESSION['max-price']) : ''; ?>">
+                    value="<?= $filters['maxPrice'] ?>">
             </div>
             <div class="flex-row">
                 <label for="max-duration">Durée (max)</label>
                 <input type="number" id="max-duration" name="max-duration" class="short-field" min="1"
-                    value="<?= isset($_SESSION['max-duration']) ? htmlspecialchars($_SESSION['max-duration']) : ''; ?>">
+                    value="<?= $filters['maxDuration'] ?>">
                 <label for="max-duration">h</label>
             </div>
             <div class="flex-row">
@@ -86,15 +86,15 @@
 
                 <select id="driver-rating-list" name="driver-rating-list" class="short-field">
                     <optgroup>
-                        <option value="none" <?= (isset($_SESSION['driver-rating-list']) && strval($_SESSION['driver-rating-list']) === "none") ? 'selected' : ''; ?>></option>
-                        <option value="5" <?= (isset($_SESSION['driver-rating-list']) && strval($_SESSION['driver-rating-list']) === "5") ? 'selected' : ''; ?>>5</option>
-                        <option value="4.5" <?= (isset($_SESSION['driver-rating-list']) && strval($_SESSION['driver-rating-list']) === "4.5") ? 'selected' : ''; ?>>4.5</option>
-                        <option value="4" <?= (isset($_SESSION['driver-rating-list']) && strval($_SESSION['driver-rating-list']) === "4") ? 'selected' : ''; ?>>4</option>
-                        <option value="3.5" <?= (isset($_SESSION['driver-rating-list']) && strval($_SESSION['driver-rating-list']) === "3.5") ? 'selected' : ''; ?>>3.5</option>
-                        <option value="3" <?= (isset($_SESSION['driver-rating-list']) && strval($_SESSION['driver-rating-list']) === "3") ? 'selected' : ''; ?>>3</option>
-                        <option value="2.5" <?= (isset($_SESSION['driver-rating-list']) && strval($_SESSION['driver-rating-list']) === "2.5") ? 'selected' : ''; ?>>2.5</option>
-                        <option value="2" <?= (isset($_SESSION['driver-rating-list']) && strval($_SESSION['driver-rating-list']) === "2") ? 'selected' : ''; ?>>2</option>
-                        <option value="1" <?= (isset($_SESSION['driver-rating-list']) && strval($_SESSION['driver-rating-list']) === "1") ? 'selected' : ''; ?>>1</option>
+                        <option value="none" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "none")) ? 'selected' : ''; ?>></option>
+                        <option value="5" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "5")) ? 'selected' : ''; ?>>5</option>
+                        <option value="4.5" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "4.5")) ? 'selected' : ''; ?>>4.5</option>
+                        <option value="4" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "4")) ? 'selected' : ''; ?>>4</option>
+                        <option value="3.5" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "3.5")) ? 'selected' : ''; ?>>3.5</option>
+                        <option value="3" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "3")) ? 'selected' : ''; ?>>3</option>
+                        <option value="2.5" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "2.5")) ? 'selected' : ''; ?>>2.5</option>
+                        <option value="2" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "2")) ? 'selected' : ''; ?>>2</option>
+                        <option value="1" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "1")) ? 'selected' : ''; ?>>1</option>
                     </optgroup>
                 </select>
                 <label for="driver-rating-list"><img src="<?= ASSETS_PATH ?>/icons/EtoileJaune.png" alt="EtoileJaune"

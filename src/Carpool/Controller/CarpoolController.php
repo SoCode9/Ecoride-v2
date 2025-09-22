@@ -27,7 +27,7 @@ class CarpoolController extends BaseController
             'date'         => isset($_GET['date'])        ? trim($_GET['date'])    : '22.09.2025', /* @TODO remettre null */ // attendu: dd.mm.yyyy
             'departure'    => isset($_GET['departure'])    ? trim($_GET['departure'])    : 'Saint-Julien-en-Genevois', /* @TODO remettre null*/
             'arrival'      => isset($_GET['arrival'])      ? trim($_GET['arrival'])      : 'Lyon',/* @TODO remettre null*/
-            'eco'          => isset($_GET['eco'])          ? (int)$_GET['eco']           : null,
+            'eco'          => isset($_GET['eco'])          ? 1          : null,
             'maxPrice'     => isset($_GET['maxPrice'])     ? (int)$_GET['maxPrice']      : null,
             'maxDuration'  => isset($_GET['maxDuration'])  ? (int)$_GET['maxDuration']   : null,
             'driverRating' => isset($_GET['driverRating']) ? (float)$_GET['driverRating'] : null,

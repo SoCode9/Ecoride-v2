@@ -61,11 +61,11 @@ class CarpoolRepository extends BaseController
             } */
 
         if (!empty($maxPrice)) {
-            $sql .= " AND (travel_price <= :max_price)";
+            $sql .= " AND (price <= :max_price)";
         }
 
         if (!empty($maxDuration)) {
-            $sql .= " AND TIMESTAMPDIFF(MINUTE, travels.travel_departure_time, travels.travel_arrival_time)/60 <= :max_duration";
+            $sql .= " AND TIMESTAMPDIFF(MINUTE, carpool.departure_time, carpool.arrival_time)/60 <= :max_duration";
         }
 
         /*  if (!empty($driverRating)) {
