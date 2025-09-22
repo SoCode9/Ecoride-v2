@@ -155,3 +155,5 @@
         </div>
     </div>
 </div>
+
+<script src="<?= ASSETS_PATH ?>js/carpool_list.js" defer></script>
