@@ -9,6 +9,7 @@ use App\Controller\BaseController;
 use App\Carpool\Repository\CarpoolRepository;
 use App\Carpool\Service\CarpoolService;
 use App\Utils\Formatting\DateFormatter;
+use App\Utils\Formatting\OtherFormatter;
 
 class CarpoolController extends BaseController
 {
@@ -73,6 +74,8 @@ class CarpoolController extends BaseController
                 }
             }
         }
+
+   
 
         // 5) Render
         return $this->render('pages/carpools/list.php', 'Covoiturages', [

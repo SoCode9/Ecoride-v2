@@ -1,18 +1,3 @@
-<!-- <table>
-    <thead>
-        <tr>
-            <th>Titre</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php /* foreach ($carpools as $carpool):  */ ?>
-            <tr>
-                <td><?php /* echo $carpool->departure_city */ ?> </td>
-            </tr>
-        <?php /* endforeach; */ ?>
-    </tbody>
-</table> -->
-
 <!-- Find a carpool -->
 <div class="flex-column gap-24 block-light-grey">
     <h2 class="text-green text-bold">Rechercher un covoiturage</h2>
@@ -118,10 +103,75 @@
 
             <?php
             if (!empty($carpools)) {
-                foreach ($carpools as $t): ?>
+                foreach ($carpools as $carpool): ?>
 
+                    <div class="travel flex-column-ms"
+                        onclick="window.location.href='carpool_details.php?id=<?= htmlspecialchars($carpool['id']) ?>'" 
+                        <?php if (isset($_SESSION['user_id']) && ($carpool['driver_id'] === $_SESSION['user_id'])) { // @TODO
+                            echo " style='border:2px solid var(--col-green);cursor:pointer;'";
+                        } else {
+                            echo " style ='cursor:pointer;'";
+                        } ?>>
 
-                    <?= 'résultat : ' . $t['departure_city'] ?>
+                        <?php // @TODO quand reservation et car faits
+                        /* $seatsAvailable = seatsAvailable( 
+                            $car->getSeatsOfferedByCar($t['car_id']),
+                            $reservation->countPassengers($t['id'])
+                        );
+                        if ($seatsAvailable === 0):  ?>
+                            <span class="watermark-complet">Complet</span>
+                        <?php endif; */ ?>
+
+                        <div class="user-header-mobile">
+                            <div class="photo-user-container" style="justify-self:center;">
+                                <img src="<? /*echo  displayPhoto($carpool['driver_photo']) */ ?>" alt="Photo de l'utilisateur"
+                                    class="photo-user">
+                            </div>
+                            <div class="user-info-mobile">
+                                <span class="pseudo-user"><?= htmlspecialchars($carpool['driver_pseudo']) ?></span>
+                                <div class="driver-rating">
+                                    <div class="flex-row font-size-very-small">
+                                        <?php // @TODO quand rating est fait
+                                        /*  $driver = new Driver($pdo, $carpool['driver_id']);
+                                        $averageRating = $driver->getAverageRatings();
+                                        if ($averageRating !== null) {
+                                            echo '<img src="' . BASE_URL . '/icons/EtoileJaune.png" class="img-width-20" alt="Icone étoile">'
+                                                . htmlspecialchars($averageRating);
+                                        } else {
+                                            echo "<span class = 'italic'>0 avis</span>";
+                                        }  */ ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="date-travel">Départ à <?= htmlspecialchars($carpool['departure_time']) ?></span>
+                        <span class="hours-travel">Arrivée à
+                            <?= htmlspecialchars($carpool['arrival_time']) ?></span>
+                        <span class="seats-available" id="seats-bs">Encore
+                            <?php // @TODO quand reservation et car faits
+                            /*  if ($seatsAvailable > 1) {
+                                echo $seatsAvailable . " places";
+                            } else {
+                                echo $seatsAvailable . " place";
+                            } */
+                            ?>
+                        </span>
+
+                        <div class="criteria-eco-div">
+                            <span class="criteria-eco"> <?= $carpool['car_electric'] <> 0 ? $carpool['car_electric'] : ''  ?> </span>
+                        </div>
+
+                        <span class="travel-price text-bold">
+                            <?php
+                            $trajetPrice = htmlspecialchars($carpool['price']);
+                            if ($trajetPrice > 1) {
+                                echo $trajetPrice . " crédits";
+                            } else {
+                                echo $trajetPrice . " crédit";
+                            }
+                            ?>
+                        </span>
+                    </div>
                 <?php endforeach;
             } elseif (isset($_POST['action'])) {
                 echo "Oups.. Aucun covoiturage n'est proposé pour cette recherche.";

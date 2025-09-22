@@ -47,18 +47,18 @@ class CarpoolRepository extends BaseController
         }
 
 
-        $sql = "SELECT * FROM carpool/* , users.pseudo AS driver_pseudo, users.photo AS driver_photo, AVG(ratings.rating) AS driver_rating, driver.user_id AS driver_id,
-                cars.car_electric AS car_electric, cars.car_seats_offered AS seats_offered, TIMESTAMPDIFF(MINUTE, travel_departure_time, travel_arrival_time)/60 AS travel_duration 
-                FROM travels 
-                JOIN users ON users.id = travels.driver_id 
-                JOIN driver ON driver.user_id = travels.driver_id 
-                JOIN cars ON cars.car_id = travels.car_id  
-                LEFT JOIN ratings ON ratings.driver_id = driver.user_id */
+        $sql = "SELECT carpool.* , users.pseudo AS driver_pseudo, users.photo AS driver_photo, driver.user_id AS driver_id ,
+                cars.electric AS car_electric, cars.seats_offered AS seats_offered, TIMESTAMPDIFF(MINUTE, departure_time, arrival_time)/60 AS carpool_duration /*,AVG(ratings.rating) AS driver_rating 
+                */FROM carpool 
+                JOIN users ON users.id = carpool.driver_id 
+                JOIN driver ON driver.user_id = carpool.driver_id 
+                JOIN cars ON cars.car_id = carpool.car_id  
+                /*LEFT JOIN ratings ON ratings.driver_id = driver.user_id */
                 WHERE (date = :travel_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) AND (status= 'not started')";
 
-        /*   if (isset($eco)) {
-                $sql .= " AND (car_electric = 1)";
-            } */
+        if (isset($eco)) {
+            $sql .= " AND (car_electric = 1)";
+        }
 
         if (!empty($maxPrice)) {
             $sql .= " AND (price <= :max_price)";
@@ -98,13 +98,6 @@ class CarpoolRepository extends BaseController
 
             $statement->execute();
             $carpools = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-            /*  //clean data with the right format
-            foreach ($carpools as &$carpool) {
-                $carpool['date'] = DateFormatter::short($carpool['date']);
-                $carpool['departure_time'] = DateFormatter::time($carpool['departure_time']);
-                $carpool['arrival_time'] = DateFormatter::time($carpool['arrival_time']);
-            } */
 
             return $carpools;
         } catch (PDOException $e) {
