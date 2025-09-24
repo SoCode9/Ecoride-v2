@@ -7,8 +7,8 @@ class Router
 {
     private array $routes = [];
     private ?string $template = null;
-
     public function __construct(private string $method, private string $uri) {}
+
     public function register(string|array $method, string $uri, string $controller, string $action)
     {
 
@@ -24,6 +24,18 @@ class Router
             'controller' => $controller,
             'action' => $action
         ];
+    }
+
+
+    /** Construit une URL pour une route donnée + paramètres de query */
+    public function generatePath(string $uri, array $params = []): string
+    {
+        $path = $this->normalizePath($uri);
+        // Construit la query string à partir du tableau de paramètres.
+        // Exemple: ['id' => '42'] -> '?id=42'
+        $qs   = $params ? ('?' . http_build_query($params)) : '';
+
+        return BASE_URL . $path . $qs;
     }
 
     public function run()
@@ -53,7 +65,7 @@ class Router
             throw new \Exception($this->method . ' n\'est pas autorisée pour cette URL');
         }
 
-   //     die($this->getCurrentPage());
+        //     die($this->getCurrentPage());
 
         return $controller->$action(); //ici va dans méthode du controller list p.ex
     }

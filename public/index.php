@@ -1,7 +1,8 @@
 <?php
 
 //17.09.2025 _ Live découverte PHP Objet 4/6 router
-
+//session_destroy();
+session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Carpool\Controller\CarpoolController;
@@ -15,11 +16,14 @@ $dotenv = new Dotenv();
 $dotenv->load(__DIR__ . '/../.env');
 
 // variable vers dossier assets dans public
-$baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); //enlève la dernière partie (index.php) pour ne garder que le dossier "/2coursPhp/public" 
+$baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); //enlève la dernière partie (index.php) pour ne garder que le dossier "/Ecoride-v2/public" 
 define('BASE_URL', $baseUrl); // stocke /2coursPhp/public
 define('ASSETS_PATH', BASE_URL . '/assets/');              // -> /2coursPhp/public/assets/
 
-define('TEMPLATE_PATH', __DIR__.'/../templates/main.php');
+define('TEMPLATE_PATH', __DIR__ . '/../templates/main.php');
+
+define('PHOTOS_URL', BASE_URL . '/assets/photos'); // URL publique
+define('PHOTOS_DIR', __DIR__   . '/assets/photos'); // chemin disque (public/assets/photos)
 
 $router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']); //URI : tout ce qui est derrière le nom de domaine
 
@@ -29,9 +33,9 @@ $router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']); //URI
 // listUser = la fonction (méthode) à appeler dans la classe MaClass
 $router->register(['GET'], '/', DashboardController::class, 'index');
 $router->register(['GET'], '/user/list', UserController::class, 'list');
-$router->register(['GET'], '/covoiturages', CarpoolController::class, 'list');
+$router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'list');
+$router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
-
 // exemple d'une route pour créer un user
 // $router->register(['GET', 'POST'], '/user/create', UserController::class, 'create');
 

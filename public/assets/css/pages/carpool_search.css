@@ -118,14 +118,14 @@
 }
 
 .criteria-eco-div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   grid-column: 4/5;
   grid-row: 3/4;
 }
 
 .criteria-eco {
-  display: flex;
-  align-items: center;
-  gap: 5px;
   color: var(--col-green);
 }
 
@@ -202,8 +202,8 @@
     display: none;
   }
 
-   .travel {
+  .travel {
     padding: 12px;
     gap: 10px;
-  } 
+  }
 }
