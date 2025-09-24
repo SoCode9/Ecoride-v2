@@ -36,13 +36,13 @@ class CarpoolRepository extends BaseController
     public function search(?string $dateSearch = null, ?string $departureCitySearch = null, ?string $arrivalCitySearch = null, ?int $eco = null, ?int $maxPrice = null, ?int $maxDuration = null, ?float $driverRating = null): array
     {
         $sql = "SELECT carpool.* , users.pseudo AS driver_pseudo, users.photo AS driver_photo, driver.user_id AS driver_id ,
-                cars.electric, cars.seats_offered AS seats_offered, TIMESTAMPDIFF(MINUTE, departure_time, arrival_time)/60 AS carpool_duration /*,AVG(ratings.rating) AS driver_rating 
-                */FROM carpool 
+                cars.electric, cars.seats_offered AS seats_offered, TIMESTAMPDIFF(MINUTE, departure_time, arrival_time)/60 AS carpool_duration, AVG(ratings.rating) AS driver_rating 
+                FROM carpool 
                 JOIN users ON users.id = carpool.driver_id 
                 JOIN driver ON driver.user_id = carpool.driver_id 
                 JOIN cars ON cars.car_id = carpool.car_id  
-                /*LEFT JOIN ratings ON ratings.driver_id = driver.user_id */
-                WHERE (date = :travel_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) AND (status= 'not started')";
+                LEFT JOIN ratings ON ratings.driver_id = driver.user_id
+                WHERE (date = :travel_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) /* AND (status= 'not started') */";
 
         if (isset($eco)) {
             $sql .= " AND (electric = 1)";
@@ -56,11 +56,11 @@ class CarpoolRepository extends BaseController
             $sql .= " AND TIMESTAMPDIFF(MINUTE, carpool.departure_time, carpool.arrival_time)/60 <= :max_duration";
         }
 
-        /*  if (!empty($driverRating)) {
-                $sql .= " GROUP BY travels.id HAVING AVG(ratings.rating) >= :driver_rating";
-            } else {
-                $sql .= " GROUP BY travels.id";
-            } */
+        if (!empty($driverRating)) {
+            $sql .= " GROUP BY carpool.id HAVING AVG(ratings.rating) >= :driver_rating";
+        } else {
+            $sql .= " GROUP BY carpool.id";
+        }
 
         $sql .= " ORDER BY departure_time ASC";
 
@@ -80,9 +80,9 @@ class CarpoolRepository extends BaseController
                 $statement->bindParam(":max_duration", $maxDuration, PDO::PARAM_INT);
             }
 
-            /*      if (!empty($driverRating)) {
+            if (!empty($driverRating)) {
                 $statement->bindValue(":driver_rating", number_format($driverRating, 1, '.', ''), PDO::PARAM_STR);
-            } */
+            }
 
             $statement->execute();
             $carpools = $statement->fetchAll(PDO::FETCH_ASSOC);

@@ -7,6 +7,8 @@ use PDO;
 use App\Routing\Router;
 use App\Controller\BaseController;
 use App\Carpool\Repository\CarpoolRepository;
+use App\Driver\Repository\DriverRepository;
+use App\Driver\Service\DriverService;
 use App\Carpool\Service\CarpoolService;
 use App\Utils\Formatting\DateFormatter;
 use App\Utils\Formatting\OtherFormatter;
@@ -92,13 +94,18 @@ class CarpoolController extends BaseController
 
         // Post-traitement d'affichage (mapping "prêt à afficher")
         $userId = $_SESSION['user_id'] ?? null;
-        $carpools = array_map(function (array $c) use ($userId) {
+        $driverRepo    = new DriverRepository($this->router);
+        $driverService = new DriverService($driverRepo);
+        $carpools = array_map(function (array $c) use ($userId, $driverService) {
             $isOwner = $userId && isset($c['driver_id']) && (string)$c['driver_id'] === (string)$userId;
-
+            $avg = $driverService->getAverageRatings($c['driver_id']);
             return [
                 'id'             => htmlspecialchars($c['id'] ?? ''),
                 'driver_pseudo'  => htmlspecialchars($c['driver_pseudo'] ?? ''),
                 'driver_photo'   => OtherFormatter::displayPhoto($c['driver_photo']) ?? null,
+                'driver_rating'  => $driverService->getAverageRatings($c['driver_id'])
+                    ? '<img src="' . ASSETS_PATH . '/icons/EtoileJaune.png" class="img-width-20" alt="Icône étoile"> ' . number_format((float)$avg, 1, ',', '')
+                    : '<span class="italic">0 avis</span>',
 
                 'price_label'    => OtherFormatter::formatCredits((int)($c['price'] ?? 0)),
                 'departure_time' => !empty($c['departure_time']) ? DateFormatter::time($c['departure_time']) : '',

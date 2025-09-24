@@ -2,7 +2,7 @@
 <div class="flex-column gap-24 block-light-grey">
     <h2 class="text-green text-bold">Rechercher un covoiturage</h2>
     <form class="block-search flex-column-ms" action="<?= BASE_URL ?>/covoiturages" method="POST">
-        <input type="hidden" name="action" value="search"> <!--identify request--> 
+        <input type="hidden" name="action" value="search"> <!--identify request-->
 
         <div class="flex-row search-field">
             <img class="img-width-20" src="<?= ASSETS_PATH ?>/icons/Localisation(2).png" alt="lieu de départ">
@@ -122,7 +122,7 @@
                                     <span class="pseudo-user"><?= $c['driver_pseudo'] ?></span>
                                     <div class="driver-rating">
                                         <div class="flex-row font-size-very-small">
-                                            <!-- Quand tu auras l'averageRating, passe un label prêt depuis le contrôleur -->
+                                            <?= $c['driver_rating']; ?>
                                         </div>
                                     </div>
                                 </div>
