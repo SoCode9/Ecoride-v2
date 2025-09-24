@@ -77,113 +77,29 @@ class CarpoolController extends BaseController
         }
 
         // ----- GET : on lit l'état et on cherche -----
-        $filters = $state; // alias lisible
+        $filters = $state;
 
-        $repo    = new CarpoolRepository($this->router);
-        $service = new CarpoolService($repo);
-        $rawCarpools = $repo->search(
-            $filters['date'] ?? null,
-            $filters['departure'] ?? null,
-            $filters['arrival'] ?? null,
-            $filters['eco'] ?? null,
-            $filters['maxPrice'] ?? null,
-            $filters['maxDuration'] ?? null,
-            $filters['driverRating'] ?? null,
-        );
-        $nextCarpool = null;
+        $repo          = new CarpoolRepository($this->router);
+        $service       = new CarpoolService($repo);
+        $driverService = new DriverService(new DriverRepository($this->router));
 
-        if (empty($rawCarpools)) {
-            $nextTravelDate = $repo->searchnextTravelDate(
-                $filters['date'] ?? null,
-                $filters['departure'] ?? null,
-                $filters['arrival'] ?? null,
-                $filters['eco'] ?? null,
-                $filters['maxPrice'] ?? null,
-                $filters['maxDuration'] ?? null,
-                $filters['driverRating'] ?? null,
-            );
-            if ($nextTravelDate && !empty($nextTravelDate['date'])) {
-                $ymd = DateFormatter::toDb($nextTravelDate['date']); // au cas où
-                $nextCarpool = [
-                    'date_ui' => DateFormatter::short($ymd) ?? DateFormatter::toUi($ymd),
-                    'date_db' => $ymd, // pour remettre dans <input type="date"> ou en POST
-                    'filters' => [
-                        'departure'    => $filters['departure'] ?? null,
-                        'arrival'      => $filters['arrival'] ?? null,
-                        'eco'          => $filters['eco'] ?? null,
-                        'maxPrice'     => $filters['maxPrice'] ?? null,
-                        'maxDuration'  => $filters['maxDuration'] ?? null,
-                        'driverRating' => $filters['driverRating'] ?? null,
-                    ],
-                ];
-            }
-        }
+        // 1) recherche + suggestion
+        [$rows, $nextCarpool] = $service->findWithSuggestion($filters);
 
-        // Post-traitement d'affichage (mapping "prêt à afficher")
-        $userId = $_SESSION['user_id'] ?? null;
-        $driverRepo    = new DriverRepository($this->router);
-        $driverService = new DriverService($driverRepo);
-        $carpools = array_map(function (array $c) use ($userId, $driverService) {
-            $isOwner = $userId && isset($c['driver_id']) && (string)$c['driver_id'] === (string)$userId;
-            $avg = $driverService->getAverageRatings($c['driver_id']);
-            return [
-                'id'             => htmlspecialchars($c['id'] ?? ''),
-                'driver_pseudo'  => htmlspecialchars($c['driver_pseudo'] ?? ''),
-                'driver_photo'   => OtherFormatter::displayPhoto($c['driver_photo']) ?? null,
-                'driver_rating'  => $driverService->getAverageRatings($c['driver_id'])
-                    ? '<img src="' . ASSETS_PATH . '/icons/EtoileJaune.png" class="img-width-20" alt="Icône étoile"> ' . number_format((float)$avg, 1, ',', '')
-                    : '<span class="italic">0 avis</span>',
+        // 2) mapping “cartes”
+        $carpools = $service->mapForList($rows, $_SESSION['user_id'] ?? null, $driverService, $this->router);
 
-                'price_label'    => OtherFormatter::formatCredits((int)($c['price'] ?? 0)),
-                'departure_time' => !empty($c['departure_time']) ? DateFormatter::time($c['departure_time']) : '',
-                'arrival_time'   => !empty($c['arrival_time'])   ? DateFormatter::time($c['arrival_time'])   : '',
-                'eco_label'      => OtherFormatter::formatEcoLabel((bool)($c['electric'] ?? 0)),
+        // 3) méta UI
+        $ui = $service->buildUiMeta($filters, $carpools);
 
-                'is_owner'       => $isOwner,
-                'detail_url'     => $this->router->generatePath('/covoiturages/details', ['id' => $c['id']]),
-
-                'card_style'     => $isOwner
-                    ? "border:2px solid var(--col-green);cursor:pointer;"
-                    : "cursor:pointer;",
-                'completed'      => isset($c['seats_available']) && (int)$c['seats_available'] === 0,
-                'seats_label'    => isset($c['seats_available'])
-                    ? ($c['seats_available'] <= 1
-                        ? $c['seats_available'] . " place"
-                        : $c['seats_available'] . " places")
-                    : ''
-            ];
-        }, $rawCarpools);
-
-        $hasCriteria = array_filter([
-            $filters['date']         ?? null,
-            $filters['departure']    ?? null,
-            $filters['arrival']      ?? null,
-            $filters['eco']          ?? null,
-            $filters['maxPrice']     ?? null,
-            $filters['maxDuration']  ?? null,
-            $filters['driverRating'] ?? null,
-        ], fn($v) => $v !== null && $v !== '') !== [];
-
-        // Afficher le message "aucun résultat" seulement si recherche faite + zéro résultat
-        $showNoResults = $hasCriteria && empty($carpools);
-
-        // Prépare la value de l'<input type="date"> : l'input veut Y-m-d
-        $dateInput = DateFormatter::toDb($filters['date']);
-
-        // Texte "Départ le ..."
-        $ymd = DateFormatter::toDb($filters['date']); // convertit d.m.Y → Y-m-d (ou null)
-        $dateLong = $ymd
-            ? 'Départ le ' . DateFormatter::long($ymd)  // long() attend Y-m-d
-            : 'Aucune date sélectionnée';
-
-        // Render
+        // 4) render
         return $this->render('pages/carpools/list.php', 'Covoiturages', [
-            'carpools'  => $carpools,
-            'filters'   => $filters,
-            'dateLong'  => $dateLong,
-            'dateInput' => $dateInput,
-            'showNoResults' => $showNoResults,
-            'nextCarpool' => $nextCarpool
+            'carpools'      => $carpools,
+            'filters'       => $filters,
+            'dateLong'      => $ui['dateLong'],
+            'dateInput'     => $ui['dateInput'],
+            'showNoResults' => $ui['showNoResults'],
+            'nextCarpool'   => $nextCarpool,
         ]);
     }
 
