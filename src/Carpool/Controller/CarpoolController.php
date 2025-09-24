@@ -80,7 +80,15 @@ class CarpoolController extends BaseController
         // Appel service/repo : ton repo accepte désormais plusieurs formats et normalise vers Y-m-d
         $repo    = new CarpoolRepository($this->router);
         $service = new CarpoolService($repo);
-        $rawCarpools = $service->searchWithFormatting($filters);
+        $rawCarpools = $repo->search(
+            $filters['date'] ?? null,
+            $filters['departure'] ?? null,
+            $filters['arrival'] ?? null,
+            $filters['eco'] ?? null,
+            $filters['maxPrice'] ?? null,
+            $filters['maxDuration'] ?? null,
+            $filters['driverRating'] ?? null,
+        );
 
         // Post-traitement d'affichage (mapping "prêt à afficher")
         $userId = $_SESSION['user_id'] ?? null;
@@ -90,7 +98,7 @@ class CarpoolController extends BaseController
             return [
                 'id'             => htmlspecialchars($c['id'] ?? ''),
                 'driver_pseudo'  => htmlspecialchars($c['driver_pseudo'] ?? ''),
-                'driver_photo'   => $c['driver_photo'] ?? null,
+                'driver_photo'   => OtherFormatter::displayPhoto($c['driver_photo']) ?? null,
 
                 'price_label'    => OtherFormatter::formatCredits((int)($c['price'] ?? 0)),
                 'departure_time' => !empty($c['departure_time']) ? DateFormatter::time($c['departure_time']) : '',
