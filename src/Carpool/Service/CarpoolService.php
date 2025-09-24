@@ -41,7 +41,7 @@ final class CarpoolService
 
         $nextCarpool = null;
         if (empty($rows)) {
-            $row = $this->repo->searchNextTravelDate(
+            $row = $this->repo->searchNextCarpoolDate(
                 $filters['date'] ?? null,
                 $filters['departure'] ?? null,
                 $filters['arrival'] ?? null,
