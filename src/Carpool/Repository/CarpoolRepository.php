@@ -35,20 +35,8 @@ class CarpoolRepository extends BaseController
      */
     public function search(?string $dateSearch = null, ?string $departureCitySearch = null, ?string $arrivalCitySearch = null, ?int $eco = null, ?int $maxPrice = null, ?int $maxDuration = null, ?float $driverRating = null): array
     {
-        // Normalize date dd.mm.yyyy -> yyyy-mm-dd
-        if (!empty($dateSearch)) {
-            $dateObject = DateTime::createFromFormat('d.m.Y', $dateSearch);
-            if ($dateObject) {
-                $dateSearch = $dateObject->format('Y-m-d');
-            } else {
-                // on peut aussi décider de renvoyer vide plutôt que d'erreur
-                throw new Exception('Invalid date format. Expected dd.mm.yyyy');
-            }
-        }
-
-
         $sql = "SELECT carpool.* , users.pseudo AS driver_pseudo, users.photo AS driver_photo, driver.user_id AS driver_id ,
-                cars.electric AS car_electric, cars.seats_offered AS seats_offered, TIMESTAMPDIFF(MINUTE, departure_time, arrival_time)/60 AS carpool_duration /*,AVG(ratings.rating) AS driver_rating 
+                cars.electric, cars.seats_offered AS seats_offered, TIMESTAMPDIFF(MINUTE, departure_time, arrival_time)/60 AS carpool_duration /*,AVG(ratings.rating) AS driver_rating 
                 */FROM carpool 
                 JOIN users ON users.id = carpool.driver_id 
                 JOIN driver ON driver.user_id = carpool.driver_id 
@@ -57,7 +45,7 @@ class CarpoolRepository extends BaseController
                 WHERE (date = :travel_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) AND (status= 'not started')";
 
         if (isset($eco)) {
-            $sql .= " AND (car_electric = 1)";
+            $sql .= " AND (electric = 1)";
         }
 
         if (!empty($maxPrice)) {

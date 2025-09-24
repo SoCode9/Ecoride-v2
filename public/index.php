@@ -1,7 +1,7 @@
 <?php
 
 //17.09.2025 _ Live découverte PHP Objet 4/6 router
-
+session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Carpool\Controller\CarpoolController;
@@ -29,7 +29,7 @@ $router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']); //URI
 // listUser = la fonction (méthode) à appeler dans la classe MaClass
 $router->register(['GET'], '/', DashboardController::class, 'index');
 $router->register(['GET'], '/user/list', UserController::class, 'list');
-$router->register(['GET'], '/covoiturages', CarpoolController::class, 'list');
+$router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'list');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
 $router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 // exemple d'une route pour créer un user

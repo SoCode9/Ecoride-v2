@@ -1,12 +1,12 @@
 <!-- Find a carpool -->
 <div class="flex-column gap-24 block-light-grey">
     <h2 class="text-green text-bold">Rechercher un covoiturage</h2>
-    <form class="block-search flex-column-ms" action="carpool_search.php" method="POST">
-        <input type="hidden" name="action" value="search"> <!--identify request-->
+    <form class="block-search flex-column-ms" action="<?= BASE_URL ?>/covoiturages" method="POST">
+        <input type="hidden" name="action" value="search"> <!--identify request--> 
 
         <div class="flex-row search-field">
             <img class="img-width-20" src="<?= ASSETS_PATH ?>/icons/Localisation(2).png" alt="lieu de départ">
-            <input type="text" id="departure-city-search" name="departure-city-search" class="font-size-small text-breakable  "
+            <input type="text" id="departure-city-search" name="departure" class="font-size-small text-breakable  "
                 placeholder="Ville de départ"
                 value="<?= htmlspecialchars($filters['departure']) ?>"
                 required>
@@ -15,7 +15,7 @@
         <span class="flex-row">→</span>
         <div class="flex-row search-field">
             <img class="img-width-20" src="<?= ASSETS_PATH ?>/icons/Localisation(2).png" alt="">
-            <input type="text" id="arrival-city-search" name="arrival-city-search" class="font-size-small text-breakable  "
+            <input type="text" id="arrival-city-search" name="arrival" class="font-size-small text-breakable  "
                 placeholder="Ville d'arrivée"
                 value="<?= htmlspecialchars($filters['arrival']) ?>"
                 required>
@@ -23,7 +23,7 @@
         </div>
         <div class="flex-row search-field">
             <img class="img-pointer" src="<?= ASSETS_PATH ?>/icons/Calendrier2.png" alt="Calendrier">
-            <input type="date" id="departure-date-search" name="departure-date-search"
+            <input type="date" id="departure-date-search" name="date"
                 class="date-field font-size-small  " style="width:110px;"
                 value="<?= htmlspecialchars($dateInput) ?>"
                 required>
@@ -48,28 +48,28 @@
 
     <div class="flex-column block-light-grey" id="filter-block">
         <h3 class="text-green" style="padding-bottom: 24px;">Filtres de recherche</h3>
-        <form class="block-column-g20" action="carpool_search.php" method="POST">
+        <form class="block-column-g20" action="<?= BASE_URL ?>/covoiturages" method="POST">
             <input type="hidden" name="action" value="filters"> <!--identify filters-->
 
             <div class="flex-row">
-                <input id="eco" name="eco" type="radio" <?= !empty($filters['eco']) ? 'checked' : ''  ?>>
+                <input id="eco" type="checkbox" name="eco" value="1" <?= !empty($filters['eco']) ? 'checked' : '' ?>>
                 <label for="eco">Voyage écologique</label>
             </div>
             <div class="flex-row">
                 <label for="max-price">Prix (max)</label>
-                <input type="number" id="max-price" name="max-price" class="short-field" min="1"
+                <input type="number" id="max-price" name="maxPrice" class="short-field" min="1"
                     value="<?= $filters['maxPrice'] ?>">
             </div>
             <div class="flex-row">
                 <label for="max-duration">Durée (max)</label>
-                <input type="number" id="max-duration" name="max-duration" class="short-field" min="1"
+                <input type="number" id="max-duration" name="maxDuration" class="short-field" min="1"
                     value="<?= $filters['maxDuration'] ?>">
                 <label for="max-duration">h</label>
             </div>
             <div class="flex-row">
                 <label for="driver-rating-list">Note chauffeur (min) </label>
 
-                <select id="driver-rating-list" name="driver-rating-list" class="short-field">
+                <select id="driver-rating-list" name="driverRating" class="short-field">
                     <optgroup>
                         <option value="none" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "none")) ? 'selected' : ''; ?>></option>
                         <option value="5" <?= (isset($filters['driverRating']) && strval($filters['driverRating'] === "5")) ? 'selected' : ''; ?>>5</option>
@@ -157,7 +157,7 @@
                     echo "<br><br>"; ?>
 
                     <!-- Form to restart search with new date -->
-                    <form method="POST" action="carpool_search.php">
+                    <form method="POST" action="<?= BASE_URL ?>/covoiturages">
                         <input type="hidden" name="action" value="search">
                         <input type="hidden" name="departure-date-search"
                             value="<?= htmlspecialchars($firstTravel['travel_date']) ?>">

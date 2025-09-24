@@ -23,39 +23,67 @@ class CarpoolController extends BaseController
 
     public function list()
     {
-        // 1) Lire les filtres depuis GET (nouvelle recherche si au moins un présent)
-        $filters = [
-            'date'         => isset($_GET['date'])        ? trim($_GET['date'])    : '22.09.2025', /* @TODO remettre null */ // attendu: dd.mm.yyyy
-            'departure'    => isset($_GET['departure'])    ? trim($_GET['departure'])    : 'Saint-Julien-en-Genevois', /* @TODO remettre null*/
-            'arrival'      => isset($_GET['arrival'])      ? trim($_GET['arrival'])      : 'Lyon',/* @TODO remettre null*/
-            'eco'          => isset($_GET['eco'])          ? 1          : null,
-            'maxPrice'     => isset($_GET['maxPrice'])     ? (int)$_GET['maxPrice']      : null,
-            'maxDuration'  => isset($_GET['maxDuration'])  ? (int)$_GET['maxDuration']   : null,
-            'driverRating' => isset($_GET['driverRating']) ? (float)$_GET['driverRating'] : null,
+        // État courant en session (ou valeurs par défaut)
+        $state = $_SESSION['carpools.search'] ?? [
+            'date'         => null, // stockée en d.m.Y pour l'affichage humain
+            'departure'    => null,
+            'arrival'      => null,
+            'eco'          => null, // 1 ou null
+            'maxPrice'     => null,
+            'maxDuration'  => null,
+            'driverRating' => null,
         ];
 
-        $isNewSearch = array_filter($filters, fn($v) => $v !== null) !== [];
+        // ----- POST : on fusionne l'état puis PRG -----
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_POST['action'] ?? null;
 
-        // 2) Session: on sauvegarde si nouvelle recherche, sinon on reprend l’ancienne
-        if ($isNewSearch) {
-            $_SESSION['carpools.search'] = $filters;
-        } else {
-            $saved = $_SESSION['carpools.search'] ?? [];
-            foreach ($filters as $k => $v) {
-                if ($v === null && array_key_exists($k, $saved)) {
-                    $filters[$k] = $saved[$k];
-                }
+            if ($action === 'reset_filters') {
+                // On ne touche pas à la recherche principale
+                $state['eco']          = null;
+                $state['maxPrice']     = null;
+                $state['maxDuration']  = null;
+                $state['driverRating'] = null;
+            } elseif ($action === 'search') {
+                // Formulaire principal : départ, arrivée, date (Y-m-d depuis <input type="date">)
+                $state['departure'] = ($v = trim($_POST['departure'] ?? '')) !== '' ? $v : null;
+                $state['arrival']   = ($v = trim($_POST['arrival']   ?? '')) !== '' ? $v : null;
+
+                $datePost = trim($_POST['date'] ?? ''); // Y-m-d
+                $state['date'] = DateFormatter::toDb($datePost); // on stocke en d.m.Y pour l’UI
+
+            } elseif ($action === 'filters') {
+                // Formulaire filtres
+                $state['eco'] = isset($_POST['eco']) ? 1 : null;
+
+                $state['maxPrice'] = (isset($_POST['maxPrice']) && $_POST['maxPrice'] !== '')
+                    ? max(1, (int)$_POST['maxPrice']) : null;
+
+                $state['maxDuration'] = (isset($_POST['maxDuration']) && $_POST['maxDuration'] !== '')
+                    ? max(1, (int)$_POST['maxDuration']) : null;
+
+                $driverRating = $_POST['driverRating'] ?? '';
+                $state['driverRating'] = ($driverRating === '' || $driverRating === 'none')
+                    ? null
+                    : (float)$driverRating;
             }
+
+            // Sauvegarde en session puis PRG (évite le repost et garde une URL propre)
+            $_SESSION['carpools.search'] = $state;
+            header('Location: ' . $this->router->generatePath('/covoiturages'));
+            exit;
         }
 
-        // 3) Récupération des données
-        $repo = new CarpoolRepository($this->router);
+        // ----- GET : on lit l'état et on cherche -----
+        $filters = $state; // alias lisible
+
+        // Appel service/repo : ton repo accepte désormais plusieurs formats et normalise vers Y-m-d
+        $repo    = new CarpoolRepository($this->router);
         $service = new CarpoolService($repo);
         $rawCarpools = $service->searchWithFormatting($filters);
 
-        // 4) Post-traitement d'affichage
+        // Post-traitement d'affichage (mapping "prêt à afficher")
         $userId = $_SESSION['user_id'] ?? null;
-
         $carpools = array_map(function (array $c) use ($userId) {
             $isOwner = $userId && isset($c['driver_id']) && (string)$c['driver_id'] === (string)$userId;
 
@@ -67,7 +95,7 @@ class CarpoolController extends BaseController
                 'price_label'    => OtherFormatter::formatCredits((int)($c['price'] ?? 0)),
                 'departure_time' => !empty($c['departure_time']) ? DateFormatter::time($c['departure_time']) : '',
                 'arrival_time'   => !empty($c['arrival_time'])   ? DateFormatter::time($c['arrival_time'])   : '',
-                'eco_label'      => OtherFormatter::formatEcoLabel((bool)($c['car_electric'] ?? 0)),
+                'eco_label'      => OtherFormatter::formatEcoLabel((bool)($c['electric'] ?? 0)),
 
                 'is_owner'       => $isOwner,
                 'detail_url'     => $this->router->generatePath('/covoiturages/details', ['id' => $c['id']]),
@@ -84,37 +112,21 @@ class CarpoolController extends BaseController
             ];
         }, $rawCarpools);
 
+        // Prépare la value de l'<input type="date"> : l'input veut Y-m-d
+        $dateInput = DateFormatter::toDb($filters['date']);
 
-        // 5) En-tête et input date
-        $dateLong = 'Aucune date sélectionnée';
-        if (!empty($filters['date'])) {
-            $dt = \DateTime::createFromFormat('d.m.Y', $filters['date']);
-            if ($dt) {
-                // DateFormatter::long attend 'Y-m-d'
-                $dateLong = 'Départ le ' . DateFormatter::long($dt->format('Y-m-d'));
-            }
-        }
+        // Texte "Départ le ..."
+        $ymd = DateFormatter::toDb($filters['date']); // convertit d.m.Y → Y-m-d (ou null)
+        $dateLong = $ymd
+            ? 'Départ le ' . DateFormatter::long($ymd)  // long() attend Y-m-d
+            : 'Aucune date sélectionnée';
 
-        // $filters['date'] peut venir en d.m.Y, d/m/Y ou Y-m-d
-        $dateInput = '';
-        if (!empty($filters['date'])) {
-            foreach (['!d.m.Y', '!d/m/Y', '!Y-m-d'] as $fmt) {
-                $dt = \DateTime::createFromFormat($fmt, $filters['date']);
-                if ($dt) {
-                    $dateInput = $dt->format('Y-m-d');
-                    break;
-                }
-            }
-        }
-
-
-
-        // 6) Render
+        // Render
         return $this->render('pages/carpools/list.php', 'Covoiturages', [
-            'carpools' => $carpools,
-            'filters'  => $filters,
-            'dateLong' => $dateLong,
-            'dateInput' => $dateInput
+            'carpools'  => $carpools,
+            'filters'   => $filters,
+            'dateLong'  => $dateLong,
+            'dateInput' => $dateInput,
         ]);
     }
 
