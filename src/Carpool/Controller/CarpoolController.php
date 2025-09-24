@@ -48,12 +48,44 @@ class CarpoolController extends BaseController
             }
         }
 
-        // 3) Appel service + repo (repo SANS router)
+        // 3) Récupération des données
         $repo = new CarpoolRepository($this->router);
         $service = new CarpoolService($repo);
-        $carpools = $service->searchWithFormatting($filters);
+        $rawCarpools = $service->searchWithFormatting($filters);
 
-        // 4) Texte d’en-tête "Départ le ..."
+        // 4) Post-traitement d'affichage
+        $userId = $_SESSION['user_id'] ?? null;
+
+        $carpools = array_map(function (array $c) use ($userId) {
+            $isOwner = $userId && isset($c['driver_id']) && (string)$c['driver_id'] === (string)$userId;
+
+            return [
+                'id'             => htmlspecialchars($c['id'] ?? ''),
+                'driver_pseudo'  => htmlspecialchars($c['driver_pseudo'] ?? ''),
+                'driver_photo'   => $c['driver_photo'] ?? null,
+
+                'price_label'    => OtherFormatter::formatCredits((int)($c['price'] ?? 0)),
+                'departure_time' => !empty($c['departure_time']) ? DateFormatter::time($c['departure_time']) : '',
+                'arrival_time'   => !empty($c['arrival_time'])   ? DateFormatter::time($c['arrival_time'])   : '',
+                'eco_label'      => OtherFormatter::formatEcoLabel((bool)($c['car_electric'] ?? 0)),
+
+                'is_owner'       => $isOwner,
+                'detail_url'     => $this->router->generatePath('/covoiturages/details', ['id' => $c['id']]),
+
+                'card_style'     => $isOwner
+                    ? "border:2px solid var(--col-green);cursor:pointer;"
+                    : "cursor:pointer;",
+                'completed'      => isset($c['seats_available']) && (int)$c['seats_available'] === 0,
+                'seats_label'    => isset($c['seats_available'])
+                    ? ($c['seats_available'] <= 1
+                        ? $c['seats_available'] . " place"
+                        : $c['seats_available'] . " places")
+                    : ''
+            ];
+        }, $rawCarpools);
+
+
+        // 5) En-tête et input date
         $dateLong = 'Aucune date sélectionnée';
         if (!empty($filters['date'])) {
             $dt = \DateTime::createFromFormat('d.m.Y', $filters['date']);
@@ -75,9 +107,9 @@ class CarpoolController extends BaseController
             }
         }
 
-   
 
-        // 5) Render
+
+        // 6) Render
         return $this->render('pages/carpools/list.php', 'Covoiturages', [
             'carpools' => $carpools,
             'filters'  => $filters,

@@ -88,9 +88,11 @@ final class DateFormatter
      * @param string $time Time in H:i:s format.
      * @return string Formatted time or error message.
      */
-    public static function time(string $time): string
+    public static function time(?string $time): string
     {
-        $dt = DateTime::createFromFormat('H:i:s', $time);
-        return $dt ? $dt->format('H\hi') : 'Invalid time format';
+        if (!$time) return '';
+
+        $dt = DateTime::createFromFormat('H:i:s', $time) ?: DateTime::createFromFormat('H:i', $time);
+        return $dt ? $dt->format('H\hi') : htmlspecialchars($time);
     }
 }

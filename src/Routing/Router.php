@@ -7,8 +7,14 @@ class Router
 {
     private array $routes = [];
     private ?string $template = null;
-
+    private string $basePath = '';
     public function __construct(private string $method, private string $uri) {}
+
+    /** Optionnel si ton app est servie sous un sous-dossier (ex: /Ecoride-v2) */
+    public function setBasePath(string $basePath): void
+    {
+        $this->basePath = rtrim($basePath, '/');
+    }
     public function register(string|array $method, string $uri, string $controller, string $action)
     {
 
@@ -24,6 +30,31 @@ class Router
             'controller' => $controller,
             'action' => $action
         ];
+    }
+
+
+    /** Construit une URL pour une route donnée + paramètres de query */
+    public function generatePath(string $uri, array $params = [], bool $absolute = false): string
+    {
+        $path = $this->normalizePath($uri);
+
+        // (facultatif) on peut vérifier que la route existe déjà :
+        if (!isset($this->routes[$path])) {
+            // tu peux décider de lancer une exception, ou ignorer ce check
+            throw new \InvalidArgumentException("Route non enregistrée: $path");
+        }
+
+        $qs = $params ? ('?' . http_build_query($params)) : '';
+
+        $relative = $this->basePath . $path . $qs;
+
+        if (!$absolute) {
+            return $relative;
+        }
+
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        return $scheme . '://' . $host . $relative;
     }
 
     public function run()
@@ -53,7 +84,7 @@ class Router
             throw new \Exception($this->method . ' n\'est pas autorisée pour cette URL');
         }
 
-   //     die($this->getCurrentPage());
+        //     die($this->getCurrentPage());
 
         return $controller->$action(); //ici va dans méthode du controller list p.ex
     }

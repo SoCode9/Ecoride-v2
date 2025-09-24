@@ -101,109 +101,82 @@
         <!--TRAVELS' SEARCHED BLOCK-->
         <div class="flex-column gap-12 pad-20 pad-10-ss grid-auto-columns">
 
-            <?php
-            if (!empty($carpools)) {
-                foreach ($carpools as $carpool): ?>
+            <div class="flex-column gap-12 pad-20 pad-10-ss grid-auto-columns">
+                <?php if (!empty($carpools)): ?>
+                    <?php foreach ($carpools as $c): ?>
+                        <div class="travel flex-column-ms"
+                            onclick="window.location.href='<?= $c['detail_url'] ?>'"
+                            style="<?= $c['card_style'] ?>">
 
-                    <div class="travel flex-column-ms"
-                        onclick="window.location.href='carpool_details.php?id=<?= htmlspecialchars($carpool['id']) ?>'" 
-                        <?php if (isset($_SESSION['user_id']) && ($carpool['driver_id'] === $_SESSION['user_id'])) { // @TODO
-                            echo " style='border:2px solid var(--col-green);cursor:pointer;'";
-                        } else {
-                            echo " style ='cursor:pointer;'";
-                        } ?>>
+                            <?php if ($c['completed']): ?>
+                                <span class="watermark-complet">Complet</span>
+                            <?php endif; ?>
 
-                        <?php // @TODO quand reservation et car faits
-                        /* $seatsAvailable = seatsAvailable( 
-                            $car->getSeatsOfferedByCar($t['car_id']),
-                            $reservation->countPassengers($t['id'])
-                        );
-                        if ($seatsAvailable === 0):  ?>
-                            <span class="watermark-complet">Complet</span>
-                        <?php endif; */ ?>
-
-                        <div class="user-header-mobile">
-                            <div class="photo-user-container" style="justify-self:center;">
-                                <img src="<? /*echo  displayPhoto($carpool['driver_photo']) */ ?>" alt="Photo de l'utilisateur"
-                                    class="photo-user">
-                            </div>
-                            <div class="user-info-mobile">
-                                <span class="pseudo-user"><?= htmlspecialchars($carpool['driver_pseudo']) ?></span>
-                                <div class="driver-rating">
-                                    <div class="flex-row font-size-very-small">
-                                        <?php // @TODO quand rating est fait
-                                        /*  $driver = new Driver($pdo, $carpool['driver_id']);
-                                        $averageRating = $driver->getAverageRatings();
-                                        if ($averageRating !== null) {
-                                            echo '<img src="' . BASE_URL . '/icons/EtoileJaune.png" class="img-width-20" alt="Icone étoile">'
-                                                . htmlspecialchars($averageRating);
-                                        } else {
-                                            echo "<span class = 'italic'>0 avis</span>";
-                                        }  */ ?>
+                            <div class="user-header-mobile">
+                                <div class="photo-user-container" style="justify-self:center;">
+                                    <img src="<?= htmlspecialchars($c['driver_photo'] ?? '') ?>"
+                                        alt="Photo de l'utilisateur"
+                                        class="photo-user">
+                                </div>
+                                <div class="user-info-mobile">
+                                    <span class="pseudo-user"><?= $c['driver_pseudo'] ?></span>
+                                    <div class="driver-rating">
+                                        <div class="flex-row font-size-very-small">
+                                            <!-- Quand tu auras l'averageRating, passe un label prêt depuis le contrôleur -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <span class="date-travel">Départ à <?= $c['departure_time'] ?></span>
+                            <span class="hours-travel">Arrivée à <?= $c['arrival_time'] ?></span>
+
+                            <?php if (!empty($c['seats_label'])): ?>
+                                <span class="seats-available" id="seats-bs">Encore <?= htmlspecialchars($c['seats_label']) ?></span>
+                            <?php endif; ?>
+
+                            <?php if (!empty($c['eco_label'])): ?>
+                                <div class="criteria-eco-div">
+                                    <img src="<?= ASSETS_PATH ?>icons/Arbre1.png" alt="Arbre" width="20px">
+                                    <span class="criteria-eco"><?= htmlspecialchars($c['eco_label']) ?></span>
+                                </div>
+                            <?php endif; ?>
+
+                            <span class="travel-price text-bold"><?= $c['price_label'] ?></span>
                         </div>
-                        <span class="date-travel">Départ à <?= htmlspecialchars($carpool['departure_time']) ?></span>
-                        <span class="hours-travel">Arrivée à
-                            <?= htmlspecialchars($carpool['arrival_time']) ?></span>
-                        <span class="seats-available" id="seats-bs">Encore
-                            <?php // @TODO quand reservation et car faits
-                            /*  if ($seatsAvailable > 1) {
-                                echo $seatsAvailable . " places";
-                            } else {
-                                echo $seatsAvailable . " place";
-                            } */
-                            ?>
-                        </span>
+                    <?php endforeach; ?>
+                <?php elseif (isset($_POST['action'])): ?>
+                    Oups.. Aucun covoiturage n'est proposé pour cette recherche.
+                <?php endif; ?>
 
-                        <div class="criteria-eco-div">
-                            <span class="criteria-eco"> <?= $carpool['car_electric'] <> 0 ? $carpool['car_electric'] : ''  ?> </span>
-                        </div>
 
-                        <span class="travel-price text-bold">
-                            <?php
-                            $trajetPrice = htmlspecialchars($carpool['price']);
-                            if ($trajetPrice > 1) {
-                                echo $trajetPrice . " crédits";
-                            } else {
-                                echo $trajetPrice . " crédit";
-                            }
-                            ?>
-                        </span>
-                    </div>
-                <?php endforeach;
-            } elseif (isset($_POST['action'])) {
-                echo "Oups.. Aucun covoiturage n'est proposé pour cette recherche.";
-            }
+                <?php if (!empty($nextTravelDate)) {
+                    // Take the first travel found 
+                    $firstTravel = $nextTravelDate[0];
 
-            if (!empty($nextTravelDate)) {
-                // Take the first travel found 
-                $firstTravel = $nextTravelDate[0];
+                    echo "<br><br>"; ?>
 
-                echo "<br><br>"; ?>
+                    <!-- Form to restart search with new date -->
+                    <form method="POST" action="carpool_search.php">
+                        <input type="hidden" name="action" value="search">
+                        <input type="hidden" name="departure-date-search"
+                            value="<?= htmlspecialchars($firstTravel['travel_date']) ?>">
+                        <input type="hidden" name="departure-city-search"
+                            value="<?= htmlspecialchars($departureCitySearch) ?>">
+                        <input type="hidden" name="arrival-city-search" value="<?= htmlspecialchars($arrivalCitySearch) ?>">
+                        <input type="hidden" name="eco" value="<?= htmlspecialchars($eco) ?>">
+                        <input type="hidden" name="max-price" value="<?= htmlspecialchars($maxPrice) ?>">
+                        <input type="hidden" name="max-duration" value="<?= htmlspecialchars($maxDuration) ?>">
+                        <input type="hidden" name="driver-rating-list" value="<?= htmlspecialchars($driverRating) ?>">
 
-                <!-- Form to restart search with new date -->
-                <form method="POST" action="carpool_search.php">
-                    <input type="hidden" name="action" value="search">
-                    <input type="hidden" name="departure-date-search"
-                        value="<?= htmlspecialchars($firstTravel['travel_date']) ?>">
-                    <input type="hidden" name="departure-city-search"
-                        value="<?= htmlspecialchars($departureCitySearch) ?>">
-                    <input type="hidden" name="arrival-city-search" value="<?= htmlspecialchars($arrivalCitySearch) ?>">
-                    <input type="hidden" name="eco" value="<?= htmlspecialchars($eco) ?>">
-                    <input type="hidden" name="max-price" value="<?= htmlspecialchars($maxPrice) ?>">
-                    <input type="hidden" name="max-duration" value="<?= htmlspecialchars($maxDuration) ?>">
-                    <input type="hidden" name="driver-rating-list" value="<?= htmlspecialchars($driverRating) ?>">
+                        <button type="submit" class="btn bg-very-light-green" style="padding: 10px;">Prochain itinéraire
+                            pour cette recherche le
+                            <?= htmlspecialchars(formatDateLong($firstTravel['travel_date'])) ?></button>
+                    </form>
+                <?php } ?>
 
-                    <button type="submit" class="btn bg-very-light-green" style="padding: 10px;">Prochain itinéraire
-                        pour cette recherche le
-                        <?= htmlspecialchars(formatDateLong($firstTravel['travel_date'])) ?></button>
-                </form>
-            <?php } ?>
-
+            </div>
         </div>
     </div>
-</div>
 
-<script src="<?= ASSETS_PATH ?>js/carpool_list.js" defer></script>
+    <script src="<?= ASSETS_PATH ?>js/carpool_list.js" defer></script>

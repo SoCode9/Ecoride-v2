@@ -31,7 +31,7 @@ $router->register(['GET'], '/', DashboardController::class, 'index');
 $router->register(['GET'], '/user/list', UserController::class, 'list');
 $router->register(['GET'], '/covoiturages', CarpoolController::class, 'list');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
-
+$router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 // exemple d'une route pour créer un user
 // $router->register(['GET', 'POST'], '/user/create', UserController::class, 'create');
 
