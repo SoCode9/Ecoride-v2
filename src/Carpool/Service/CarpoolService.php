@@ -21,25 +21,6 @@ final class CarpoolService
             $filters['maxDuration'] ?? null,
             $filters['driverRating'] ?? null,
         );
-
-        // formatage pour le front
-     /*   foreach ($items as &$row) {
-            if (!empty($row['departure_time'])) {
-                $row['departure_time'] = DateFormatter::time($row['departure_time']);
-            }
-            if (!empty($row['arrival_time'])) {
-                $row['arrival_time'] = DateFormatter::time($row['arrival_time']);
-            }
-
-             if ($row['car_electric'] === 1) {
-                $row['car_electric'] = OtherFormatter::formatEco($row['car_electric']);
-            } */
-
-           /*  var_dump('<pre>');
-            var_dump($row);
-            var_dump('/<pre>'); 
-        }
-*/
         return $items;
     }
 }

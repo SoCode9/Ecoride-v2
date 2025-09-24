@@ -7,14 +7,8 @@ class Router
 {
     private array $routes = [];
     private ?string $template = null;
-    private string $basePath = '';
     public function __construct(private string $method, private string $uri) {}
 
-    /** Optionnel si ton app est servie sous un sous-dossier (ex: /Ecoride-v2) */
-    public function setBasePath(string $basePath): void
-    {
-        $this->basePath = rtrim($basePath, '/');
-    }
     public function register(string|array $method, string $uri, string $controller, string $action)
     {
 
@@ -34,27 +28,14 @@ class Router
 
 
     /** Construit une URL pour une route donnée + paramètres de query */
-    public function generatePath(string $uri, array $params = [], bool $absolute = false): string
+    public function generatePath(string $uri, array $params = []): string
     {
         $path = $this->normalizePath($uri);
+        // Construit la query string à partir du tableau de paramètres.
+        // Exemple: ['id' => '42'] -> '?id=42'
+        $qs   = $params ? ('?' . http_build_query($params)) : '';
 
-        // (facultatif) on peut vérifier que la route existe déjà :
-        if (!isset($this->routes[$path])) {
-            // tu peux décider de lancer une exception, ou ignorer ce check
-            throw new \InvalidArgumentException("Route non enregistrée: $path");
-        }
-
-        $qs = $params ? ('?' . http_build_query($params)) : '';
-
-        $relative = $this->basePath . $path . $qs;
-
-        if (!$absolute) {
-            return $relative;
-        }
-
-        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        return $scheme . '://' . $host . $relative;
+        return BASE_URL . $path . $qs;
     }
 
     public function run()
