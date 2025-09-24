@@ -15,14 +15,7 @@ class CarpoolRepository extends BaseController
 {
 
     /**
-     * 
-     * @param string $dateSearch //
-     * @param string $departureCitySearch //departureCity searched
-     * @param string $arrivalCitySearch //arrivalCity searched
-     * @return array //return the array of all travels meeting the criteria
-     */
-    /**
-     * To search for all travels that meet the criteria
+     * To search for all carpools that meet the criteria
      * @param mixed $dateSearch date searched
      * @param mixed $departureCitySearch departure city searched
      * @param mixed $arrivalCitySearch arrival city searched
@@ -42,7 +35,7 @@ class CarpoolRepository extends BaseController
                 JOIN driver ON driver.user_id = carpool.driver_id 
                 JOIN cars ON cars.car_id = carpool.car_id  
                 LEFT JOIN ratings ON ratings.driver_id = driver.user_id
-                WHERE (date = :travel_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) /* AND (status= 'not started') */";
+                WHERE (date = :carpool_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) /* AND (status= 'not started') */";
 
         if (isset($eco)) {
             $sql .= " AND (electric = 1)";
@@ -68,7 +61,7 @@ class CarpoolRepository extends BaseController
             $pdo = DbConnection::getPdo();
             $statement = $pdo->prepare($sql);
 
-            $statement->bindParam(":travel_date", $dateSearch, PDO::PARAM_STR);
+            $statement->bindParam(":carpool_date", $dateSearch, PDO::PARAM_STR);
             $statement->bindParam(":departure_city", $departureCitySearch, PDO::PARAM_STR);
             $statement->bindParam(":arrival_city", $arrivalCitySearch, PDO::PARAM_STR);
 
@@ -107,7 +100,7 @@ class CarpoolRepository extends BaseController
      * @throws \Exception If a database error occurs
      * @return array
      */
-    public function searchnextTravelDate(?string $dateSearch = null, ?string $departureCitySearch = null, ?string $arrivalCitySearch = null, ?int $eco = null, ?int $maxPrice = null, ?int $maxDuration = null, ?float $driverRating = null): ?array
+    public function searchNextCarpoolDate(?string $dateSearch = null, ?string $departureCitySearch = null, ?string $arrivalCitySearch = null, ?int $eco = null, ?int $maxPrice = null, ?int $maxDuration = null, ?float $driverRating = null): ?array
     {
         try {
 
@@ -117,7 +110,7 @@ class CarpoolRepository extends BaseController
             JOIN users ON users.id = carpool.driver_id JOIN driver ON driver.user_id = carpool.driver_id 
             JOIN cars ON cars.car_id = carpool.car_id  
             LEFT JOIN ratings ON ratings.driver_id = driver.user_id  
-            WHERE (date > :travel_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) /* AND (status= 'not started') */";
+            WHERE (date > :carpool_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) /* AND (status= 'not started') */";
             if (isset($eco)) {
                 $sql .= " AND (electric = 1)";
             }
@@ -140,7 +133,7 @@ class CarpoolRepository extends BaseController
 
             $pdo = DbConnection::getPdo();
             $statement = $pdo->prepare($sql);
-            $statement->bindParam(":travel_date", $dateSearch, PDO::PARAM_STR);
+            $statement->bindParam(":carpool_date", $dateSearch, PDO::PARAM_STR);
             $statement->bindParam(":departure_city", $departureCitySearch, PDO::PARAM_STR);
             $statement->bindParam(":arrival_city", $arrivalCitySearch, PDO::PARAM_STR);
 
@@ -157,11 +150,11 @@ class CarpoolRepository extends BaseController
             }
 
             $statement->execute();
-            $nextTravelDate = $statement->fetch(PDO::FETCH_ASSOC);
+            $nextCarpoolDate = $statement->fetch(PDO::FETCH_ASSOC);
 
-            return $nextTravelDate ?: null;
+            return $nextCarpoolDate ?: null;
         } catch (PDOException $e) {
-            error_log("Database error in searchnextTravelDate(): " . $e->getMessage());
+            error_log("Database error in searchNextCarpoolDate(): " . $e->getMessage());
             throw new Exception("Une erreur est survenue");
         }
     }

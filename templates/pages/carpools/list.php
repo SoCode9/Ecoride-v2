@@ -98,7 +98,7 @@
         <span class="flex-row flex-center text-bold font-size-big">
             <?= htmlspecialchars($dateLong) ?>
         </span>
-        <!--TRAVELS' SEARCHED BLOCK-->
+        <!--CARPOOL'S SEARCHED BLOCK-->
         <div class="flex-column gap-12 pad-20 pad-10-ss grid-auto-columns">
 
             <div class="flex-column gap-12 pad-20 pad-10-ss grid-auto-columns">

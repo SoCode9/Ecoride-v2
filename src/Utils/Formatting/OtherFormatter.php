@@ -31,4 +31,16 @@ final class OtherFormatter
 
         return PHOTOS_URL . '/' . rawurlencode($safeFileName);
     }
+
+    /**
+     * calculation of seatsAvailable with informations in DB
+     * @param int $seatsOfferedNb //field in DB
+     * @param int $seatsAllowedNb //field in DB
+     * @return int
+     */
+    public static function seatsAvailable(int $seatsOfferedNb, int $seatsAllocatedNb): int
+    {
+        $seatsAvailable = $seatsOfferedNb - $seatsAllocatedNb;
+        return $seatsAvailable;
+    }
 }

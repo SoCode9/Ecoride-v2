@@ -2,8 +2,10 @@
 
 namespace App\Carpool\Service;
 
+use App\Car\Repository\CarRepository;
 use App\Carpool\Repository\CarpoolRepository;
 use App\Driver\Service\DriverService;
+use App\Reservation\Repository\ReservationRepository;
 use App\Routing\Router;
 use App\Utils\Formatting\DateFormatter;
 use App\Utils\Formatting\OtherFormatter;
@@ -83,13 +85,15 @@ final class CarpoolService
         return array_map(function (array $c) use ($userId, $driverService, $router) {
 
             $isOwner = $userId && isset($c['driver_id']) && (string)$c['driver_id'] === (string)$userId;
+            $carRepo = new CarRepository($router);
+            $resRepo = new ReservationRepository($router);
 
             // moyenne (simple — si tu veux éviter N+1, on fera un batch plus tard)
             $avg = $driverService->getAverageRatings((string)$c['driver_id']);
             $ratingHtml = $avg !== null
                 ? '<img src="' . ASSETS_PATH . '/icons/EtoileJaune.png" class="img-width-20" alt="Icône étoile"> ' . number_format((float)$avg, 1, ',', '')
                 : '<span class="italic">0 avis</span>';
-
+            $seatsAvailable = OtherFormatter::seatsAvailable($carRepo->getSeatsOfferedByCar($c['car_id']), $resRepo->countPassengers($c['id']));
             return [
                 'id'             => htmlspecialchars($c['id'] ?? ''),
                 'driver_pseudo'  => htmlspecialchars($c['driver_pseudo'] ?? ''),
@@ -108,12 +112,10 @@ final class CarpoolService
                     ? "border:2px solid var(--col-green);cursor:pointer;"
                     : "cursor:pointer;",
 
-                'completed'   => isset($c['seats_available']) && (int)$c['seats_available'] === 0,
-                'seats_label' => isset($c['seats_available'])
-                    ? ((int)$c['seats_available'] <= 1
-                        ? $c['seats_available'] . " place"
-                        : $c['seats_available'] . " places")
-                    : '',
+                'completed'   => (int)$seatsAvailable === 0,
+                'seats_label' => $seatsAvailable <= 1
+                    ? $seatsAvailable . " place"
+                    : $seatsAvailable . " places"
             ];
         }, $rows);
     }
