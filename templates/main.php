@@ -21,10 +21,10 @@
             <nav>
                 <ul class="navigation">
                     <li><a href="<?= BASE_URL ?>/" id='home-page' class="<?= $current === '/' ? 'active' : '' ?>">Accueil</a></li>
-                    <li><a href="" id='carpool-button' class="<?= $current === '/Covoiturages' ? 'active' : '' ?>">Covoiturages</a></li>
-                    <li><a href="" id='contact-button' class=" <?= $current === '/Contact' ? 'active' : '' ?>">Contact</a></li>
-                    <li><a href="" id='user-space' class="btn border-white <?= $current === '/Espace-utilisateur' ? 'activeBtn' : '' ?>">Espace Utilisateur</a></li>
-                    <li><a href="" id='login-button' class="<?= $current === '/Espace-utilisateur' ? 'activeBtn' : '' ?>">Connexion</a></li>
+                    <li><a href="<?= BASE_URL ?>/covoiturages" id='carpool-button' class="<?= $current === '/covoiturages' ? 'active' : '' ?>">Covoiturages</a></li>
+                    <li><a href="" id='contact-button' class=" <?= $current === '/contact' ? 'active' : '' ?>">Contact</a></li>
+                    <li><a href="" id='user-space' class="btn border-white <?= $current === '/espace-utilisateur' ? 'activeBtn' : '' ?>">Espace Utilisateur</a></li>
+                    <li><a href="" id='login-button' class="<?= $current === '/espace-utilisateur' ? 'activeBtn' : '' ?>">Connexion</a></li>
                 </ul>
             </nav>
 
@@ -33,10 +33,10 @@
                 <button id="close-btn" href="#" class="close">×</button>
                 <ul>
                     <li><a href="<?= BASE_URL ?>/" id='home-page' class="<?= $current === '/' ? 'active' : '' ?>">Accueil</a></li>
-                    <li><a href="" id='carpool-button' class="<?= $current === '/Covoiturages' ? 'active' : '' ?>">Covoiturages</a></li>
-                    <li><a href="" id='contact-button' class="<?= $current === '/Contact' ? 'active' : '' ?>">Contact</a></li>
-                    <li><a href="" id='user-space' class="btn border-white <?= $current === '/Espace-utilisateur' ? 'activeBtn' : '' ?>">Espace Utilisateur</a></li>
-                    <li><a href="" id='login-button' class="<?= $current === '/Espace-utilisateur' ? 'activeBtn' : '' ?>">Connexion</a></li>
+                    <li><a href="<?= BASE_URL ?>/covoiturages" id='carpool-button' class="<?= $current === '/covoiturages' ? 'active' : '' ?>">Covoiturages</a></li>
+                    <li><a href="" id='contact-button' class="<?= $current === '/contact' ? 'active' : '' ?>">Contact</a></li>
+                    <li><a href="" id='user-space' class="btn border-white <?= $current === '/espace-utilisateur' ? 'activeBtn' : '' ?>">Espace Utilisateur</a></li>
+                    <li><a href="" id='login-button' class="<?= $current === '/espace-utilisateur' ? 'activeBtn' : '' ?>">Connexion</a></li>
                 </ul>
             </div>
             <div class="current-tab hidden" id="current-tab-mobile"></div>
