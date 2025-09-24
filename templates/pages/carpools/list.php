@@ -145,35 +145,29 @@
                             <span class="travel-price text-bold"><?= $c['price_label'] ?></span>
                         </div>
                     <?php endforeach; ?>
-                <?php elseif (isset($_POST['action'])): ?>
+                <?php elseif (!empty($showNoResults)): ?>
                     Oups.. Aucun covoiturage n'est proposé pour cette recherche.
                 <?php endif; ?>
 
 
-                <?php if (!empty($nextTravelDate)) {
-                    // Take the first travel found 
-                    $firstTravel = $nextTravelDate[0];
-
-                    echo "<br><br>"; ?>
-
-                    <!-- Form to restart search with new date -->
+                <!--Display of the date of the next carpool that matches the search criteria-->
+                <?php if (!empty($nextCarpool)): ?>
                     <form method="POST" action="<?= BASE_URL ?>/covoiturages">
                         <input type="hidden" name="action" value="search">
-                        <input type="hidden" name="departure-date-search"
-                            value="<?= htmlspecialchars($firstTravel['travel_date']) ?>">
-                        <input type="hidden" name="departure-city-search"
-                            value="<?= htmlspecialchars($departureCitySearch) ?>">
-                        <input type="hidden" name="arrival-city-search" value="<?= htmlspecialchars($arrivalCitySearch) ?>">
-                        <input type="hidden" name="eco" value="<?= htmlspecialchars($eco) ?>">
-                        <input type="hidden" name="max-price" value="<?= htmlspecialchars($maxPrice) ?>">
-                        <input type="hidden" name="max-duration" value="<?= htmlspecialchars($maxDuration) ?>">
-                        <input type="hidden" name="driver-rating-list" value="<?= htmlspecialchars($driverRating) ?>">
 
-                        <button type="submit" class="btn bg-very-light-green" style="padding: 10px;">Prochain itinéraire
-                            pour cette recherche le
-                            <?= htmlspecialchars(formatDateLong($firstTravel['travel_date'])) ?></button>
+                        <input type="hidden" name="departure" value="<?= htmlspecialchars((string)($nextCarpool['filters']['departure'] ?? '')) ?>">
+                        <input type="hidden" name="arrival" value="<?= htmlspecialchars((string)($nextCarpool['filters']['arrival']   ?? '')) ?>">
+                        <input type="hidden" name="date" value="<?= htmlspecialchars((string)($nextCarpool['date_db'] ?? '')) ?>">
+                        <input type="hidden" name="eco" value="1">
+                        <input type="hidden" name="maxPrice" value="<?= (int)$nextCarpool['filters']['maxPrice'] ?>">
+                        <input type="hidden" name="maxDuration" value="<?= (int)$nextCarpool['filters']['maxDuration'] ?>">
+                        <input type="hidden" name="driverRating" value="<?= htmlspecialchars((string)$nextCarpool['filters']['driverRating']) ?>">
+
+                        <button type="submit" class="btn bg-very-light-green" style="padding:10px;">
+                            Prochain itinéraire pour cette recherche le <?= htmlspecialchars((string)$nextCarpool['date_ui']) ?>
+                        </button>
                     </form>
-                <?php } ?>
+                <?php endif; ?>
 
             </div>
         </div>

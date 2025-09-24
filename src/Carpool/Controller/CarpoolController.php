@@ -79,7 +79,6 @@ class CarpoolController extends BaseController
         // ----- GET : on lit l'état et on cherche -----
         $filters = $state; // alias lisible
 
-        // Appel service/repo : ton repo accepte désormais plusieurs formats et normalise vers Y-m-d
         $repo    = new CarpoolRepository($this->router);
         $service = new CarpoolService($repo);
         $rawCarpools = $repo->search(
@@ -91,6 +90,34 @@ class CarpoolController extends BaseController
             $filters['maxDuration'] ?? null,
             $filters['driverRating'] ?? null,
         );
+        $nextCarpool = null;
+
+        if (empty($rawCarpools)) {
+            $nextTravelDate = $repo->searchnextTravelDate(
+                $filters['date'] ?? null,
+                $filters['departure'] ?? null,
+                $filters['arrival'] ?? null,
+                $filters['eco'] ?? null,
+                $filters['maxPrice'] ?? null,
+                $filters['maxDuration'] ?? null,
+                $filters['driverRating'] ?? null,
+            );
+            if ($nextTravelDate && !empty($nextTravelDate['date'])) {
+                $ymd = DateFormatter::toDb($nextTravelDate['date']); // au cas où
+                $nextCarpool = [
+                    'date_ui' => DateFormatter::short($ymd) ?? DateFormatter::toUi($ymd),
+                    'date_db' => $ymd, // pour remettre dans <input type="date"> ou en POST
+                    'filters' => [
+                        'departure'    => $filters['departure'] ?? null,
+                        'arrival'      => $filters['arrival'] ?? null,
+                        'eco'          => $filters['eco'] ?? null,
+                        'maxPrice'     => $filters['maxPrice'] ?? null,
+                        'maxDuration'  => $filters['maxDuration'] ?? null,
+                        'driverRating' => $filters['driverRating'] ?? null,
+                    ],
+                ];
+            }
+        }
 
         // Post-traitement d'affichage (mapping "prêt à afficher")
         $userId = $_SESSION['user_id'] ?? null;
@@ -127,6 +154,19 @@ class CarpoolController extends BaseController
             ];
         }, $rawCarpools);
 
+        $hasCriteria = array_filter([
+            $filters['date']         ?? null,
+            $filters['departure']    ?? null,
+            $filters['arrival']      ?? null,
+            $filters['eco']          ?? null,
+            $filters['maxPrice']     ?? null,
+            $filters['maxDuration']  ?? null,
+            $filters['driverRating'] ?? null,
+        ], fn($v) => $v !== null && $v !== '') !== [];
+
+        // Afficher le message "aucun résultat" seulement si recherche faite + zéro résultat
+        $showNoResults = $hasCriteria && empty($carpools);
+
         // Prépare la value de l'<input type="date"> : l'input veut Y-m-d
         $dateInput = DateFormatter::toDb($filters['date']);
 
@@ -142,6 +182,8 @@ class CarpoolController extends BaseController
             'filters'   => $filters,
             'dateLong'  => $dateLong,
             'dateInput' => $dateInput,
+            'showNoResults' => $showNoResults,
+            'nextCarpool' => $nextCarpool
         ]);
     }
 

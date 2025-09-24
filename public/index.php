@@ -1,6 +1,7 @@
 <?php
 
 //17.09.2025 _ Live découverte PHP Objet 4/6 router
+//session_destroy();
 session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
 
