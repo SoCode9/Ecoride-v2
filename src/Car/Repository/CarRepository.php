@@ -4,15 +4,41 @@ namespace App\Car\Repository;
 
 use App\Database\DbConnection;
 use PDO;
-
-use App\Controller\BaseController;
-use App\Utils\Formatting\DateFormatter;
-use DateTime;
 use PDOException;
 use Exception;
 
-class CarRepository extends BaseController
+use App\Car\Entity\Car;
+
+class CarRepository
 {
+    public function findById(string $id): ?Car
+    {
+        try {
+            $sql = "SELECT * FROM cars WHERE car_id = :id";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':id', $id, PDO::PARAM_STR);
+            $statement->execute();
+            $row = $statement->fetch(PDO::FETCH_ASSOC);
+            if (!$row) return null;
+
+            return new Car(
+                $row['car_id'],
+                $row['brand_id'],
+                $row['driver_id'],
+                $row['licence_plate'],
+                $row['first_registration_date'],
+                $row['seats_offered'],
+                $row['model'],
+                $row['color'],
+                $row['electric'],
+            );
+        } catch (PDOException $e) {
+            error_log("CarRepository - Database error in findById() : " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
+    }
+
 
     /**
      * Returns the number of seats offered by a specific car.
@@ -46,7 +72,7 @@ class CarRepository extends BaseController
      * @throws \Exception If no car is found when searching by carpool ID.
      * @return void
      */
-    public function getCar(?string $carpoolId = null, ?string $driverId = null)
+    /*  public function getCar(?string $carpoolId = null, ?string $driverId = null)
     {
         $sql = "SELECT cars.*, brands.* FROM cars 
         JOIN driver ON driver.user_id = cars.driver_id 
@@ -96,5 +122,5 @@ class CarRepository extends BaseController
             $cars = $statement->fetchAll(PDO::FETCH_ASSOC);
             return $cars;
         }
-    }
+    } */
 }
