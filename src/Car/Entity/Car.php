@@ -9,6 +9,7 @@ final class Car
     public function __construct(
         private int $id,
         private int $brandId,
+        private string $brand,
         private string $driverid,
         private string $licencePlate,
         private string $firstRegistrationDate,
@@ -26,6 +27,10 @@ final class Car
     public function getBrandId(): int
     {
         return $this->brandId;
+    }
+    public function getBrand(): string
+    {
+        return $this->brand;
     }
     public function getDriverid(): string
     {

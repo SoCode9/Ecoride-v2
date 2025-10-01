@@ -11,10 +11,12 @@ use App\Car\Entity\Car;
 
 class CarRepository
 {
-    public function findById(string $id): ?Car
+    public function findById(int $id): ?Car
     {
         try {
-            $sql = "SELECT * FROM cars WHERE car_id = :id";
+            $sql = "SELECT cars.*, brands.* FROM cars 
+            JOIN brands ON brands.id = cars.brand_id
+            WHERE car_id = :id";
             $pdo = DbConnection::getPdo();
             $statement = $pdo->prepare($sql);
             $statement->bindParam(':id', $id, PDO::PARAM_STR);
@@ -25,6 +27,7 @@ class CarRepository
             return new Car(
                 $row['car_id'],
                 $row['brand_id'],
+                $row['name'],
                 $row['driver_id'],
                 $row['licence_plate'],
                 $row['first_registration_date'],
