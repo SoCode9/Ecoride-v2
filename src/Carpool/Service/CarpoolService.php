@@ -70,8 +70,11 @@ final class CarpoolService
     public function detailView(string $id, ?string $userId): array
     {
         $c = $this->repo->findById($id);
-        if (!$c) throw new \Exception('Covoiturage introuvable');
-        return CarpoolDisplay::one($c, $userId, $this->driverService, $this->resRepo, $this->carRepo, $this->userRepo, $this->router, true);
+        if (!$c) throw new \Exception(message: 'Covoiturage introuvable');
+
+
+
+        return CarpoolDisplay::one($c, $userId, $this->driverService, $this, $this->userRepo, $this->router, true);
     }
 
     /** @return array[] */
@@ -91,13 +94,12 @@ final class CarpoolService
             $rows,
             $userId,
             $this->driverService,
-            $this->resRepo,
-            $this->carRepo,
+            $this,
             $this->userRepo,
             $this->router
         );
     }
-    
+
     /**
      *  Compute small UI meta values for the template:
      *  - showNoResults: true when a search was performed and no cards are returned
@@ -125,5 +127,14 @@ final class CarpoolService
         $dateLong  = $dateInput ? ('Départ le ' . DateFormatter::long($dateInput)) : 'Aucune date sélectionnée';
 
         return compact('showNoResults', 'dateInput', 'dateLong');
+    }
+
+    public function seatsAvailable(int $carId, string $carpoolId)
+    {
+        $seatsOffered =  $this->carRepo->getSeatsOfferedByCar($carId);
+        $passengers = $this->resRepo->countPassengers($carpoolId);
+        $seatsAvailable = max(0, $seatsOffered - $passengers);
+
+        return $seatsAvailable;
     }
 }
