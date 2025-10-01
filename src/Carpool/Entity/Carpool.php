@@ -21,22 +21,6 @@ final class Carpool
         private ?string $status
     ) {}
 
-    public function toArray(): array
-    {
-        return [
-            'id'             => $this->getIdCarpool(),
-            'driver_id'      => $this->getIdDriver(),
-            'date'           => $this->getDate(),
-            'departure_city' => $this->getDepartureCity(),
-            'arrival_city'   => $this->getArrivalCity(),
-            'departure_time' => $this->getDepartureTime(),
-            'arrival_time'   => $this->getArrivalTime(),
-            'price'          => $this->getPrice(),
-            'status'         => $this->getStatus(),
-            'car_id'         => $this->getCarId(),
-        ];
-    }
-
     public function getIdCarpool()
     {
         return $this->id;
