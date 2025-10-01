@@ -4,15 +4,41 @@ namespace App\User\Repository;
 
 use App\Database\DbConnection;
 use PDO;
-
-use App\Controller\BaseController;
-use App\Utils\Formatting\DateFormatter;
-use DateTime;
 use PDOException;
 use Exception;
 
-class UserRepository extends BaseController
+use App\User\Entity\User;
+
+class UserRepository
 {
+
+
+    public function findById(string $id): ?User
+    {
+        try {
+            $sql = "SELECT * FROM users WHERE id = :id";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':id', $id, PDO::PARAM_STR);
+            $statement->execute();
+            $row = $statement->fetch(PDO::FETCH_ASSOC);
+            if (!$row) return null;
+
+            return new User(
+                $row['id'],
+                $row['pseudo'],
+                $row['mail'],
+                $row['password'],
+                $row['credit'],
+                $row['photo'],
+                $row['id_role'],
+                $row['is_activated'],
+            );
+        } catch (PDOException $e) {
+            error_log("UserRepository - Database error in findById() : " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
+    }
 
     public function getRole($userId): int
     {
