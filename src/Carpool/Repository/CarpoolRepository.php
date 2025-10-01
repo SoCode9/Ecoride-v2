@@ -4,42 +4,43 @@ namespace App\Carpool\Repository;
 
 use App\Database\DbConnection;
 use PDO;
-
-use App\Carpool\Entity\Carpool;
-use App\Controller\BaseController;
-use App\Utils\Formatting\DateFormatter;
-use DateTime;
 use PDOException;
 use Exception;
 
-class CarpoolRepository extends BaseController
+use App\Carpool\Entity\Carpool;
+use App\Utils\Formatting\DateFormatter;
+
+class CarpoolRepository
 {
-
-
     public function findById(string $id): ?Carpool
     {
-        $sql = "SELECT * FROM carpool WHERE id = :id";
-        $pdo = DbConnection::getPdo();
-        $statement = $pdo->prepare($sql);
-        $statement->bindParam(':id', $id, PDO::PARAM_STR);
-        $statement->execute();
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
-        if (!$row) return null;
+        try {
+            $sql = "SELECT * FROM carpool WHERE id = :id";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':id', $id, PDO::PARAM_STR);
+            $statement->execute();
+            $row = $statement->fetch(PDO::FETCH_ASSOC);
+            if (!$row) return null;
 
-        return new Carpool(
-            $row['id'],
-            $row['driver_id'],
-            $row['date'],               // 'Y-m-d' ou 'Y-m-d H:i:s'
-            $row['departure_city'],
-            $row['arrival_city'],
-            $row['departure_time'],   // 'Y-m-d H:i:s' conseillé
-            $row['arrival_time'],
-            (int)$row['price'],
-            (int)$row['car_id'],
-            null,
-            $row['description'],
-            $row['status']
-        );
+            return new Carpool(
+                $row['id'],
+                $row['driver_id'],
+                $row['date'],               // 'Y-m-d' ou 'Y-m-d H:i:s'
+                $row['departure_city'],
+                $row['arrival_city'],
+                $row['departure_time'],   // 'Y-m-d H:i:s' conseillé
+                $row['arrival_time'],
+                (int)$row['price'],
+                (int)$row['car_id'],
+                null,
+                $row['description'],
+                $row['status']
+            );
+        } catch (PDOException $e) {
+            error_log("CarpoolRepository - Database error in findById() : " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
     }
 
     // LISTE: des lignes “prêtes pour mapForList” (joins inclus)
@@ -125,7 +126,7 @@ class CarpoolRepository extends BaseController
      */
     public function search(?string $dateSearch = null, ?string $departureCitySearch = null, ?string $arrivalCitySearch = null, ?int $eco = null, ?int $maxPrice = null, ?int $maxDuration = null, ?float $driverRating = null): array
     {
-        $sql = "SELECT carpool.* , users.pseudo AS driver_pseudo, users.photo AS driver_photo, driver.user_id AS driver_id ,
+        $sql = "SELECT carpool.* , users.pseudo, users.photo AS driver_photo, driver.user_id AS driver_id ,
                 cars.electric, cars.seats_offered AS seats_offered, TIMESTAMPDIFF(MINUTE, departure_time, arrival_time)/60 AS carpool_duration, AVG(ratings.rating) AS driver_rating 
                 FROM carpool 
                 JOIN users ON users.id = carpool.driver_id 
