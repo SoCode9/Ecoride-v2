@@ -4,14 +4,10 @@ namespace App\Reservation\Repository;
 
 use App\Database\DbConnection;
 use PDO;
-
-use App\Controller\BaseController;
-use App\Utils\Formatting\DateFormatter;
-use DateTime;
 use PDOException;
 use Exception;
 
-class ReservationRepository extends BaseController
+class ReservationRepository
 {
 
     /**
