@@ -4,14 +4,64 @@ namespace App\Driver\Repository;
 
 use App\Database\DbConnection;
 use PDO;
-
-use App\User\Controller\UserController;
-
 use PDOException;
 use Exception;
 
-class DriverRepository extends UserController
+use App\Driver\Entity\Driver;
+use App\User\Repository\UserRepository;
+
+class DriverRepository
 {
+
+    public function __construct(private UserRepository $users) {}
+
+    private function findById(string $id): array|null
+    {
+        try {
+            $sql = "SELECT * FROM driver WHERE user_id = :id";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':id', $id, PDO::PARAM_STR);
+            $statement->execute();
+            $row = $statement->fetch(PDO::FETCH_ASSOC);
+            if (!$row) return null;
+
+            return array(
+                "user_id" => $row['user_id'] ?? null,
+                "food" => $row['food'] ?? null,
+                "music" => $row['music'] ?? null,
+                "pets" => $row['pets'] ?? null,
+                "smoker" => $row['smoker'] ?? null,
+                "speaker" => $row['speaker'] ?? null
+            );
+        } catch (PDOException $e) {
+            error_log("DriverRepository - Database error in findById() : " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
+    }
+
+    public function makeFromUserId(string $id): Driver
+    {
+        $u = $this->users->findById($id);
+        $driver = $this->findById($u->getId());
+
+        return new Driver(
+            $driver['food'] ?? null,
+            $driver['music'] ?? null,
+            $driver['pets'] ?? null,
+            $driver['smoker'] ?? null,
+            $driver['speaker'] ?? null,
+            $u->getId(),
+            $u->getPseudo(),
+            $u->getMail(),
+            $u->getPassword(),
+            $u->getCredit(),
+            $u->getPhoto(),
+            $u->getIdRole(),
+            $u->IsActivated()
+        );
+    }
+
     /**
      * Loads all validated ratings for the current driver, including the rater's pseudo and photo.
      *
@@ -25,14 +75,12 @@ class DriverRepository extends UserController
         }
 
         try {
-            $sql = "
-            SELECT ratings.*, users.pseudo, users.photo
+            $sql = "SELECT ratings.*, users.pseudo, users.photo
             FROM ratings
             JOIN driver ON driver.user_id = ratings.driver_id
             JOIN users ON users.id = ratings.user_id
             WHERE ratings.driver_id = :driver_id AND ratings.status = 'validated'
-            ORDER BY ratings.created_at DESC
-        ";
+            ORDER BY ratings.created_at DESC";
 
             $pdo = DbConnection::getPdo();
             $statement = $pdo->prepare($sql);
@@ -45,6 +93,4 @@ class DriverRepository extends UserController
             throw new Exception("Impossible de charger les évaluations du conducteur");
         }
     }
-
-    
 }
