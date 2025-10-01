@@ -3,6 +3,7 @@
 namespace App\Carpool\Controller;
 
 use App\Controller\BaseController;
+use App\Driver\Entity\Driver;
 use App\Routing\Router;
 
 use App\Carpool\Repository\CarpoolRepository;
@@ -19,17 +20,20 @@ class CarpoolController extends BaseController
 {
     private const SEARCH_KEY = 'carpools.search';
     private CarpoolService $service;
+    private CarpoolRepository $repo;
 
     public function __construct(Router $router)
     {
         parent::__construct($router);
-        $driverService = new DriverService(new DriverRepository($router));
+        $userRepo = new UserRepository();
+        $driverService = new DriverService(new DriverRepository($userRepo));
+        $this->repo = new CarpoolRepository();
         $this->service = new CarpoolService(
-            new CarpoolRepository($router),
+            $this->repo,
             $driverService,
-            new ReservationRepository($router),
-            new CarRepository($router),
-            new UserRepository($router),
+            new ReservationRepository(),
+            new CarRepository(),
+            new UserRepository(),
             $router
         );
     }
@@ -79,10 +83,44 @@ class CarpoolController extends BaseController
         }
 
         $userId  = $_SESSION['user_id'] ?? null;
-        $carpool = $this->service->detailView($id, $userId);
+        $carpoolFormatted = $this->service->detailView($id, $userId);
 
+        $carpool = $this->repo->findById($id);
+        $userRepo = new UserRepository();
+        $driRepo = new DriverRepository($userRepo);
+        $driSer = new DriverService($driRepo);
+        $carRepo = new CarRepository();
+        $driver = $driRepo->makeFromUserId($carpool->getIdDriver());
+        $car = $carRepo->findById($carpool->getCarId());
+        $electric = $car->isElectric() ? ' - Electrique' : '';
+        $getterByPref = [
+            'food'    => 'getFood',
+            'music'   => 'getMusic',
+            'pets'    => 'getPets',
+            'smoker'  => 'getSmoker',
+            'speaker' => 'getSpeaker',
+        ];
+        $preferencesData = [];
+
+        foreach ($getterByPref as $preference => $getter) {
+            $result = $driver->$getter(); // ?bool (true/false/null)
+            $item = $driSer->formatPreference($preference, $result);
+            if ($item !== null) {
+                $preferencesData[] = $item;
+            }
+        }
+
+        $dateLong  = $carpool->getDate() ? ('Départ le ' . DateFormatter::long($carpool->getDate())) : 'Aucune date sélectionnée';
+
+        //var_dump($electric);
         return $this->render('pages/carpools/details.php', 'Détail', [
-            'carpool' => $carpool
+            'carpool' => $carpool,
+            'carpoolFormatted' => $carpoolFormatted,
+            'driver' => $driver,
+            'dateLong' => $dateLong,
+            'car' => $car,
+            'isElectric' => $electric,
+            'preferencesData' => $preferencesData
         ]);
     }
 
