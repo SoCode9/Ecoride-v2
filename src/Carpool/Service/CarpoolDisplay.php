@@ -48,7 +48,7 @@ final class CarpoolDisplay
         $carId         = is_array($c) ? (int)($c['car_id'] ?? 0)             : (int)$c->getCarId();
         $price         = is_array($c) ? (int)($c['price'] ?? 0)              : (int)$c->getPrice();
         $driverPhoto   = is_array($c) ? ($c['driver_photo'] ?? null)         : $dataUser->getPhoto();
-        $carElectric   = is_array($c) ? (bool)($c['car_electric'] ?? 0)      : $dataCar->isElectric();
+        $carElectric   = is_array($c) ? (bool)($c['electric'] ?? 0)      : $dataCar->isElectric();
 
         // --- dérivés partagés ---
         $isOwner = $currentUserId && $driverId !== '' && $driverId === (string)$currentUserId;
