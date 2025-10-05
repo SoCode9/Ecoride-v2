@@ -112,7 +112,8 @@
 }
 
 /* Hide native radio buttons */
-input[type="checkbox"] {
+input[type="checkbox"] ,
+input[type="radio"] {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -129,7 +130,8 @@ input[type="checkbox"] {
 }
 
 /* Style when button is selected */
-input[type="checkbox"]:checked {
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
   border-color: var(--col-grey);
   background-color: var(--col-grey);
 }

@@ -13,7 +13,7 @@ use App\User\Repository\UserRepository;
 class DriverRepository
 {
 
-    public function __construct(private UserRepository $users) {}
+    public function __construct(private UserRepository $userRepo) {}
 
     private function findById(string $id): array|null
     {
@@ -42,7 +42,7 @@ class DriverRepository
 
     public function makeFromUserId(string $id): Driver
     {
-        $u = $this->users->findById($id);
+        $u = $this->userRepo->findById($id);
         $driver = $this->findById($u->getId());
 
         return new Driver(
