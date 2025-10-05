@@ -31,19 +31,17 @@ $baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); //enlève la dernièr
 define('BASE_URL', $baseUrl); // stocke /2coursPhp/public
 define('ASSETS_PATH', BASE_URL . '/assets/');              // -> /2coursPhp/public/assets/
 
-define('TEMPLATE_PATH', __DIR__ . '/../templates/main.php');
+define('MAIN_TEMPLATE_PATH', __DIR__ . '/../templates/main.php');
+define('TEMPLATE_PATH', __DIR__ . '/../templates');
 
 define('PHOTOS_URL', BASE_URL . '/assets/photos'); // URL publique
 define('PHOTOS_DIR', __DIR__   . '/assets/photos'); // chemin disque (public/assets/photos)
 
 $router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']); //URI : tout ce qui est derrière le nom de domaine
 
-// GET = méthode utilisée dans le navigateur
-// /user/list = l'url dans le navigateur après l'host (on parle d'URI)
-// MaClass = la classe à charger pour appeler le dernier paramètre
-// listUser = la fonction (méthode) à appeler dans la classe MaClass
 $router->register(['GET'], '/', DashboardController::class, 'index');
-$router->register(['GET'], '/user/list', UserController::class, 'list');
+$router->register(['GET'], '/mon-profil', UserController::class, 'profil');
+$router->register(['GET'], '/mes-covoiturages', UserController::class, 'listCarpools');
 $router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'list');
 $router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');

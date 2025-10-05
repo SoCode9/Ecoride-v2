@@ -67,6 +67,26 @@ class CarRepository
         return (int) $result['seats_offered'];
     }
 
+    public function findAllCars(string $driverId)
+    {
+        try {
+            $sql = "SELECT cars.*, brands.* FROM cars 
+        JOIN driver ON driver.user_id = cars.driver_id 
+        JOIN brands ON brands.id = cars.brand_id
+        WHERE driver.user_id = :driver_id";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindValue(':driver_id', $driverId, PDO::PARAM_STR);
+            $statement->execute();
+            $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } catch (PDOException $e) {
+            error_log("CarRepository - Database error in findAllCars() : " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
+    }
+
     /**
      *Loads car information from the database based on a carpool ID (single car) 
      * or a driver ID (multiple cars).

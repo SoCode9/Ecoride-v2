@@ -23,7 +23,7 @@ class BaseController
 
         ob_start(); //tout ce qui va après jusqu'au ob_clean : sera mis en cache
 
-        require_once TEMPLATE_PATH;
+        require_once MAIN_TEMPLATE_PATH;
 
         $content = ob_get_contents();
         ob_clean();
