@@ -126,6 +126,52 @@
     </section>
 
 
-    <!--........-->
+    <!--RATING'S DRIVER BLOCK-->
+
+
+    <section class="flex-column block-light-grey gap-12 block-driver-ratings w-100-ss">
+
+        <div class="flex-column gap-8 item-center">
+            <h3 class="text-green">Avis du chauffeur</h3>
+            <div class="flex-row item-center gap-4" style="padding-left: 0px;">
+                <img src="<?= BASE_URL ?>/icons/EtoileJaune.png" class="img-width-20" alt="">
+                <span class="flex-row">
+                    <?= $carpoolFormatted['driver_rating'];
+                    if ($carpoolFormatted['driver_rating'] !== null) {
+                        echo  " / 5";
+                    }
+                    ?>
+                </span>
+                <span class="font-size-very-small"><?php /* "(" . htmlspecialchars($driver->countRatings()) . " avis)" */ ?></span>
+            </div>
+        </div>
+
+
+        <!--ratings list-->
+        <?php foreach ($ratings as $rating): ?>
+            <?php $userId = $rating->getUserId();
+            $rf = $ratingsFormatted[$userId];
+            ?>
+
+            <div class="flex-column gap-8">
+                <div class="flex-row flex-between">
+                    <div class="flex-row item-center gap-4">
+                        <img src="<?= htmlspecialchars($rf['userPhoto']) ?>" alt="Photo de l'utilisateur" class="photo-50">
+                        <span><?= htmlspecialchars($rf['userPseudo']) ?></span>
+                    </div>
+                    <div class="flex-row item-center gap-4" style="padding-left: 0px;">
+                        <img src="<?= BASE_URL ?>/icons/EtoileJaune.png" class="img-width-20" alt="">
+                        <span class="flex-row"><?= $rf['rating'] ?></span>
+                    </div>
+                </div>
+                <p><?= htmlspecialchars(($rating->getDescription())) ?></p>
+                <span class="font-size-very-small italic"><?= htmlspecialchars($rf['createdAt']) ?></span>
+                <hr>
+            </div>
+        <?php endforeach ?>
+
+    </section>
+
+
 
 </div>

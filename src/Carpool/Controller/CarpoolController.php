@@ -3,7 +3,6 @@
 namespace App\Carpool\Controller;
 
 use App\Controller\BaseController;
-use App\Driver\Entity\Driver;
 use App\Routing\Router;
 
 use App\Carpool\Repository\CarpoolRepository;
@@ -11,10 +10,14 @@ use App\Driver\Repository\DriverRepository;
 use App\Reservation\Repository\ReservationRepository;
 use App\Car\Repository\CarRepository;
 use App\User\Repository\UserRepository;
+use App\Rating\Repository\RatingRepository;
 
 use App\Driver\Service\DriverService;
 use App\Carpool\Service\CarpoolService;
 use App\Utils\Formatting\DateFormatter;
+use App\Utils\Formatting\OtherFormatter;
+use App\Rating\Service\RatingService;
+
 
 class CarpoolController extends BaseController
 {
@@ -90,6 +93,8 @@ class CarpoolController extends BaseController
         $driRepo = new DriverRepository($userRepo);
         $driSer = new DriverService($driRepo);
         $carRepo = new CarRepository();
+        $ratingRepo = new RatingRepository();
+        $ratingSer = new RatingService($ratingRepo, $userRepo);
         $driver = $driRepo->makeFromUserId($carpool->getIdDriver());
         $car = $carRepo->findById($carpool->getCarId());
         $electric = $car->isElectric() ? ' - Electrique' : '';
@@ -112,7 +117,10 @@ class CarpoolController extends BaseController
 
         $dateLong  = $carpool->getDate() ? ('Départ le ' . DateFormatter::long($carpool->getDate())) : 'Aucune date sélectionnée';
 
-        //var_dump($electric);
+        $ratings = $ratingRepo->findAllByDriver($carpool->getIdDriver(), true);
+        $ratings = $ratings ?? [];
+        $ratingsFormatted = $ratingSer->formatRatings($ratings);
+       
         return $this->render('pages/carpools/details.php', 'Détail', [
             'carpool' => $carpool,
             'carpoolFormatted' => $carpoolFormatted,
@@ -120,7 +128,9 @@ class CarpoolController extends BaseController
             'dateLong' => $dateLong,
             'car' => $car,
             'isElectric' => $electric,
-            'preferencesData' => $preferencesData
+            'preferencesData' => $preferencesData,
+            'ratings' => $ratings,
+            'ratingsFormatted' => $ratingsFormatted
         ]);
     }
 
