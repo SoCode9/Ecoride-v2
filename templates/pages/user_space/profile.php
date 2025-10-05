@@ -32,7 +32,7 @@
      <div class="flex-row item-center hidden" id="edit-photo-icon">
          <button onclick="showPopup('popup-new-photo')"
              style="width: 30px; background-color: var(--col-orange); padding:4px 4px;" class="btn"><img
-                 src="<?= BASE_URL ?>/icons/Modifier.png" alt="edit">
+                 src="<?= ASSETS_PATH ?>/icons/Modifier.png" alt="edit">
          </button>
          <span class="italic font-size-small ">Modifier la photo de profil</span>
      </div>
@@ -102,11 +102,11 @@
                          <label for="brand">Marque : </label>
                          <select id="brand" class="text-field" name="brand" required>
                              <option value="">Sélectionner</option>
-                             <?php foreach ($brands as $brand): ?>
-                                 <option value="<?= htmlspecialchars($brand['id']); ?>">
-                                     <?= htmlspecialchars($brand['name']); ?>
+                            <!--  <?php/*  foreach ($brands as $brand): */ ?>
+                                 <option value="<?php  /* htmlspecialchars($brand['id']); */  ?>">
+                                     <?php /* htmlspecialchars($brand['name']); */ ?>
                                  </option>
-                             <?php endforeach; ?>
+                             <?php /* endforeach; */ ?> -->
                          </select>
                      </div>
                      <div class="flex-row">
@@ -309,3 +309,6 @@
          </div>
      </div>
  </section>
+
+ <script>window.BASE_URL = "<?= rtrim(BASE_URL, '/') ?>";</script>
+ <script src="<?= ASSETS_PATH ?>js/user_space.js" defer></script>

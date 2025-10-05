@@ -93,4 +93,27 @@ class DriverRepository
             throw new Exception("Impossible de charger les évaluations du conducteur");
         }
     }
+
+    public function updateDriverPreference(string $userId, string $column, $value): void
+    {
+        if (empty($userId)) {
+            throw new Exception("Impossible de modifier la préférence sans identifiant utilisateur");
+        }
+
+        try {
+            $sql = "UPDATE driver SET $column = :value WHERE user_id = :userId";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            if ($value === null) {
+                $statement->bindValue(':value', null, PDO::PARAM_NULL);
+            } else {
+                $statement->bindValue(':value', $value, PDO::PARAM_INT);
+            }
+            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+            $statement->execute();
+        } catch (PDOException $e) {
+            error_log("Database error in updateDriverPreference() [$column] (user ID: {$userId}) : " . $e->getMessage());
+            throw new Exception("Impossible d'ajouter la préférence");
+        }
+    }
 }
