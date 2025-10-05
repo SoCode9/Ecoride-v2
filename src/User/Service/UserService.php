@@ -20,7 +20,7 @@ final class UserService
         $userId = $user->getId();
         $photo = OtherFormatter::displayPhoto($user->getPhoto());
 
-        if (in_array($user->getIdRole(), [2, 3])) {
+        if (in_array($this->repo->getRole($userId), [2, 3])) {
             $driRepo = new DriverRepository($this->repo);
             $driSer = new DriverService($driRepo);
 
@@ -30,11 +30,9 @@ final class UserService
                 : '<span class="italic">0 avis</span>';
         }
 
-
-
         return [
             'photo' => $photo,
-            'rating' => $rating,
+            'rating' => $rating ?? null,
         ];
     }
 }

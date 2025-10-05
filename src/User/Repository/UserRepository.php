@@ -82,4 +82,67 @@ class UserRepository
             throw new Exception("Impossible de mettre à jour les crédits");
         }
     }
+
+    public function isDriver(string $userId): bool
+    {
+        try {
+            $sql = "SELECT user_id FROM driver WHERE user_id=:userId";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+            $statement->execute();
+
+            return $statement->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("Database error in isDriver(): ($userId): " . $e->getMessage());
+            throw new Exception("Impossible de savoir si l'utilisateur est un chauffeur");
+        }
+    }
+
+    /**
+     * Creates a new driver profile linked to a user
+     * @param string $userId The UUID of the user
+     * @throws \Exception If the insertion fails
+     * @return void
+     */
+    public function createDriver(string $userId): void
+    {
+        try {
+            $sql = 'INSERT INTO driver (user_id) VALUES (:userId)';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+            $statement->execute();
+        } catch (PDOException $e) {
+            error_log("Database error in createDriver(): " . $e->getMessage());
+            throw new Exception("Impossible de créer un profil conducteur");
+        }
+    }
+
+    /**
+     * Updates the user's role in the database
+     * @param int $roleId The new role ID to assign to the user
+     * @throws \Exception If the user ID is not set or the update fails
+     * @return void
+     */
+    public function setIdRole(string $userId, int $roleId): void
+    {
+        if (empty($userId)) {
+            throw new Exception("Impossible de définir un rôle sans identifiant utilisateur");
+        }
+
+        try {
+            $sql = "UPDATE users SET id_role = :roleId WHERE id = :userId";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':roleId', $roleId, PDO::PARAM_INT);
+            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+            $statement->execute();
+
+            /* $this->idRole = $roleId; */
+        } catch (PDOException $e) {
+            error_log("Database error in setIdRole() (user ID: {$userId}) : " . $e->getMessage());
+            throw new Exception("Impossible de mettre à jour le rôle de l'utilisateur");
+        }
+    }
 }
