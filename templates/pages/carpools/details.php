@@ -175,3 +175,6 @@
 
 
 </div>
+
+<script>window.BASE_URL = "<?= rtrim(BASE_URL, '/') ?>";</script>
+<script src="<?= ASSETS_PATH ?>js/carpool_details.js" defer></script>
