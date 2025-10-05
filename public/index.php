@@ -1,11 +1,16 @@
 <?php
 
-//17.09.2025 _ Live découverte PHP Objet 4/6 router
-//session_destroy();
 session_start();
+//données de test de session
+/* $_SESSION['user_id'] = '947b27ba-8a5d-11f0-be17-50ebf69c727b';
+$_SESSION = [];           // vide le tableau
+session_destroy();        // supprime le fichier de session
+setcookie('PHPSESSID', '', time() - 3600, '/'); // (optionnel) supprime le cookie */
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Carpool\Controller\CarpoolController;
+use App\Reservation\Controller\ReservationController;
 use App\Dashboard\DashboardController;
 use App\User\Controller\UserController;
 use Symfony\Component\Dotenv\Dotenv;
@@ -36,6 +41,7 @@ $router->register(['GET'], '/user/list', UserController::class, 'list');
 $router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'list');
 $router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
+$router->register(['POST'], '/reservation/check', ReservationController::class, 'checkParticipation');
 // exemple d'une route pour créer un user
 // $router->register(['GET', 'POST'], '/user/create', UserController::class, 'create');
 
