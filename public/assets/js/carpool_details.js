@@ -51,12 +51,12 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function updateParticipation(carpoolId) {
-    fetch("../back/reservation/update_participation.php", {
+    fetch((window.BASE_URL || "") + "/reservation/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: "travel_id=" + carpoolId,
+      body: "carpool_id=" + carpoolId,
     })
       .then((response) => response.json())
       .then((data) => {

@@ -33,4 +33,10 @@ class ReservationController extends BaseController
 
         $this->service->checkParticipation();
     }
+
+    public function updateParticipation()
+    {
+
+        $this->service->updateParticipation();
+    }
 }

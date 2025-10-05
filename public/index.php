@@ -1,11 +1,9 @@
 <?php
 
-session_start();
-//données de test de session
-/* $_SESSION['user_id'] = '947b27ba-8a5d-11f0-be17-50ebf69c727b';
-$_SESSION = [];           // vide le tableau
-session_destroy();        // supprime le fichier de session
-setcookie('PHPSESSID', '', time() - 3600, '/'); // (optionnel) supprime le cookie */
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -15,6 +13,14 @@ use App\Dashboard\DashboardController;
 use App\User\Controller\UserController;
 use Symfony\Component\Dotenv\Dotenv;
 use App\Routing\Router;
+use App\User\Entity\User;
+
+
+//données de test de session
+$connectedId = $_SESSION['user_id'] = '947b27ba-8a5d-11f0-be17-50ebf69c727b';
+/* $_SESSION = [];           // vide le tableau
+session_destroy();        // supprime le fichier de session
+setcookie('PHPSESSID', '', time() - 3600, '/'); // (optionnel) supprime le cookie */
 
 //charge configuration
 $dotenv = new Dotenv();
@@ -42,6 +48,7 @@ $router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'l
 $router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
 $router->register(['POST'], '/reservation/check', ReservationController::class, 'checkParticipation');
+$router->register(['POST'], '/reservation/update', ReservationController::class, 'updateParticipation');
 // exemple d'une route pour créer un user
 // $router->register(['GET', 'POST'], '/user/create', UserController::class, 'create');
 

@@ -11,6 +11,30 @@ class ReservationRepository
 {
 
     /**
+     * Create a new reservation for a user on a given carpool
+     * @param string $userId Passenger user UUID
+     * @param string $carpoolId Carpool UUID to join
+     * @param int $creditsSspent Amount of credits recorded as spent for this reservation
+     * @throws \Exception If a database error occurs
+     * @return bool True on successful insert, false otherwise.
+     */
+    public function new(string $userId, string $carpoolId, int $creditsSspent)
+    {
+        try {
+            $sql = 'INSERT INTO reservations (user_id, carpool_id, credits_spent) VALUES (:userId, :carpoolId, :creditSpent)';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+            $statement->bindParam(':carpoolId', $carpoolId, PDO::PARAM_STR);
+            $statement->bindValue(':creditSpent', $creditsSspent, PDO::PARAM_INT);
+            return $statement->execute();
+        } catch (PDOException $e) {
+            error_log("ReservationRepository - Database error in new() : " . $e->getMessage());
+            throw new Exception("Une erreur est survenue lors de l'enregistrement de la réservation");
+        }
+    }
+
+    /**
      * count the number of passengers in a carpool
      * @param string $carpoolId
      * @return int

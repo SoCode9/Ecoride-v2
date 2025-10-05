@@ -2,6 +2,7 @@
 
 namespace App\Reservation\Service;
 
+use App\Database\DbConnection;
 use Exception;
 
 use App\Reservation\Repository\ReservationRepository;
@@ -27,7 +28,7 @@ final class ReservationService
     public function checkParticipation()
     {
         try {
-            // Check if travel ID is sent
+            // Check if carpool ID is sent
             if (!isset($_POST['carpool_id'])) {
                 throw new Exception("ID du covoiturage manquant");
             }
@@ -64,8 +65,6 @@ final class ReservationService
             if ($carpool->getStatus() !== 'not started') {
                 throw new Exception("Le covoiturage est soit en cours, soit annulé, soit terminé");
             }
-
-           // var_dump($availableSeats);
             echo json_encode([
                 "success" => true,
                 "availableSeats" => $availableSeats,
@@ -77,6 +76,71 @@ final class ReservationService
             echo json_encode([
                 "success" => false,
                 "message" => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function updateParticipation()
+    {
+        $pdo = DbConnection::getPdo();
+        try {
+            $pdo->beginTransaction();
+
+            ### second check ###
+            $userId = $_SESSION['user_id'];
+
+            $carpoolId = $_POST['carpool_id'] ?? null;
+
+            // Check if carpool ID is sent
+            if (!isset($carpoolId)) {
+                throw new Exception("ID du covoiturage manquant");
+            }
+
+            // Check the available seats and retrieve the carpool's price
+            $reservation = $this->repo;
+            $carpool = $this->carpoolRepo->findById($carpoolId);
+            $seatsOffered = $this->carRepo->getSeatsOfferedByCar($carpool->getCarId());
+
+            $seatsAllocated = (int)$reservation->countPassengers($carpoolId);
+            $availableSeats = max(0, $seatsOffered - $seatsAllocated);
+            if ($availableSeats = 0) {
+                throw new Exception("Plus de places disponibles");
+            }
+            $travelPrice = (int)$carpool->getPrice();
+
+            // Check the carpool's status
+            if ($carpool->getStatus() !== 'not started') {
+                throw new Exception("Impossible de participer à ce covoiturage");
+            }
+
+            // Check that the user has enough credits 
+            $user = $this->userRepo->findById($userId);
+            $userCredit = (int)$user->getCredit();
+
+            if ($userCredit < $travelPrice) {
+                throw new Exception("Crédits insuffisants");
+            }
+
+            ### END second check ###
+
+            // UPDATE DataBase 
+
+            //debit the user
+            $this->userRepo->setCredit($userId, $userCredit-$travelPrice);
+
+            //create the reservation in DB
+            $this->repo->new($userId, $carpoolId, $travelPrice);
+
+            $pdo->commit();
+            echo json_encode(["success" => true, "message" => "Participation confirmée !"]);
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log("Error in update_participation.php : " . $e->getMessage());
+            echo json_encode([
+                "success" => false,
+                "message" => "Une erreur est survenue"
             ]);
         }
     }
