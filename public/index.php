@@ -38,12 +38,8 @@ define('PHOTOS_DIR', __DIR__   . '/assets/photos'); // chemin disque (public/ass
 
 $router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']); //URI : tout ce qui est derrière le nom de domaine
 
-// GET = méthode utilisée dans le navigateur
-// /user/list = l'url dans le navigateur après l'host (on parle d'URI)
-// MaClass = la classe à charger pour appeler le dernier paramètre
-// listUser = la fonction (méthode) à appeler dans la classe MaClass
 $router->register(['GET'], '/', DashboardController::class, 'index');
-$router->register(['GET'], '/user/list', UserController::class, 'list');
+$router->register(['GET'], '/mon-profil', UserController::class, 'profil');
 $router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'list');
 $router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');

@@ -6,8 +6,8 @@ use App\Controller\BaseController;
 
 class UserController extends BaseController
 {
-    public function list()
+    public function profil()
     {
-        return $this->render('pages/users/list.php', 'Utilisateurs', []);
+        return $this->render('pages/user_space/profile.php', 'Mon espace', []);
     }
 }
