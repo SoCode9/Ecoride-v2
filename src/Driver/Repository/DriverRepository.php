@@ -3,6 +3,7 @@
 namespace App\Driver\Repository;
 
 use App\Database\DbConnection;
+use App\Database\MongoConnection;
 use PDO;
 use PDOException;
 use Exception;
@@ -44,13 +45,15 @@ class DriverRepository
     {
         $u = $this->userRepo->findById($id);
         $driver = $this->findById($u->getId());
-
+        $otherPref = $this->findCustomPreferences($id);
+        //var_dump($otherPref);
         return new Driver(
             $driver['food'] ?? null,
             $driver['music'] ?? null,
             $driver['pets'] ?? null,
             $driver['smoker'] ?? null,
             $driver['speaker'] ?? null,
+            $otherPref ?? [],
             $u->getId(),
             $u->getPseudo(),
             $u->getMail(),
@@ -61,6 +64,34 @@ class DriverRepository
             $u->IsActivated()
         );
     }
+
+    /**
+     * find the custom preferences of the current driver.
+     * 
+     * @throws Exception If the user ID is not set or the preferences cannot be loaded
+     * @return array 
+     */
+    public function findCustomPreferences(string $userId): array
+    {
+        if (empty($userId)) {
+            error_log("findCustomPreferences() failed: driver ID is empty");
+            throw new Exception("Impossible de charger les préférences sans identifiant utilisateur");
+        }
+
+        try {
+            $mongo = MongoConnection::getMongoDb();
+            $preferenceCollection = $mongo->preferences;
+            $result = $preferenceCollection->find([
+                'id_user' => $userId
+            ])->toArray();
+
+            return array_map(fn($doc) => (array)$doc, $result);
+        } catch (Exception $e) {
+            error_log("Database error in findCustomPreferences() (user ID: {$userId}) : " . $e->getMessage());
+            return [];
+        }
+    }
+
 
     /**
      * Loads all validated ratings for the current driver, including the rater's pseudo and photo.

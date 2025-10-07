@@ -13,6 +13,7 @@ final class Driver extends User
         private ?bool $pets,
         private ?bool $smoker,
         private ?bool $speaker,
+        private ?array $otherPref,
         // Champs pour User
         string $id,
         string $pseudo,
@@ -21,11 +22,12 @@ final class Driver extends User
         ?int $credit,
         ?string $photo,
         int $idRole,
-        bool $isActivated,
+        bool $isActivated
+
     ) {
         parent::__construct($id, $pseudo, $mail, $password, $credit, $photo, $idRole, $isActivated);
     }
-    
+
     public function getFood(): ?bool
     {
         return $this->food;
@@ -46,5 +48,9 @@ final class Driver extends User
     public function getSpeaker(): ?bool
     {
         return $this->speaker;
+    }
+    public function getOtherPref(): ?array
+    {
+        return $this->otherPref;
     }
 }

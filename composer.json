@@ -6,5 +6,8 @@
             "App\\": "src/"
         }
     },
-    "require": {}
+    "require": {
+        "mongodb/mongodb": "^2.1",
+        "symfony/dotenv": "^7.3"
+    }
 }

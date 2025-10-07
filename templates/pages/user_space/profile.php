@@ -300,9 +300,7 @@
                  </div>
              </div>
              <div id="pref-container">
-                 <?php
-                    /* include __DIR__ . "/../components/lists/other_pref.php"; */ // @todo
-                    ?>
+                  <?php include TEMPLATE_PATH . '/components/otherPreferences/list.php'; ?>
              </div>
 
 
