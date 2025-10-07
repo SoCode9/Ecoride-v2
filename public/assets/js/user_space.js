@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updatePhoto.classList.remove("hidden");
       }
 
-      document.querySelectorAll(".delete-car-icon").forEach((deleteIcon) => {
+      document.querySelectorAll(".delete-car-form").forEach((deleteIcon) => {
         deleteIcon.classList.remove("hidden");
       });
 

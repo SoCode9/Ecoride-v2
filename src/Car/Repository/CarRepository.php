@@ -115,7 +115,7 @@ class CarRepository
      * @param string $color
      * @return array{car_id: bool|string, message: string, success: bool|array{error: string, success: bool}} Result with success status and message
      */
-    public function newCar(string $driverId, string $brandId, string $model, string $licencePlate, string $firstRegistrationDate, int $seatsOffered, bool $electric, string $color): array
+    public function new(string $driverId, string $brandId, string $model, string $licencePlate, string $firstRegistrationDate, int $seatsOffered, bool $electric, string $color): array
     {
         try {
             $this->ensureDriver($driverId);
@@ -147,6 +147,36 @@ class CarRepository
             ];
         }
     }
+
+    /**
+     * Delete a car
+     * @param int $carId car id to delete
+     * @throws \Exception
+     * @return void
+     */
+    public function delete(int $carId): void
+    {
+        try {
+            $pdo = DbConnection::getPdo();
+            $pdo->beginTransaction();
+            $sql = 'DELETE FROM cars WHERE car_id = :carId';
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':carId', $carId, PDO::PARAM_INT);
+            $statement->execute();
+
+            // Check if a row was actually deleted
+            if ($statement->rowCount() === 0) {
+                throw new Exception("Aucune voiture trouvée");
+            }
+
+            $pdo->commit();
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            error_log("Erreur dans deleteCar : " . $e->getMessage());
+            throw new Exception("Impossible de supprimer la voiture");
+        }
+    }
+
 
     /**
      * Ensures that the user is a driver. If not, adds them as a driver

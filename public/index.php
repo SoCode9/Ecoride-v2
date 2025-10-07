@@ -51,6 +51,7 @@ $router->register(['POST'], '/reservation/check', ReservationController::class, 
 $router->register(['POST'], '/reservation/update', ReservationController::class, 'updateParticipation');
 $router->register(['POST'], '/car/add', CarController::class, 'new');
 $router->register(['GET'], '/car/list', CarController::class, 'list');
+$router->register(['POST'], '/car/delete', CarController::class, 'delete');
 // exemple d'une route pour créer un user
 // $router->register(['GET', 'POST'], '/user/create', UserController::class, 'create');
 

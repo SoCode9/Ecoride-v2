@@ -44,9 +44,9 @@ class CarController extends BaseController
         $seatOffered = $_POST['nb_passengers'];
 
         try {
-            $this->repo->newCar($userId, $brand, $model, $licencePlate, $firstRegistrationDate, $seatOffered, $electric, $color);
+            $this->repo->new($userId, $brand, $model, $licencePlate, $firstRegistrationDate, $seatOffered, $electric, $color);
         } catch (PDOException $e) {
-            error_log("Database error in newCar(): " . $e->getMessage());
+            error_log("CarController - Database error in new(): " . $e->getMessage());
             throw new Exception("Une erreur est survenue");
         }
         echo json_encode([
@@ -61,11 +61,29 @@ class CarController extends BaseController
     {
         $userId = $_SESSION['user_id'] ?? null;
 
-        $carRepo = new CarRepository();
-        $cars = $carRepo->findAllCars($userId);
+        $cars = $this->repo->findAllCars($userId);
 
         return $this->renderPartial('components/car/list.php', [
             'cars' => $cars
         ]);
+    }
+
+    public function delete()
+    {
+        $carId = $_POST['id'] ?? null;
+
+        $this->repo->delete($carId);
+
+        try {
+            header('Location: ' . BASE_URL . '/mon-profil');
+            $_SESSION['success_message'] = "La voiture a été supprimée";
+
+            exit;
+        } catch (Exception $e) {
+            error_log("CarController - Database error in delete(): " . $e->getMessage());
+            header('Location: ' . BASE_URL . '/mon-profil');
+            $_SESSION['error_message'] = "Erreur lors de la suppression de la voiture";
+            exit;
+        }
     }
 }

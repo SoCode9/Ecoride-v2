@@ -39,8 +39,10 @@ class BaseController
 
         unset($data);
 
+        $current = $this->router->getCurrentPage();
+
         ob_start();
-        require TEMPLATE_PATH . '/' . $template; 
+        require TEMPLATE_PATH . '/' . $template;
         echo ob_get_clean();
     }
 }
