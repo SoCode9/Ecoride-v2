@@ -40,7 +40,7 @@ class UserController extends BaseController
         $cars = $car->findAllCars($userId);
 
         $brands = $car->findAllBrands();
-        
+
         return $this->render('pages/user_space/profile.php', 'Mon espace', [
             'user' => $user,
             'formattedUser' => $formattedUser,
@@ -110,5 +110,32 @@ class UserController extends BaseController
             echo json_encode(["success" => false, "message" => "Préférence $preferenceName invalide"]);
             exit;
         }
+    }
+
+    public function editPhoto()
+    {
+
+        $userId = $_SESSION['user_id'];
+
+        try {
+            // Check if a file was sent and if there were no upload errors
+            if (!isset($_FILES['new_photo']) || $_FILES['new_photo']['error'] !== UPLOAD_ERR_OK) {
+                throw new Exception("Erreur lors du téléchargement du fichier");
+            }
+            $file = $_FILES['new_photo'];
+            
+            // process the photo
+            $uniqueName = $this->service->editPhoto($userId, $file);
+
+            // Update the user's photo path in the database
+            $this->repo->setPhoto($userId, $uniqueName);
+            $_SESSION['success_message'] = "Votre photo a été mise à jour avec succès";
+        } catch (Exception $e) {
+            error_log("Erreur upload photo (user ID $userId) : " . $e->getMessage());
+            $_SESSION['error_message'] = $e->getMessage();
+        }
+
+        header('Location: ' . BASE_URL . '/mon-profil');
+        exit;
     }
 }

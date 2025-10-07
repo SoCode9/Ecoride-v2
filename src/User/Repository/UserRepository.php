@@ -121,6 +121,7 @@ class UserRepository
 
     /**
      * Updates the user's role in the database
+     * @param string $photoUser The path or name of the user's photo
      * @param int $roleId The new role ID to assign to the user
      * @throws \Exception If the user ID is not set or the update fails
      * @return void
@@ -143,6 +144,31 @@ class UserRepository
         } catch (PDOException $e) {
             error_log("Database error in setIdRole() (user ID: {$userId}) : " . $e->getMessage());
             throw new Exception("Impossible de mettre à jour le rôle de l'utilisateur");
+        }
+    }
+    /**
+     * Updates the user's profile photo in the database
+     * @param string $userId The UUID of the user
+     * @param string $photoUser The path or name of the user's photo
+     * @throws \Exception If the user ID is not set or the update fails
+     * @return void
+     */
+    public function setPhoto(string $userId, string $photoUser): void
+    {
+        if (empty($userId)) {
+            throw new Exception("Impossible de modifier la photo sans identifiant utilisateur");
+        }
+
+        try {
+            $sql = 'UPDATE users SET photo = :photo_user WHERE id = :user_id';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':photo_user', $photoUser, PDO::PARAM_STR);
+            $statement->bindParam(':user_id', $userId, PDO::PARAM_STR);
+            $statement->execute();
+        } catch (PDOException $e) {
+            error_log("Database error in setPhoto() (user ID: {$userId}) : " . $e->getMessage());
+            throw new Exception("Impossible de mettre à jour la photo de profil");
         }
     }
 }
