@@ -30,4 +30,19 @@ class BaseController
 
         return $content;
     }
+
+    protected function renderPartial(string $template, array $data = []): void
+    {
+        foreach ($data as $key => $value) {
+            $$key = $value;
+        }
+
+        unset($data);
+
+        $current = $this->router->getCurrentPage();
+
+        ob_start();
+        require TEMPLATE_PATH . '/' . $template;
+        echo ob_get_clean();
+    }
 }

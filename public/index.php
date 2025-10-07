@@ -11,6 +11,7 @@ use App\Carpool\Controller\CarpoolController;
 use App\Reservation\Controller\ReservationController;
 use App\Dashboard\DashboardController;
 use App\User\Controller\UserController;
+use App\Car\Controller\CarController;
 use Symfony\Component\Dotenv\Dotenv;
 use App\Routing\Router;
 use App\User\Entity\User;
@@ -48,6 +49,9 @@ $router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'd
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
 $router->register(['POST'], '/reservation/check', ReservationController::class, 'checkParticipation');
 $router->register(['POST'], '/reservation/update', ReservationController::class, 'updateParticipation');
+$router->register(['POST'], '/car/add', CarController::class, 'new');
+$router->register(['GET'], '/car/list', CarController::class, 'list');
+$router->register(['POST'], '/car/delete', CarController::class, 'delete');
 // exemple d'une route pour créer un user
 // $router->register(['GET', 'POST'], '/user/create', UserController::class, 'create');
 

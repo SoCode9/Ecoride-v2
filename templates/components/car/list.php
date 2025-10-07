@@ -21,10 +21,13 @@ if (empty($cars)): ?>
             </span>
             <span>Couleur : <?= htmlspecialchars($car['color']) ?></span>
             <span>Nombre de passagers possible : <?= htmlspecialchars($car['seats_offered']) ?></span>
-            <a class="hidden delete-car-icon"
-                href="<?= BASE_URL ?>/back/car/delete.php?action=delete_car&id=<?= $car['car_id'] ?>">
-                <img src="<?= ASSETS_PATH ?>/icons/Supprimer.png" class="img-width-20" style="cursor: pointer;">
-            </a>
+
+            <form method="POST" action="<?= BASE_URL ?>/car/delete" class="hidden delete-car-form">
+                <input type="hidden" name="id" value="<?= (int)$car['car_id'] ?>">
+                <button type="submit">
+                    <img src="<?= ASSETS_PATH ?>/icons/Supprimer.png" class="img-width-20" style="cursor:pointer;">
+                </button>
+            </form>
             <?php if ($index !== $totalCars - 1):
                 echo '<hr>';
             endif; ?>

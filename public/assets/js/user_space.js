@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updatePhoto.classList.remove("hidden");
       }
 
-      document.querySelectorAll(".delete-car-icon").forEach((deleteIcon) => {
+      document.querySelectorAll(".delete-car-form").forEach((deleteIcon) => {
         deleteIcon.classList.remove("hidden");
       });
 
@@ -215,4 +215,51 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Une erreur est survenue. Veuillez réessayer.");
       });
   });
+
+  /** Refresh only Car's section (not full page) **/
+  function refreshCarList() {
+    fetch((window.BASE_URL || "") + "/car/list")
+      .then((response) => response.text())
+      .then((html) => {
+        let carContainer = document.getElementById("car-container");
+        if (!carContainer) {
+          console.error("Erreur : car-container introuvable dans le DOM !");
+          return;
+        }
+
+        carContainer.innerHTML = html;
+      })
+      .catch((error) => {
+        console.error("Erreur de mise à jour car-container :", error);
+      });
+  }
+
+  /** Add a car **/
+  const carForm = document.getElementById("car-form");
+
+  if (carForm) {
+    carForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      let formData = new FormData(carForm);
+
+      fetch((window.BASE_URL || "") + "/car/add", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            carForm.reset();
+            refreshCarList();
+          } else {
+            console.error("Erreur :", data.error);
+            alert("Erreur : " + data.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Erreur AJAX :", error);
+        });
+    });
+  }
 });
