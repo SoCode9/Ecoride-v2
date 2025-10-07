@@ -1,7 +1,6 @@
 <?php
-//17.09.2025 _ Live découverte PHP Objet 3/5
 
-namespace App\Database; //dans composer, autoload : app = dossier src
+namespace App\Database; 
 use PDO;
 
 class DbConnection

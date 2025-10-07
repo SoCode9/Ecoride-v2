@@ -40,7 +40,7 @@ class UserController extends BaseController
         $cars = $car->findAllCars($userId);
 
         $brands = $car->findAllBrands();
-
+        //var_dump($driver->getOtherPref());
         return $this->render('pages/user_space/profile.php', 'Mon espace', [
             'user' => $user,
             'formattedUser' => $formattedUser,
@@ -123,7 +123,7 @@ class UserController extends BaseController
                 throw new Exception("Erreur lors du téléchargement du fichier");
             }
             $file = $_FILES['new_photo'];
-            
+
             // process the photo
             $uniqueName = $this->service->editPhoto($userId, $file);
 

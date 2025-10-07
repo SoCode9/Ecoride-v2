@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
         deleteIcon.classList.remove("hidden");
       });
 
-      document.querySelectorAll(".delete-pref-icon").forEach((deleteIcon) => {
+      document.querySelectorAll(".delete-pref-form").forEach((deleteIcon) => {
         deleteIcon.classList.remove("hidden");
       });
 
