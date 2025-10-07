@@ -30,17 +30,34 @@
 
      </div>
      <div class="flex-row item-center hidden" id="edit-photo-icon">
-         <button onclick="showPopup('popup-new-photo')"
+         <button onclick="showPopup('new-photo')"
              style="width: 30px; background-color: var(--col-orange); padding:4px 4px;" class="btn"><img
                  src="<?= ASSETS_PATH ?>/icons/Modifier.png" alt="edit">
          </button>
          <span class="italic font-size-small ">Modifier la photo de profil</span>
      </div>
 
+     <!-- popup edit photo-->
+     <div class="popup" id="new-photo" style="display:none;">
+         <h3 class=" m-tb-12">Modifier la photo de profil</h3>
+         <div class="block-column-g20">
+
+             <span>Sélectionner une photo de profil</span>
+             <form action="<?= BASE_URL ?>/mon-profil/photo" method="POST" enctype="multipart/form-data"
+                 onsubmit="console.log('Form submitted!')" class="flex-column gap-24">
+                 <input type="hidden" name="action" value="edit-photo-user">
+                 <input type="file" name="new_photo" id="photo" required>
+                 <div class="btn bg-light-green">
+                     <button type="submit">Enregistrer la photo</button>
+                 </div>
+             </form>
+
+         </div>
+         <button type="button" class="col-back-grey-btn btn" style="justify-self:right;"
+             onclick="closePopup('new-photo')">Annuler</button>
+     </div>
 
 
-     <? php/*  include __DIR__ . "/../components/popup/new_photo.php"; */ //@TODO 
-        ?>
      <div class="flex-row flex-between">
          <span><?= htmlspecialchars($user->getMail()) ?></span>
          <span><?= htmlspecialchars($user->getCredit()) ?> crédits</span>

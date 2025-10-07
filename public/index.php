@@ -43,6 +43,7 @@ $router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']); //URI
 $router->register(['GET'], '/', DashboardController::class, 'index');
 $router->register(['GET'], '/mon-profil', UserController::class, 'profile');
 $router->register(['POST'], '/mon-profil/update', UserController::class, 'editProfile');
+$router->register(['POST'], '/mon-profil/photo', UserController::class, 'editPhoto');
 $router->register(['GET'], '/mes-covoiturages', UserController::class, 'listCarpools');
 $router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'list');
 $router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
