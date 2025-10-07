@@ -39,11 +39,14 @@ class UserController extends BaseController
         $car = new CarRepository();
         $cars = $car->findAllCars($userId);
 
+        $brands = $car->findAllBrands();
+        
         return $this->render('pages/user_space/profile.php', 'Mon espace', [
             'user' => $user,
             'formattedUser' => $formattedUser,
             'driver' => $driver,
-            'cars' => $cars
+            'cars' => $cars,
+            'brands' => $brands
         ]);
     }
 

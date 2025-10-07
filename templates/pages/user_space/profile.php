@@ -39,7 +39,7 @@
 
 
 
-     <?php/*  include __DIR__ . "/../components/popup/new_photo.php"; */ //@TODO 
+     <? php/*  include __DIR__ . "/../components/popup/new_photo.php"; */ //@TODO 
         ?>
      <div class="flex-row flex-between">
          <span><?= htmlspecialchars($user->getMail()) ?></span>
@@ -78,7 +78,7 @@
              <h3 class="text-green">Voitures</h3>
 
              <div id="car-container" class="flex-column gap-8 grid-auto-columns">
-                 <?php include TEMPLATE_PATH . '/components/car/list.php';?>
+                 <?php include TEMPLATE_PATH . '/components/car/list.php'; ?>
              </div>
 
 
@@ -102,11 +102,11 @@
                          <label for="brand">Marque : </label>
                          <select id="brand" class="text-field" name="brand" required>
                              <option value="">Sélectionner</option>
-                            <!--  <?php/*  foreach ($brands as $brand): */ ?>
-                                 <option value="<?php  /* htmlspecialchars($brand['id']); */  ?>">
-                                     <?php /* htmlspecialchars($brand['name']); */ ?>
+                             <?php foreach ($brands as $brand): ?>
+                                 <option value="<?= htmlspecialchars($brand['id']);  ?>">
+                                     <?= htmlspecialchars($brand['name']); ?>
                                  </option>
-                             <?php /* endforeach; */ ?> -->
+                             <?php endforeach; ?>
                          </select>
                      </div>
                      <div class="flex-row">
@@ -240,14 +240,14 @@
                          </div>
                          <div class="flex-row">
                              <label for="speak-no" class="radio-not-edit">Non</label>
-                             <input type="radio" class="radio-not-edit" name="speak_pref" id="speak-no" 
-                              <?php if (isset($driver) && ($driver->getSpeaker() === false)) {
+                             <input type="radio" class="radio-not-edit" name="speak_pref" id="speak-no"
+                                 <?php if (isset($driver) && ($driver->getSpeaker() === false)) {
                                         echo 'checked';
                                     } ?>>
                          </div>
                          <div class="flex-row">
                              <label for="speak_undefined" class="radio-not-edit">Pas de préférence</label>
-                             <input type="radio" class="radio-not-edit" name="speak_pref" id="speak-undefined" 
+                             <input type="radio" class="radio-not-edit" name="speak_pref" id="speak-undefined"
                                  <?php if (isset($driver) && ($driver->getSpeaker() === null)) {
                                         echo 'checked';
                                     } ?>>
@@ -261,21 +261,21 @@
                          <div class="flex-row">
                              <label for="music-yes" class="radio-not-edit">Oui</label>
                              <input type="radio" class="radio-not-edit" name="music_pref" id="music-yes"
-                                  <?php if (isset($driver) && ($driver->getMusic() === true)) {
+                                 <?php if (isset($driver) && ($driver->getMusic() === true)) {
                                         echo 'checked';
                                     } ?>>
                          </div>
                          <div class="flex-row">
                              <label for="music-no" class="radio-not-edit">Non</label>
-                             <input type="radio" class="radio-not-edit" name="music_pref" id="music-no" 
-                              <?php if (isset($driver) && ($driver->getMusic() === false)) {
+                             <input type="radio" class="radio-not-edit" name="music_pref" id="music-no"
+                                 <?php if (isset($driver) && ($driver->getMusic() === false)) {
                                         echo 'checked';
                                     } ?>>
                          </div>
                          <div class="flex-row">
                              <label for="music-undefined" class="radio-not-edit">Pas de préférence</label>
-                             <input type="radio" class="radio-not-edit" name="music_pref" id="music-undefined" 
-                                  <?php if (isset($driver) && ($driver->getMusic() === null)) {
+                             <input type="radio" class="radio-not-edit" name="music_pref" id="music-undefined"
+                                 <?php if (isset($driver) && ($driver->getMusic() === null)) {
                                         echo 'checked';
                                     } ?>>
                          </div>
@@ -310,5 +310,7 @@
      </div>
  </section>
 
- <script>window.BASE_URL = "<?= rtrim(BASE_URL, '/') ?>";</script>
+ <script>
+     window.BASE_URL = "<?= rtrim(BASE_URL, '/') ?>";
+ </script>
  <script src="<?= ASSETS_PATH ?>js/user_space.js" defer></script>
