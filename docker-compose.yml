@@ -1,0 +1,113 @@
+services:
+  app:
+    container_name: ecoride2-app
+    build: .
+    volumes:
+      - ./:/var/www/html
+      - ./storage/photos:/var/www/storage/photos
+      - ./docker/default.conf:/etc/apache2/sites-available/000-default.conf:ro
+    ports:
+      - 8090:80
+    environment:
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      MONGO_URI: ${MONGO_URI}
+      MONGO_DB: ${MONGO_DB}
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      MAIL_FROM: no-reply@ecoride.local
+      MAIL_FROM_NAME: EcoRide
+    depends_on:
+      db:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    container_name: ecoride2-db
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+    ports:
+      - "3308:3306"
+    volumes:
+      - ecoride2-db_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  phpmyadmin:
+    container_name: ecoride2-phpmyadmin
+    image: phpmyadmin:5.2.2
+    environment:
+      PMA_HOST: db
+      PMA_USER: ${DB_USER}
+      PMA_PASSWORD: ${DB_PASS}
+    ports:
+      - "8084:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mongo:
+    container_name: ecoride2-mongo
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASS}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    ports:
+      - "27018:27017"
+    volumes:
+      - ecoride2-mongo_data:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mongosh --quiet --username $$MONGO_INITDB_ROOT_USERNAME --password $$MONGO_INITDB_ROOT_PASSWORD --eval 'db.adminCommand({ ping: 1 })' --authenticationDatabase admin || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  mongo-express:
+    container_name: ecoride2-mongo-express
+    image: mongo-express:1.0.2
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASS}
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH_USERNAME: ${ME_BASIC_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_BASIC_PASS}
+    ports:
+      - "8083:8081"
+    restart: unless-stopped
+
+  mailpit:
+    container_name: ecoride2-mailpit
+    image: axllent/mailpit
+    ports:
+      - "8026:8025" # UI
+      - "1026:1025" # SMTP
+    restart: unless-stopped
+
+volumes:
+  ecoride2-db_data:
+  ecoride2-mongo_data:
