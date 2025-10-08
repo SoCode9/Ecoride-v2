@@ -23,7 +23,7 @@
                     <li><a href="<?= BASE_URL ?>/" id='home-page' class="<?= $current === '/' ? 'active' : '' ?>">Accueil</a></li>
                     <li><a href="<?= BASE_URL ?>/covoiturages" id='carpool-button' class="<?= $current === '/covoiturages' ? 'active' : '' ?>">Covoiturages</a></li>
                     <li><a href="" id='contact-button' class=" <?= $current === '/contact' ? 'active' : '' ?>">Contact</a></li>
-                    <li><a href="<?= BASE_URL?>/mon-profil" id='user-space' class="btn border-white <?= ($current === '/mon-profil'||$current ==='/mes-covoiturages') ? 'activeBtn' : '' ?>">Espace Utilisateur</a></li>
+                    <li><a href="<?= BASE_URL ?>/mon-profil" id='user-space' class="btn border-white <?= ($current === '/mon-profil' || $current === '/mes-covoiturages') ? 'activeBtn' : '' ?>">Espace Utilisateur</a></li>
                     <li><a href="" id='login-button' class="<?= $current === '/espace-utilisateur' ? 'activeBtn' : '' ?>">Connexion</a></li>
                 </ul>
             </nav>
@@ -51,6 +51,26 @@
         </div>
     </header>
 
+    <!--display of error or success messages-->
+    <?php if (isset($_SESSION['success_message'])): ?>
+        <div class="message">
+            <?php
+            echo $_SESSION['success_message'];
+            unset($_SESSION['success_message']); // Deletes after display
+            ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error_message'])): ?>
+        <div class="message" style="background-color: var(--col-light-red); color: var(--col-dark-red);">
+            <?php
+            echo $_SESSION['error_message'];
+            unset($_SESSION['error_message']); // Deletes after display
+            ?>
+        </div>
+    <?php endif; ?>
+
+
     <main>
         <?php require_once $template ?>
     </main>
@@ -69,5 +89,20 @@
         </div>
     </footer>
 </body>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const message = document.querySelector(".message");
+        if (message) {
+            setTimeout(() => {
+                message.style.opacity = "0"; 
+                setTimeout(() => {
+                    message.style.display = "none"; 
+                }, 500);
+            }, 4000); 
+        }
+    });
+</script>
 
 </html>
