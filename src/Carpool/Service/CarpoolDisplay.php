@@ -62,6 +62,7 @@ final class CarpoolDisplay
 
         $seatsAvailable = $carpoolService->seatsAvailable($carId, $id);
         $seatsLabel     = $seatsAvailable <= 1 ? "$seatsAvailable place" : "$seatsAvailable places";
+        $departureDateTime = DateTime::createFromFormat("Y-m-d H:i:s", $dateRaw . ' ' . $depTimeRaw);
 
         // --- actions (seulement en détail) ---
         $participateBtn = null;
@@ -86,6 +87,8 @@ final class CarpoolDisplay
                 : null;
         }
 
+
+
         return [
             'id'             => $id,
             'reservationId'  => $reservationId,
@@ -98,6 +101,7 @@ final class CarpoolDisplay
             'departure_time' => DateFormatter::time($depTimeRaw),
             'arrival_time'   => DateFormatter::time($arrTimeRaw),
             'date'           => DateFormatter::short($dateRaw),
+            'departure_date_time' => $departureDateTime,
             'duration'       => self::carpoolDuration($depTimeRaw, $arrTimeRaw),
             'status'         => $status,
 
@@ -109,6 +113,8 @@ final class CarpoolDisplay
 
             'detail_url'     => $router->generatePath('/covoiturages/details', ['id' => $id]),
             'cancel_url'     => $router->generatePath('/carpool/cancel', ['id' => $id]),
+            'start_url'      => $router->generatePath('/carpool/start', ['id' => $id]),
+            'complete_url'      => $router->generatePath('/carpool/completed', ['id' => $id]),
             'card_style'     => $isOwner ? "border:2px solid var(--col-green);cursor:pointer;" : "cursor:pointer;",
 
             // actions (null en liste)

@@ -23,7 +23,7 @@
                     <li><a href="<?= BASE_URL ?>/" id='home-page' class="<?= $current === '/' ? 'active' : '' ?>">Accueil</a></li>
                     <li><a href="<?= BASE_URL ?>/covoiturages" id='carpool-button' class="<?= $current === '/covoiturages' ? 'active' : '' ?>">Covoiturages</a></li>
                     <li><a href="" id='contact-button' class=" <?= $current === '/contact' ? 'active' : '' ?>">Contact</a></li>
-                    <li><a href="<?= BASE_URL?>/mon-profil" id='user-space' class="btn border-white <?= $current === '/mon-profil' ? 'activeBtn' : '' ?>">Espace Utilisateur</a></li>
+                    <li><a href="<?= BASE_URL?>/mon-profil" id='user-space' class="btn border-white <?= ($current === '/mon-profil'||$current ==='/mes-covoiturages') ? 'activeBtn' : '' ?>">Espace Utilisateur</a></li>
                     <li><a href="" id='login-button' class="<?= $current === '/espace-utilisateur' ? 'activeBtn' : '' ?>">Connexion</a></li>
                 </ul>
             </nav>

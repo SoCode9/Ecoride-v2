@@ -4,6 +4,7 @@ namespace App\User\Controller;
 
 use App\Carpool\Service\CarpoolService;
 use Exception;
+use DateTime;
 
 use App\Controller\BaseController;
 use App\Routing\Router;
@@ -168,6 +169,8 @@ class UserController extends BaseController
             $this->router
         );
 
+        $now = new DateTime();
+
         $carpoolListToValidate = $carpoolSer->listCarpoolToValidate($userId);
         $carpoolListNotStarted = $carpoolSer->listCarpoolNotStarted($userId);
         $carpoolListCompleted = $carpoolSer->listCarpoolCompleted($userId);
@@ -176,7 +179,8 @@ class UserController extends BaseController
             'carpoolButton' => $carpoolButton ?? null,
             'carpoolListToValidate' => $carpoolListToValidate,
             'carpoolListNotStarted' => $carpoolListNotStarted,
-            'carpoolListCompleted' => $carpoolListCompleted
+            'carpoolListCompleted' => $carpoolListCompleted,
+            'now' => $now
         ]);
     }
 }

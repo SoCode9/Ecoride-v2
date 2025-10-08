@@ -197,6 +197,13 @@ final class ReservationService
         $this->repo->setValidated($reservationId);
     }
 
+    /**
+     * triggers actions when a carpool is canceled
+     * @param string $userId 
+     * @param string $carpoolId
+     * @throws \RuntimeException
+     * @return string
+     */
     public function cancelByCurrentUser(string $userId, string $carpoolId): string
     {
         $carpool = $this->carpoolRepo->findById($carpoolId);
@@ -211,6 +218,13 @@ final class ReservationService
         return $this->cancelAsPassenger($userId, $carpoolId);
     }
 
+    /**
+     * If a passenger cancel the carpool
+     * @param string $userId
+     * @param string $carpoolId
+     * @throws \RuntimeException
+     * @return string
+     */
     public function cancelAsPassenger(string $userId, string $carpoolId): string
     {
         $pdo = DbConnection::getPdo();
@@ -239,6 +253,13 @@ final class ReservationService
         }
     }
 
+    /**
+     * If the driver cancel the carpool
+     * @param string $driverId
+     * @param string $carpoolId
+     * @throws \RuntimeException
+     * @return string
+     */
     public function cancelAsDriver(string $driverId, string $carpoolId): string
     {
         $pdo = DbConnection::getPdo();
@@ -288,6 +309,49 @@ final class ReservationService
             $pdo->rollBack();
             error_log("ReservationService - cancelAsDriver() : " . $e->getMessage());
             throw $e;
+        }
+    }
+
+    /**
+     * When the driver mark the carpool as completed
+     * @param string $carpoolId
+     * @throws \RuntimeException
+     * @throws \Exception
+     * @return string
+     */
+    public function completedCarpool(string $carpoolId)
+    {
+        $carpool = $this->carpoolRepo->findById($carpoolId);
+        if (!$carpool) {
+            throw new \RuntimeException("Covoiturage introuvable");
+        }
+
+        try {
+
+            $this->carpoolRepo->setCarpoolStatus('in validation', $carpoolId);
+
+            $passengers = $this->repo->getPassengersOfTheCarpool($carpoolId);
+            $carpoolDate = DateFormatter::long($carpool->getDate());
+            $carpoolDeparture = $carpool->getDepartureCity();
+            $carpoolArrival = $carpool->getArrivalCity();
+            $message = "Le covoiturage du $carpoolDate de $carpoolDeparture à $carpoolArrival est terminé ! 
+        Merci de valider que tout s'est bien passé en vous rendant sur votre espace utilisateur. 
+        N'hésitez pas à soumettre un avis.";
+
+            foreach ($passengers as $passengerId) {
+                $passenger = $this->userRepo->findById($passengerId['user_id']);
+                $to = $passenger->getMail();
+                $subject = 'Validation du covoiturage';
+                $html = nl2br($message);
+
+                if (!$this->mailer->send($to, $subject, $html, 'no-reply@ecoride.fr', 'EcoRide')) {
+                    error_log("Mail validation non envoyé à $to");
+                }
+            }
+            return "Vos crédits seront mis à jour une fois que les passagers auront validé le covoiturage.";
+        } catch (Exception $e) {
+            error_log("ReservationService - completedCarpool() : " . $e->getMessage());
+            throw new Exception("Impossible de marquer le covoiturage comme terminé");
         }
     }
 }
