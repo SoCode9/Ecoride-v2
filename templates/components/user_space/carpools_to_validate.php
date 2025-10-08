@@ -4,12 +4,7 @@
 
 <div class="flex-column gap-8 grid-auto-columns">
     <?php foreach ($carpoolListToValidate as $carpool): ?>
-        <div class="travel" onclick="window.location.href='<?= $carpool['detail_url'] ?>'"
-            <?php if ($carpool['is_owner']) {
-                echo "style='border:2px solid var(--col-green);cursor:pointer;'";
-            } else {
-                echo "style ='cursor:pointer;'";
-            } ?>>
+        <div class="travel" onclick="window.location.href='<?= $carpool['detail_url'] ?>'" style="<?= $carpool['card_style'] ?>">
             <div class="user-header-mobile">
                 <div class="photo-user-container " style="justify-self:center;">
                     <img src="<?= htmlspecialchars($carpool['driver_photo']) ?>" alt="Photo de l'utilisateur" class="photo-user">

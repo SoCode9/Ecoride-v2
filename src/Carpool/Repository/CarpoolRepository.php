@@ -322,7 +322,7 @@ class CarpoolRepository
     public function getCarpoolsNotStarted(string $userId): array
     {
         try {
-            $sql = "SELECT carpool.*, users.pseudo, users.photo AS driver_photo, AVG(ratings.rating) AS rating
+            $sql = "SELECT carpool.*, users.pseudo, users.photo AS driver_photo, AVG(ratings.rating) AS rating, MAX(reservations.id) AS reservationId
             FROM carpool
             LEFT JOIN reservations ON reservations.carpool_id = carpool.id AND reservations.user_id = :userId
             JOIN driver ON driver.user_id = carpool.driver_id

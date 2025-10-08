@@ -56,6 +56,31 @@ class ReservationRepository
     }
 
     /**
+     * Get the reservation id of a reservation
+     * @param string $userId
+     * @param string $carpoolId
+     * @throws \Exception
+     * @return int
+     */
+    public function getReservationId(string $userId, string $carpoolId): int
+    {
+        $sql = 'SELECT id FROM reservations WHERE user_id = :userId AND carpool_id = :carpoolId';
+        $pdo = DbConnection::getPdo();
+        $statement = $pdo->prepare($sql);
+        $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+        $statement->bindParam(':carpoolId', $carpoolId, PDO::PARAM_STR);
+
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        if (!$result || !isset($result['id'])) {
+            error_log("Database error in getReservationId() ");
+            throw new Exception("Aucune réservation n'a été trouvée");
+        }
+
+        return $result['id'];
+    }
+
+    /**
      * Check if a reservation already exists for a given user and carpool.
      * @param int $userId    The passenger's user ID
      * @param int $carpoolId  The carpool (carpool) ID
@@ -126,6 +151,29 @@ class ReservationRepository
         }
 
         return $result['driver_id'];
+    }
+
+    /**
+     * Retrieves the list of user IDs of passengers for a given carpool (carpool).
+     *
+     * @param string $carpoolId The ID of the carpool
+     * @return array An array of passengers (each item contains 'user_id')
+     * @throws Exception If a database error occurs
+     */
+    public function getPassengersOfTheCarpool(string $carpoolId): array
+    {
+        try {
+            $sql = 'SELECT user_id FROM reservations WHERE carpool_id = :carpoolId';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':carpoolId', $carpoolId, PDO::PARAM_STR);
+            $statement->execute();
+
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database error in getPassengersOfTheCarpool() (carpool ID: $carpoolId): " . $e->getMessage());
+            throw new Exception("Impossible de récupérer les passagers du covoiturage");
+        }
     }
 
     /**
@@ -223,6 +271,28 @@ class ReservationRepository
         } catch (PDOException $e) {
             error_log("Database error in addBadComment() (reservation ID: $reservationId): " . $e->getMessage());
             throw new Exception("Erreur lors l'ajout d'un mauvais commentaire");
+        }
+    }
+
+    /**
+     * When a user (passenger or driver) cancel a carpool
+     * @param string $userId
+     * @param string $carpoolId
+     * @throws \Exception
+     * @return void
+     */
+    public function delete(string $userId, string $carpoolId): void
+    {
+        try {
+            $sql = 'DELETE FROM reservations WHERE user_id = :userId AND carpool_id = :carpoolId';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':userId', $userId);
+            $statement->bindParam(':carpoolId', $carpoolId);
+            $statement->execute();
+        } catch (PDOException $e) {
+            error_log("Database error in cancelCarpool() : " . $e->getMessage());
+            throw new Exception("Impossible de supprimer la réservation");
         }
     }
 }

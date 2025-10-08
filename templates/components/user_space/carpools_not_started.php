@@ -4,12 +4,7 @@
 
 <div class="flex-column gap-8 grid-auto-columns">
     <?php foreach ($carpoolListNotStarted as $carpool): ?>
-        <div class="travel" onclick="window.location.href='<?= $carpool['detail_url'] ?>'"
-            <?php if ($carpool['is_owner']) {
-                echo "style='border:2px solid var(--col-green);cursor:pointer;'";
-            } else {
-                echo "style ='cursor:pointer;'";
-            } ?>>
+        <div class="travel" onclick="window.location.href='<?= $carpool['detail_url'] ?>'" style="<?= $carpool['card_style'] ?>">
             <div class="user-header-mobile">
                 <div class="photo-user-container " style="justify-self:center;">
                     <img src="<?= htmlspecialchars($carpool['driver_photo']) ?>" alt="Photo de l'utilisateur" class="photo-user">
@@ -34,13 +29,12 @@
             <?php if ($carpool['status'] === 'not started'): ?>
                 <div class="btn action-btn" onclick="event.stopPropagation();"
                     style="background-color:var(--col-light-grey); grid-column: 5/6; grid-row: 3/5;">
-                    <a href="../back/user/user_space.php?action=cancel_carpool&id=<?= $carpool['id'] ?>"
-                        class="font-size-small">Annuler</a>
+                    <a onclick="window.location.href='<?= $carpool['cancel_url'] ?>'" class="font-size-small">Annuler</a>
                 </div>
             <?php endif; ?>
 
             <?php
-            $now = new DateTime(); 
+            $now = new DateTime();
             $departureDateTime = DateTime::createFromFormat("Y-m-d H:i:s", $carpool['date'] . ' ' . $carpool['departure_time']);
 
             if (($carpool['status'] === 'not started') && $carpool['is_owner'] && $departureDateTime !== false && $departureDateTime <= $now): ?>

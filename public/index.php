@@ -57,12 +57,13 @@ $router->register(['POST'], '/car/delete', CarController::class, 'delete');
 $router->register(['POST'], '/preference/add', DriverController::class, 'newOtherPreference');
 $router->register(['GET'], '/preference/list', DriverController::class, 'listOtherPreferences');
 $router->register(['POST'], '/preference/delete', DriverController::class, 'deleteOtherPreference');
-$router->register(['POST'], '/carpool/approved', ReservationController::class, 'carpoolApproved');
-$router->register(['POST'], '/carpool/rejected', ReservationController::class, 'carpoolRejected');
 
 // carpools - action
 $router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 $router->register(['POST'], '/reservation/check', ReservationController::class, 'checkParticipation');
 $router->register(['POST'], '/reservation/update', ReservationController::class, 'updateParticipation');
+$router->register(['POST'], '/carpool/approved', ReservationController::class, 'carpoolApproved');
+$router->register(['POST'], '/carpool/rejected', ReservationController::class, 'carpoolRejected');
+$router->register(['GET'], '/carpool/cancel', ReservationController::class, 'cancelCarpool');
 
 echo $router->run();

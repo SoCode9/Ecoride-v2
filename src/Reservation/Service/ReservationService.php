@@ -194,4 +194,99 @@ final class ReservationService
         $this->repo->addBadComment($reservationId, $badComment);
         $this->repo->setValidated($reservationId);
     }
+
+    public function cancelByCurrentUser(string $userId, string $carpoolId): string
+    {
+        $carpool = $this->carpoolRepo->findById($carpoolId);
+        if (!$carpool) {
+            throw new \RuntimeException("Covoiturage introuvable");
+        }
+
+        if ($carpool->getIdDriver() === $userId) {
+            return $this->cancelAsDriver($userId, $carpoolId);
+        }
+
+        return $this->cancelAsPassenger($userId, $carpoolId);
+    }
+
+    public function cancelAsPassenger(string $userId, string $carpoolId): string
+    {
+        $pdo = DbConnection::getPdo();
+
+        try {
+            $pdo->beginTransaction();
+
+            $reservationId = $this->repo->getReservationId($userId, $carpoolId);
+            if (!$reservationId) {
+                throw new \RuntimeException("Aucune réservation à annuler");
+            }
+
+            $creditSpent = (int)$this->repo->getCreditSpent($reservationId);
+
+            // recommandé: méthode incrémentale
+            $this->userRepo->setCredit($userId, $creditSpent);
+
+            $this->repo->delete($userId, $carpoolId);
+
+            $pdo->commit();
+
+            return "Vous ne participez plus au covoiturage. Vos crédits vous ont été restitués.";
+        } catch (\Throwable $e) {
+            $pdo->rollBack();
+            error_log("ReservationService - cancelAsPassenger() : " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function cancelAsDriver(string $driverId, string $carpoolId): string
+    {
+        $pdo = DbConnection::getPdo();
+
+        try {
+            $pdo->beginTransaction();
+
+            $carpool = $this->carpoolRepo->findById($carpoolId);
+            if (!$carpool || $carpool->getIdDriver() !== $driverId) {
+                throw new \RuntimeException("Seul le chauffeur peut annuler ce covoiturage");
+            }
+
+            $passengers = $this->repo->getPassengersOfTheCarpool($carpoolId);
+
+            $carpoolDate = DateFormatter::monthYear($carpool->getDate());
+            $carpoolDeparture = $carpool->getDepartureCity();
+            $carpoolArrival = $carpool->getArrivalCity();
+            $message = "Le covoiturage du $carpoolDate de $carpoolDeparture à $carpoolArrival a été annulé par le chauffeur.";
+
+            foreach ($passengers as $p) {
+                $passengerId = $p['user_id'];
+
+                $reservationId = $this->repo->getReservationId($passengerId, $carpoolId);
+                if (!$reservationId) {
+                    continue;
+                }
+
+                $creditSpent = (int)$this->repo->getCreditSpent($reservationId);
+                $this->userRepo->setCredit($passengerId, $creditSpent);
+                $this->repo->delete($passengerId, $carpoolId);
+
+                // envoi mail optionnel (non-bloquant) — à réactiver si besoin
+                // try {
+                //     $passenger = $this->userRepo->findById($passengerId);
+                //     $this->mailer->send($passenger->getMail(), 'Annulation du covoiturage', nl2br($message), 'no-reply@ecoride.fr', 'EcoRide');
+                // } catch (\Throwable $mailErr) {
+                //     error_log("Mail annulation non envoyé à $passengerId : " . $mailErr->getMessage());
+                // }
+            }
+
+            $this->carpoolRepo->setCarpoolStatus('cancelled', $carpoolId);
+
+            $pdo->commit();
+
+            return "Le covoiturage a été annulé. Les passagers ont été remboursés.";
+        } catch (\Throwable $e) {
+            $pdo->rollBack();
+            error_log("ReservationService - cancelAsDriver() : " . $e->getMessage());
+            throw $e;
+        }
+    }
 }

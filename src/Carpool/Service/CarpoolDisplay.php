@@ -108,6 +108,7 @@ final class CarpoolDisplay
             'seats_label'    => $seatsLabel,
 
             'detail_url'     => $router->generatePath('/covoiturages/details', ['id' => $id]),
+            'cancel_url'     => $router->generatePath('/carpool/cancel', ['id' => $id]),
             'card_style'     => $isOwner ? "border:2px solid var(--col-green);cursor:pointer;" : "cursor:pointer;",
 
             // actions (null en liste)
