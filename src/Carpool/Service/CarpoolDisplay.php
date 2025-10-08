@@ -99,6 +99,7 @@ final class CarpoolDisplay
             'arrival_time'   => DateFormatter::time($arrTimeRaw),
             'date'           => DateFormatter::short($dateRaw),
             'duration'       => self::carpoolDuration($depTimeRaw, $arrTimeRaw),
+            'status'         => $status,
 
             'eco_label'      => OtherFormatter::formatEcoLabel($carElectric),
 

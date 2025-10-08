@@ -159,4 +159,23 @@ final class CarpoolService
             $this->router
         );
     }
+
+    /**
+     * Returns carpools not started with the correct formatting
+     * @param string $userId The UUID user
+     * @return array 
+     */
+    public function listCarpoolNotStarted(string $userId): array
+    {
+        $rows = $this->repo->getCarpoolsNotStarted($userId);
+
+        return CarpoolDisplay::many(
+            $rows,
+            $userId,
+            $this->driverService,
+            $this,
+            $this->userRepo,
+            $this->router
+        );
+    }
 }
