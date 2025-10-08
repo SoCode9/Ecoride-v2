@@ -138,4 +138,21 @@ class UserController extends BaseController
         header('Location: ' . BASE_URL . '/mon-profil');
         exit;
     }
+
+    public function listCarpools()
+    {
+        $userId = $_SESSION['user_id'];
+
+        $car = new CarRepository();
+        $cars = $car->findAllCars($userId);
+
+        if ($this->repo->isDriver($userId) && $cars !== []) {
+            $carpoolButton = '<a class="btn action-btn" style="padding: 8px; text-align:right;"
+                href="<?= BASE_URL ?>/controllers/create_carpool.php">Proposer un covoiturage</a>'; // @todo remplacer lien create a carpool
+        }
+
+        return $this->render('pages/user_space/carpools.php', 'Mon espace', [
+            'carpoolButton' => $carpoolButton ?? null
+        ]);
+    }
 }

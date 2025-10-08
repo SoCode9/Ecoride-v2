@@ -1,11 +1,8 @@
- <?php
-    $currentTab = $_GET['tab'] ?? 'profil';
-    ?>
  <div class="tabs" style="justify-content: space-between;">
-     <button class="btn main-tab-btn <?= $currentTab === 'profil' ? 'active' : '' ?>" style=" width:100%;"
-         data-target="profil" onclick="window.location.href='<?= BASE_URL ?>/mon-profil'">Mon profil</button>
-     <button class="btn main-tab-btn <?= $currentTab === 'carpools' ? 'active' : '' ?>" style=" width:100%;"
-         data-target="carpools" onclick="window.location.href='<?= BASE_URL ?>/mes-covoiturages'">Mes
+     <button class="btn main-tab-btn active" style="width:100%;"
+         onclick="window.location.href='<?= BASE_URL ?>/mon-profil'">Mon profil</button>
+     <button class="btn main-tab-btn" style="width:100%;"
+         onclick="window.location.href='<?= BASE_URL ?>/mes-covoiturages'">Mes
          covoiturages</button>
  </div>
 
