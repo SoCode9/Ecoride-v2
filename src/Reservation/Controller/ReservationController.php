@@ -14,7 +14,8 @@ use App\Rating\Repository\RatingRepository;
 
 use App\Reservation\Service\ReservationService;
 
-
+use App\Utils\Formatting\DateFormatter;
+use App\Utils\MailService;
 class ReservationController extends BaseController
 {
     private ReservationService $service;
@@ -27,7 +28,7 @@ class ReservationController extends BaseController
         $carRepo = new CarRepository();
         $this->repo = new ReservationRepository();
 
-        $this->service = new ReservationService($this->repo, $userRepo, $carpoolRepo, $carRepo);
+        $this->service = new ReservationService($this->repo, $userRepo, $carpoolRepo, $carRepo, new MailService());
     }
 
     public function checkParticipation()
@@ -91,5 +92,27 @@ class ReservationController extends BaseController
             $_SESSION['error_message'] = "Une erreur est survenue";
             exit;
         }
+    }
+
+    public function cancelCarpool(): void
+    {
+        $userId    = $_SESSION['user_id'] ?? null;
+        $carpoolId = (string)($_GET['id'] ?? '');
+
+        if (!$userId || $carpoolId === '') {
+            $_SESSION['error_message'] = "ID du covoiturage manquant";
+            header('Location:' . BASE_URL . '/mes-covoiturages');
+            return;
+        }
+
+        try {
+            $message = $this->service->cancelByCurrentUser($userId, $carpoolId);
+            $_SESSION['success_message'] = $message;
+        } catch (\Throwable $e) {
+            error_log("Error in cancel a carpool : " . $e->getMessage());
+            $_SESSION['error_message'] = "Impossible d'annuler le covoiturage.";
+        }
+
+        header('Location:' . BASE_URL . '/mes-covoiturages');
     }
 }

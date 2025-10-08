@@ -99,6 +99,7 @@ final class CarpoolDisplay
             'arrival_time'   => DateFormatter::time($arrTimeRaw),
             'date'           => DateFormatter::short($dateRaw),
             'duration'       => self::carpoolDuration($depTimeRaw, $arrTimeRaw),
+            'status'         => $status,
 
             'eco_label'      => OtherFormatter::formatEcoLabel($carElectric),
 
@@ -107,6 +108,7 @@ final class CarpoolDisplay
             'seats_label'    => $seatsLabel,
 
             'detail_url'     => $router->generatePath('/covoiturages/details', ['id' => $id]),
+            'cancel_url'     => $router->generatePath('/carpool/cancel', ['id' => $id]),
             'card_style'     => $isOwner ? "border:2px solid var(--col-green);cursor:pointer;" : "cursor:pointer;",
 
             // actions (null en liste)

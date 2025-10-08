@@ -284,7 +284,7 @@ class CarpoolRepository
     public function getCarpoolsToValidate(string $userId): array
     {
         try {
-            $sql = "SELECT carpool.*, users.pseudo, users.photo, AVG(ratings.rating) AS rating, 
+            $sql = "SELECT carpool.*, users.pseudo, users.photo AS driver_photo, AVG(ratings.rating) AS rating, 
                 MAX(reservations.is_validated) AS is_validated,
                 MAX(reservations.id) AS reservationId
             FROM carpool
@@ -313,6 +313,42 @@ class CarpoolRepository
             throw new Exception("Impossible d'obtenir les covoiturages à valider");
         }
     }
+
+    /**
+     * list of carpools "not started" or "in progress" 
+     * @param string $userId
+     * @return array
+     */
+    public function getCarpoolsNotStarted(string $userId): array
+    {
+        try {
+            $sql = "SELECT carpool.*, users.pseudo, users.photo AS driver_photo, AVG(ratings.rating) AS rating, MAX(reservations.id) AS reservationId
+            FROM carpool
+            LEFT JOIN reservations ON reservations.carpool_id = carpool.id AND reservations.user_id = :userId
+            JOIN driver ON driver.user_id = carpool.driver_id
+            JOIN users ON users.id = carpool.driver_id
+            LEFT JOIN ratings ON ratings.driver_id = carpool.driver_id
+            WHERE (carpool.status IN ('not started', 'in progress'))
+              AND (
+                    reservations.user_id IS NOT NULL   
+                    OR carpool.driver_id = :userId     
+                  )
+            GROUP BY carpool.id, users.id
+            ORDER BY carpool.date ASC ";
+
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+
+            $statement->execute();
+
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database error in getCarpoolsNotStarted() : " . $e->getMessage());
+            throw new Exception("Impossible d'obtenir les covoiturages non commencé");
+        }
+    }
+
 
     /**
      * Update the carpool status
