@@ -48,7 +48,7 @@ class DriverController extends BaseController
 
         $driver = $this->repo->makeFromUserId($userId);
 
-        return $this->renderPartial('components/preference/list.php', [
+        return $this->renderPartial('components/otherPreferences/list.php', [
             'driver' => $driver
         ]);
     }
@@ -56,11 +56,10 @@ class DriverController extends BaseController
     public function deleteOtherPreference()
     {
         $userId = $_SESSION['user_id'] ?? null;
-        $prefToDelete = $_GET['id'];
-
-        $this->repo->deleteCustomPreference($userId, $prefToDelete);
-
+        $prefToDelete = $_POST['id'];
         try {
+            $this->repo->deleteCustomPreference($userId, $prefToDelete);
+            
             header('Location: ' . BASE_URL . '/mon-profil');
             $_SESSION['success_message'] = "La préférence a été supprimée";
 
