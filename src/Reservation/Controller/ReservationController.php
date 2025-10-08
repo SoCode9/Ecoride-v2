@@ -4,11 +4,13 @@ namespace App\Reservation\Controller;
 
 use App\Controller\BaseController;
 use App\Routing\Router;
+use Exception;
 
 use App\Reservation\Repository\ReservationRepository;
 use App\User\Repository\UserRepository;
 use App\Carpool\Repository\CarpoolRepository;
 use App\Car\Repository\CarRepository;
+use App\Rating\Repository\RatingRepository;
 
 use App\Reservation\Service\ReservationService;
 
@@ -38,5 +40,56 @@ class ReservationController extends BaseController
     {
 
         $this->service->updateParticipation();
+    }
+
+    public function carpoolApproved()
+    {
+
+        try {
+
+            $userId = $_SESSION['user_id'];
+
+            $reservationId = $_POST['idReservation'];
+
+            $rating = $_POST['rating'] ?? null;
+            if ($rating === '')
+                $rating = null;
+
+            $comment = $_POST['comment'] ?? null;
+
+            $driverId = $this->repo->getDriverIdFromReservation($reservationId);
+
+            if (isset($rating)) {
+                $newRating = new RatingRepository();
+                $newRating->new($userId, $driverId, $rating, $comment);
+            }
+
+            $this->service->carpoolApproved($reservationId);
+
+            header('Location:' . BASE_URL . '/mes-covoiturages');
+            $_SESSION['success_message'] = "Le covoiturage a été validé";
+        } catch (Exception $e) {
+            error_log("Carpool validation error : " . $e->getMessage());
+            header('Location:' . BASE_URL . '/mes-covoiturages');
+            $_SESSION['error_message'] = "Une erreur est survenue";
+            exit;
+        }
+    }
+
+    public function carpoolRejected()
+    {
+        try {
+            $reservationId = $_POST['idReservation'];
+            $comment = $_POST['comment'];
+
+            $this->service->carpoolRejected($reservationId, $comment);
+            header('Location:' . BASE_URL . '/mes-covoiturages');
+            $_SESSION['success_message'] = "Votre retour a été transmis pour traitement";
+        } catch (Exception $e) {
+            error_log("Carpool validation error : " . $e->getMessage());
+            header('Location:' . BASE_URL . '/mes-covoiturages');
+            $_SESSION['error_message'] = "Une erreur est survenue";
+            exit;
+        }
     }
 }

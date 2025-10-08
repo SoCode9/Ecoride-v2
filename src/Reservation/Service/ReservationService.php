@@ -126,7 +126,7 @@ final class ReservationService
             // UPDATE DataBase 
 
             //debit the user
-            $this->userRepo->setCredit($userId, $userCredit-$travelPrice);
+            $this->userRepo->setCredit($userId, -$travelPrice);
 
             //create the reservation in DB
             $this->repo->new($userId, $carpoolId, $travelPrice);
@@ -143,5 +143,55 @@ final class ReservationService
                 "message" => "Une erreur est survenue"
             ]);
         }
+    }
+
+    /**
+     * When a carpool is approved (YES)
+     * @param int $reservationId
+     * @throws \Exception
+     * @return void
+     */
+    public function carpoolApproved(int $reservationId): void
+    {
+        try {
+            $pdo = DbConnection::getPdo();
+            $pdo->beginTransaction();
+
+            $creditSpent = $this->repo->getCreditSpent($reservationId);
+
+            $driverId = $this->repo->getDriverIdFromReservation($reservationId);
+            $this->userRepo->setCredit($driverId, $creditSpent);
+
+            $this->repo->setValidated($reservationId);
+
+            $carpoolId = $this->repo->getCarpoolIdFromReservation($reservationId);
+            $notValidated = $this->repo->getReservationsNotValidatedOfACarpool($carpoolId);
+
+            if (empty($notValidated)) {
+                $carpoolRepo = new CarpoolRepository();
+
+                $carpoolRepo->setCarpoolStatus('ended', $carpoolId);
+
+                $this->userRepo->setCredit($driverId, -2);
+            }
+
+            $pdo->commit();
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            error_log("Error in carpoolApproved() : " . $e->getMessage());
+            throw new Exception("Impossible de valider la réservation");
+        }
+    }
+
+    /**
+     * When a carpool is rejected (NO)
+     * @param int $reservationId
+     * @param string $badComment
+     * @return void
+     */
+    public function carpoolRejected(int $reservationId, string $badComment): void
+    {
+        $this->repo->addBadComment($reservationId, $badComment);
+        $this->repo->setValidated($reservationId);
     }
 }

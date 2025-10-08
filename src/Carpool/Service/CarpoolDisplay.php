@@ -36,7 +36,7 @@ final class CarpoolDisplay
             $dataUser = $userRepo->findById($c->getIdDriver());
             $dataCar = $carRepo->findById($c->getCarId());
         }
-        //var_dump($dataUser->getPhoto());
+
         // --- accès unifiés (entité vs row) ---
         $id            = is_array($c) ? (string)($c['id'] ?? '')             : (string)$c->getIdCarpool();
         $driverId      = is_array($c) ? (string)($c['driver_id'] ?? '')      : (string)$c->getIdDriver();

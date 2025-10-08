@@ -313,4 +313,36 @@ class CarpoolRepository
             throw new Exception("Impossible d'obtenir les covoiturages à valider");
         }
     }
+
+    /**
+     * Update the carpool status
+     * @param string $newStatus the new statut given
+     * @param string $carpoolId the carpool id for which the status is being changed
+     * @throws \Exception If a database error occurs
+     * @return void
+     */
+    public function setCarpoolStatus(string $newStatus, string $carpoolId): void
+    {
+        try {
+            $sql = "UPDATE carpool SET status = :newStatus ";
+            if ($newStatus === 'ended') {
+                $sql .= ", validated_at = :currentDate";
+            }
+            $sql .= " WHERE id = :carpoolId";
+
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
+            $statement->bindParam(':carpoolId', $carpoolId, PDO::PARAM_STR);
+            if ($newStatus === 'ended') {
+                $today = date('Y-m-d H:i:s');
+                $statement->bindParam(':currentDate', $today, PDO::PARAM_STR);
+            }
+
+            $statement->execute();
+        } catch (Exception $e) {
+            error_log("CarpoolRepository - Database error in setCarpoolStatus(): " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
+    }
 }
