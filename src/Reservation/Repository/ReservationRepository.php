@@ -56,9 +56,9 @@ class ReservationRepository
     }
 
     /**
-     * Check if a reservation already exists for a given user and travel.
+     * Check if a reservation already exists for a given user and carpool.
      * @param int $userId    The passenger's user ID
-     * @param int $carpoolId  The travel (carpool) ID
+     * @param int $carpoolId  The carpool (carpool) ID
      * @return bool          True if a reservation exists, false otherwise
      * @throws Exception     If a database error occurs
      */

@@ -137,4 +137,26 @@ final class CarpoolService
 
         return $seatsAvailable;
     }
+
+
+    // User Space - My Carpools
+
+    /**
+     * Returns carpools to be validated with the correct formatting
+     * @param string $userId The UUID user
+     * @return array 
+     */
+    public function listCarpoolToValidate(string $userId): array
+    {
+        $rows = $this->repo->getCarpoolsToValidate($userId);
+
+        return CarpoolDisplay::many(
+            $rows,
+            $userId,
+            $this->driverService,
+            $this,
+            $this->userRepo,
+            $this->router
+        );
+    }
 }

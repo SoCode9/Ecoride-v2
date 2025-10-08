@@ -40,7 +40,10 @@ final class CarpoolDisplay
         // --- accès unifiés (entité vs row) ---
         $id            = is_array($c) ? (string)($c['id'] ?? '')             : (string)$c->getIdCarpool();
         $driverId      = is_array($c) ? (string)($c['driver_id'] ?? '')      : (string)$c->getIdDriver();
+        $reservationId = is_array($c) ? (string)($c['reservationId'] ?? '')  : null;
         $driverpseudo  = is_array($c) ? (string)($c['pseudo'] ?? '')         : (string)$dataUser->getPseudo();
+        $depCity    = is_array($c) ? ($c['departure_city'] ?? null)       : $c->getDepartureCity();
+        $arrCity    = is_array($c) ? ($c['arrival_city'] ?? null)         : $c->getArrivalCity();
         $depTimeRaw    = is_array($c) ? ($c['departure_time'] ?? null)       : $c->getDepartureTime();
         $arrTimeRaw    = is_array($c) ? ($c['arrival_time'] ?? null)         : $c->getArrivalTime();
         $dateRaw       = is_array($c) ? ($c['date'] ?? null)                 : $c->getDate();
@@ -84,10 +87,14 @@ final class CarpoolDisplay
         }
 
         return [
+            'id'             => $id,
+            'reservationId'  => $reservationId,
             'driver_photo'   => OtherFormatter::displayPhoto($driverPhoto),
             'driver_rating'  => $rating,
             'driver_pseudo' => $driverpseudo,
             'price_label'    => OtherFormatter::formatCredits($price),
+            'departure_city' => $depCity,
+            'arrival_city'   => $arrCity,
             'departure_time' => DateFormatter::time($depTimeRaw),
             'arrival_time'   => DateFormatter::time($arrTimeRaw),
             'date'           => DateFormatter::short($dateRaw),
