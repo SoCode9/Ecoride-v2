@@ -14,9 +14,7 @@ use App\User\Repository\UserRepository;
 class DriverRepository
 {
 
-    public function __construct(private UserRepository $userRepo)
-    {
-    }
+    public function __construct(private UserRepository $userRepo) {}
 
     private function findById(string $id): array|null
     {
@@ -70,17 +68,12 @@ class DriverRepository
 
     /**
      * find the custom preferences of the current driver.
-     * 
-     * @throws Exception If the user ID is not set or the preferences cannot be loaded
+     * @param string $userId The UUID of the user
+     * @throws Exception If the preferences cannot be loaded
      * @return array 
      */
     public function findCustomPreferences(string $userId): array
     {
-        if (empty($userId)) {
-            error_log("findCustomPreferences() failed: driver ID is empty");
-            throw new Exception("Impossible de charger les préférences sans identifiant utilisateur");
-        }
-
         try {
             $mongo = MongoConnection::getMongoDb();
             $preferenceCollection = $mongo->preferences;
@@ -99,17 +92,13 @@ class DriverRepository
     /**
      * Add a custom preference for the driver
      * This method inserts a new custom preference into the MongoDB collection.
+     * @param string $userId The UUID of the user
      * @param string $customPrefToAdd The new preference to insert
-     * @throws \Exception If the user ID is not set or a database error occurs
+     * @throws \Exception If a database error occurs
      * @return void
      */
     public function newCustomPreference(string $userId, string $customPrefToAdd): void
     {
-        if (empty($userId)) {
-            error_log("newCustomPreference() failed: user ID is empty.");
-            throw new Exception("Impossible d'ajouter une préférence sans identifiant utilisateur");
-        }
-
         try {
             $mongo = MongoConnection::getMongoDb();
             $preferenceCollection = $mongo->preferences;
@@ -128,17 +117,13 @@ class DriverRepository
     /**
      * Deletes a custom preference for the driver
      * This method removes a specific custom preference from the MongoDB collection.
+     * @param string $userId The UUID of the user
      * @param string $customPrefToDelete The preference to delete
-     * @throws \Exception If the user ID is not set or a database error occurs
+     * @throws \Exception If a database error occurs
      * @return void
      */
     public function deleteCustomPreference(string $userId, string $customPrefToDelete): void
     {
-        if (empty($userId)) {
-            error_log("deleteCustomPreference() failed: user ID is empty.");
-            throw new Exception("Impossible de supprimer une préférence sans identifiant utilisateur");
-        }
-
         try {
             $mongo = MongoConnection::getMongoDb();
             $preferenceCollection = $mongo->preferences;
@@ -155,16 +140,12 @@ class DriverRepository
 
     /**
      * Loads all validated ratings for the current driver, including the rater's pseudo and photo.
-     *
-     * @throws Exception If the driver ID is not set or the query fails
+     * @param string $driverId The UUID of the user
+     * @throws Exception If the query fails
      * @return array An array of ratings with user information
      */
-    public static function loadValidatedRatings($driverId): array
+    public static function findValidatedRatings($driverId): array
     {
-        if (empty($driverId)) {
-            throw new Exception("Impossible de charger les avis sans identifiant conducteur");
-        }
-
         try {
             $sql = "SELECT ratings.*, users.pseudo, users.photo
             FROM ratings
@@ -180,17 +161,13 @@ class DriverRepository
 
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Database error in loadValidatedRatings() (driver ID: {$driverId}) : " . $e->getMessage());
+            error_log("Database error in findValidatedRatings() (driver ID: {$driverId}) : " . $e->getMessage());
             throw new Exception("Impossible de charger les évaluations du conducteur");
         }
     }
 
     public function updateDriverPreference(string $userId, string $column, $value): void
     {
-        if (empty($userId)) {
-            throw new Exception("Impossible de modifier la préférence sans identifiant utilisateur");
-        }
-
         try {
             $sql = "UPDATE driver SET $column = :value WHERE user_id = :userId";
             $pdo = DbConnection::getPdo();

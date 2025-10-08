@@ -10,11 +10,12 @@ final class DriverService
 
     /**
      * Calculates the average rating for the driver based on validated ratings
+     * @param string $driverId The UUID of the user
      * @return float|null The average rating (e.g., 4.2), or null if no rating is available
      */
     public function getAverageRatings($driverId): ?float
     {
-        $allInfoRatings = $this->repo->loadValidatedRatings($driverId);
+        $allInfoRatings = $this->repo->findValidatedRatings($driverId);
         if (empty($allInfoRatings)) {
             return null; // if the driver has no rating
         }
@@ -63,7 +64,7 @@ final class DriverService
                 $textNotOK = "Je préfère me concentrer sur la route";
                 break;
             default:
-                return null ;
+                return null;
         }
         //if yes
         if ($result === true) {
@@ -86,18 +87,4 @@ final class DriverService
         }
     }
 
-
-
-    /*  $petPref = $driver->getPets();
-                if ($petPref === true): ?>
-                    <div class="text-icon">
-                        <img src='<?= ASSETS_PATH ?>/icons/AnimauxOk.png' class='img-width-20' alt=''>
-                        <span>J'aime la compagnie des animaux</span>
-                    </div>
-                <?php elseif ($petPref === false): ?>
-                    <div class="text-icon">
-                        <img src='<?= ASSETS_PATH ?>/icons/AnimauxPasOk.png' class='img-width-20' alt=''>
-                        <span>Je préfère ne pas voyager avec des animaux</span>
-                    </div>
-                <?php endif; ?> */
 }

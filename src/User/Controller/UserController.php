@@ -40,7 +40,7 @@ class UserController extends BaseController
         $cars = $car->findAllCars($userId);
 
         $brands = $car->findAllBrands();
-        //var_dump($driver->getOtherPref());
+
         return $this->render('pages/user_space/profile.php', 'Mon espace', [
             'user' => $user,
             'formattedUser' => $formattedUser,
