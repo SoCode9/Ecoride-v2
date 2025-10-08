@@ -11,7 +11,7 @@
 
             <div class="time-location-ellipse">
                 <div class="flex-column gap-8 time-location">
-                    <span><?= htmlspecialchars($carpoolFormatted['departure_time'])/* formatTime(htmlspecialchars($travel->getDepartureTime())) */ ?></span>
+                    <span><?= htmlspecialchars($carpoolFormatted['departure_time']) ?></span>
                     <span><?= htmlspecialchars($carpool->getDepartureCity()) ?></span>
                 </div>
 
@@ -112,14 +112,12 @@
 
 
                 <!--Others preferences-->
-                <?php
-                /* $customPreferences = $driver->loadCustomPreferences();
-                foreach ($customPreferences as $pref): ?>
+                <?php foreach ($driver->getOtherPref() as $preference): ?>
                     <div class="text-icon">
-                        <img src='<?= BASE_URL ?>/icons/addPref.png' class='img-width-20' alt=''>
-                        <span><?= htmlspecialchars($pref['custom_preference']) ?></span>
+                        <img src='<?= ASSETS_PATH ?>/icons/addPref.png' class='img-width-20' alt=''>
+                        <span><?= htmlspecialchars($preference['custom_preference']) ?></span>
                     </div>
-                <?php endforeach;*/ ?>
+                <?php endforeach; ?>
 
             </div>
 
@@ -142,7 +140,7 @@
                     }
                     ?>
                 </span>
-                <span class="font-size-very-small"><?php /* "(" . htmlspecialchars($driver->countRatings()) . " avis)" */ ?></span>
+                <span class="font-size-very-small"><?= "(" . htmlspecialchars(count($ratings) ?? 0) . " avis)" ?></span>
             </div>
         </div>
 
@@ -176,5 +174,7 @@
 
 </div>
 
-<script>window.BASE_URL = "<?= rtrim(BASE_URL, '/') ?>";</script>
+<script>
+    window.BASE_URL = "<?= rtrim(BASE_URL, '/') ?>";
+</script>
 <script src="<?= ASSETS_PATH ?>js/carpool_details.js" defer></script>

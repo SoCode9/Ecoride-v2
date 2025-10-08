@@ -120,7 +120,7 @@ class CarpoolController extends BaseController
         $ratings = $ratingRepo->findAllByDriver($carpool->getIdDriver(), true);
         $ratings = $ratings ?? [];
         $ratingsFormatted = $ratingSer->formatRatings($ratings);
-       
+
         return $this->render('pages/carpools/details.php', 'Détail', [
             'carpool' => $carpool,
             'carpoolFormatted' => $carpoolFormatted,
