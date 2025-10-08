@@ -67,5 +67,7 @@ $router->register(['POST'], '/reservation/update', ReservationController::class,
 $router->register(['POST'], '/carpool/approved', ReservationController::class, 'carpoolApproved');
 $router->register(['POST'], '/carpool/rejected', ReservationController::class, 'carpoolRejected');
 $router->register(['GET'], '/carpool/cancel', ReservationController::class, 'cancelCarpool');
+$router->register(['GET'], '/carpool/start', ReservationController::class, 'startCarpool');
+$router->register(['GET'], '/carpool/completed', ReservationController::class, 'completedCarpool');
 
 echo $router->run();

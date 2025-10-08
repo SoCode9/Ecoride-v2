@@ -142,7 +142,7 @@ final class CarpoolService
     // User Space - My Carpools
 
     /**
-     * Returns carpools to be validated with the correct formatting
+     * Return carpools to be validated with the correct formatting
      * @param string $userId The UUID user
      * @return array 
      */
@@ -161,7 +161,7 @@ final class CarpoolService
     }
 
     /**
-     * Returns carpools not started with the correct formatting
+     * Return carpools not started with the correct formatting
      * @param string $userId The UUID user
      * @return array 
      */
@@ -180,7 +180,7 @@ final class CarpoolService
     }
 
     /**
-     * Returns carpools completed with the correct formatting
+     * Return carpools completed with the correct formatting
      * @param string $userId The UUID user
      * @return array 
      */

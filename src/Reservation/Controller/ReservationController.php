@@ -16,6 +16,7 @@ use App\Reservation\Service\ReservationService;
 
 use App\Utils\Formatting\DateFormatter;
 use App\Utils\MailService;
+
 class ReservationController extends BaseController
 {
     private ReservationService $service;
@@ -111,6 +112,37 @@ class ReservationController extends BaseController
         } catch (\Throwable $e) {
             error_log("Error in cancel a carpool : " . $e->getMessage());
             $_SESSION['error_message'] = "Impossible d'annuler le covoiturage.";
+        }
+
+        header('Location:' . BASE_URL . '/mes-covoiturages');
+    }
+
+    public function startCarpool(): void
+    {
+        $carpoolId = (string)($_GET['id'] ?? '');
+
+        try {
+            $carpoolRepo = new CarpoolRepository();
+            $carpoolRepo->setCarpoolStatus('in progress', $carpoolId);
+            header('Location:' . BASE_URL . '/mes-covoiturages');
+            $_SESSION['success_message'] = "Le covoiturage a débuté.";
+        } catch (Exception $e) {
+            error_log("Error in start a carpool : " . $e->getMessage());
+            $_SESSION['error_message'] = "Une erreur est survenue";
+            header('Location:' . BASE_URL . '/mes-covoiturages');
+        }
+    }
+
+    public function completedCarpool(): void
+    {
+        $carpoolId = (string)($_GET['id'] ?? '');
+        
+        try {
+            $message = $this->service->completedCarpool($carpoolId);
+            $_SESSION['success_message'] = $message;
+        } catch (\Throwable $e) {
+            error_log("Error in complete a carpool : " . $e->getMessage());
+            $_SESSION['error_message'] = "Une erreur est survenue";
         }
 
         header('Location:' . BASE_URL . '/mes-covoiturages');

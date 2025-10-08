@@ -33,23 +33,18 @@
                 </div>
             <?php endif; ?>
 
-            <?php
-            $now = new DateTime();
-            $departureDateTime = DateTime::createFromFormat("Y-m-d H:i:s", $carpool['date'] . ' ' . $carpool['departure_time']);
-
-            if (($carpool['status'] === 'not started') && $carpool['is_owner'] && $departureDateTime !== false && $departureDateTime <= $now): ?>
+            <?php            
+            if (($carpool['status'] === 'not started') && $carpool['is_owner'] && $carpool['departure_date_time'] !== false && $carpool['departure_date_time'] <= $now): ?>
                 <div class="btn action-btn" onclick="event.stopPropagation();"
                     style=" background-color:var(--col-light-green); grid-column: 5/6; grid-row: 3/5;">
-                    <a href="../back/user/user_space.php?action=start_carpool&id=<?= $carpool['id'] ?>"
-                        class="font-size-small">Démarrer</a>
+                    <a onclick="window.location.href='<?= $carpool['start_url'] ?>'" class="font-size-small">Démarrer</a>
                 </div>
             <?php endif; ?>
 
             <?php if (($carpool['status'] === 'in progress') && $carpool['is_owner']): ?>
                 <div class="btn action-btn" onclick="event.stopPropagation();"
                     style=" background-color:var(--col-light-green); grid-column: 5/6; grid-row: 3/5;">
-                    <a href="../back/user/user_space.php?action=complete_carpool&id=<?= $carpool['id'] ?>"
-                        class="font-size-small">Terminer</a>
+                    <a onclick="window.location.href='<?= $carpool['complete_url'] ?>'" class="font-size-small">Terminer</a>
                 </div>
             <?php endif; ?>
         </div>
