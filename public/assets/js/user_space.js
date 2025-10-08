@@ -234,6 +234,24 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
+  /** Refresh only Preferences' section (not full page) **/
+  function refreshPrefList() {
+    fetch((window.BASE_URL || "") + "/preference/list")
+      .then(response => response.text())
+      .then(html => {
+        let prefContainer = document.getElementById("pref-container");
+        if (!prefContainer) {
+          console.error("Erreur : pref-container introuvable dans le DOM !");
+          return;
+        }
+
+        prefContainer.innerHTML = html;
+      })
+      .catch(error => {
+        console.error("Erreur de mise à jour pref-container: ", error);
+      })
+  }
+
   /** Add a car **/
   const carForm = document.getElementById("car-form");
 
@@ -261,6 +279,35 @@ document.addEventListener("DOMContentLoaded", function () {
           console.error("Erreur AJAX :", error);
         });
     });
+  }
+
+  /**Add a pref **/
+  const prefForm = document.getElementById("pref-form");
+  if (prefForm) {
+    prefForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      let formData = new FormData(prefForm);
+      fetch((window.BASE_URL || "") + "/preference/add", {
+        method: "POST",
+        body: formData
+      })
+        .then(response => response.json())
+
+        .then(data => {
+          if (data.success) {
+            prefForm.reset();
+            refreshPrefList();
+          } else {
+            console.error("Erreur :", data.error);
+            alert(data.error);
+          }
+        })
+        .catch(error => {
+          console.error("Erreur AJAX :", error);
+        });
+
+    })
   }
 });
 
