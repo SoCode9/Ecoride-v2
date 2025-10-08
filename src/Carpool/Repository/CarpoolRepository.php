@@ -349,6 +349,42 @@ class CarpoolRepository
         }
     }
 
+    /**
+     * list of carpools "ended" and validated or "cancelled"
+     * @param string $userId
+     * @return array
+     */
+    public function getCarpoolsCompleted(string $userId): array
+    {
+        try {
+            $sql = "SELECT carpool.*, u.pseudo, u.photo AS driver_photo, AVG(r.rating) AS rating, MAX(res.is_validated) AS is_validated
+            FROM carpool
+            LEFT JOIN reservations res ON res.carpool_id = carpool.id AND res.user_id   = :userId
+            JOIN driver d ON d.user_id = carpool.driver_id
+            JOIN users u ON u.id = carpool.driver_id
+            LEFT JOIN ratings r ON r.driver_id = carpool.driver_id
+            WHERE (
+                    (res.user_id IS NOT NULL 
+                     AND (carpool.status = 'cancelled' OR res.is_validated = 1))
+                 OR (carpool.driver_id = :userId 
+                     AND (carpool.status = 'cancelled' OR carpool.status = 'ended'))
+                  )
+            GROUP BY carpool.id, u.id
+            ORDER BY carpool.date ASC ";
+
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+
+            $statement->execute();
+
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database error in getCarpoolsCompleted() : " . $e->getMessage());
+            throw new Exception("Impossible d'obtenir les covoiturages terminés");
+        }
+    }
+
 
     /**
      * Update the carpool status
