@@ -2,6 +2,7 @@
 
 namespace App\User\Controller;
 
+use App\Carpool\Service\CarpoolService;
 use Exception;
 
 use App\Controller\BaseController;
@@ -10,7 +11,11 @@ use App\Routing\Router;
 use App\User\Repository\UserRepository;
 use App\Car\Repository\CarRepository;
 use App\Driver\Repository\DriverRepository;
+use App\Carpool\Repository\CarpoolRepository;
+use App\Reservation\Repository\ReservationRepository;
+
 use App\User\Service\UserService;
+use App\Driver\Service\DriverService;
 
 class UserController extends BaseController
 {
@@ -137,5 +142,37 @@ class UserController extends BaseController
 
         header('Location: ' . BASE_URL . '/mon-profil');
         exit;
+    }
+
+    public function listCarpools()
+    {
+        $userId = $_SESSION['user_id'];
+
+        $car = new CarRepository();
+        $cars = $car->findAllCars($userId);
+
+        if ($this->repo->isDriver($userId) && $cars !== []) {
+            $carpoolButton = '<a class="btn action-btn" style="padding: 8px; text-align:right;"
+                href="<?= BASE_URL ?>/controllers/create_carpool.php">Proposer un covoiturage</a>'; // @todo remplacer lien create a carpool
+        }
+
+        $userRepo = new UserRepository();
+        $driverService = new DriverService(new DriverRepository($userRepo));
+        $carpoolRepo = new CarpoolRepository();
+        $carpoolSer = new CarpoolService(
+            $carpoolRepo,
+            $driverService,
+            new ReservationRepository(),
+            new CarRepository(),
+            new UserRepository(),
+            $this->router
+        );
+
+        $carpoolListToValidate = $carpoolSer->listCarpoolToValidate($userId);
+
+        return $this->render('pages/user_space/carpools.php', 'Mon espace', [
+            'carpoolButton' => $carpoolButton ?? null,
+            'carpoolListToValidate' => $carpoolListToValidate
+        ]);
     }
 }

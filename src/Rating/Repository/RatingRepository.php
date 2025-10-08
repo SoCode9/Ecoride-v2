@@ -10,7 +10,34 @@ use Exception;
 use App\Rating\Entity\Rating;
 
 class RatingRepository
+
 {
+    /**
+     * Saves a new rating from a user to a driver into the database
+     * @param string $userId The ID of the user giving the rating
+     * @param string $driverId The ID of the driver receiving the rating
+     * @param float $newRating The rating value (e.g. 4.5)
+     * @param string|null $newComment Optional comment left by the user
+     * @throws \Exception If a database error occurs
+     * @return bool True on success, false on failure
+     */
+    public function new(string $userId, string $driverId, float $newRating, ?string $newComment = null): bool
+    {
+        try {
+            $sql = 'INSERT INTO ratings (user_id, driver_id, rating, description) VALUES (:userId, :driverId, :rating, :comment)';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+            $statement->bindParam(':driverId', $driverId, PDO::PARAM_STR);
+            $statement->bindValue(':rating', $newRating);
+            $statement->bindParam(':comment', $newComment, PDO::PARAM_STR);
+            return $statement->execute();
+        } catch (PDOException $e) {
+            error_log("RatingRepository - Database error in new() : " . $e->getMessage());
+            throw new Exception("Une erreur est survenue lors de l'enregistrement de la note");
+        }
+    }
+
     public function findByDriverId(int $id): ?Rating
     {
         try {
@@ -56,7 +83,6 @@ class RatingRepository
             $statement->execute();
             $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
             if (!$rows) return [];
-            //var_dump($rows);
             $ratings = [];
             foreach ($rows as $rating) {
                 $ratings[] = new Rating(

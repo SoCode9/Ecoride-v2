@@ -47,7 +47,7 @@ class DriverRepository
         $u = $this->userRepo->findById($id);
         $driver = $this->findById($u->getId());
         $otherPref = $this->findCustomPreferences($id);
-        //var_dump($otherPref);
+
         return new Driver(
             $driver['food'] ?? null,
             $driver['music'] ?? null,

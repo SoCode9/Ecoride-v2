@@ -13,6 +13,7 @@ use App\Dashboard\DashboardController;
 use App\User\Controller\UserController;
 use App\Car\Controller\CarController;
 use App\Driver\Controller\DriverController;
+
 use Symfony\Component\Dotenv\Dotenv;
 use App\Routing\Router;
 use App\User\Entity\User;
@@ -39,30 +40,29 @@ define('TEMPLATE_PATH', __DIR__ . '/../templates');
 define('PHOTOS_URL', BASE_URL . '/assets/photos'); // URL publique
 define('PHOTOS_DIR', __DIR__   . '/assets/photos'); // chemin disque (public/assets/photos)
 
-$router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']); //URI : tout ce qui est derrière le nom de domaine
+$router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']); 
 
+// main pages
 $router->register(['GET'], '/', DashboardController::class, 'index');
 $router->register(['GET'], '/mon-profil', UserController::class, 'profile');
-$router->register(['POST'], '/mon-profil/update', UserController::class, 'editProfile');
-$router->register(['POST'], '/mon-profil/photo', UserController::class, 'editPhoto');
 $router->register(['GET'], '/mes-covoiturages', UserController::class, 'listCarpools');
 $router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'list');
-$router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
-$router->register(['POST'], '/reservation/check', ReservationController::class, 'checkParticipation');
-$router->register(['POST'], '/reservation/update', ReservationController::class, 'updateParticipation');
+// userspace - action
+$router->register(['POST'], '/mon-profil/update', UserController::class, 'editProfile');
+$router->register(['POST'], '/mon-profil/photo', UserController::class, 'editPhoto');
 $router->register(['POST'], '/car/add', CarController::class, 'new');
 $router->register(['GET'], '/car/list', CarController::class, 'list');
 $router->register(['POST'], '/car/delete', CarController::class, 'delete');
 $router->register(['POST'], '/preference/add', DriverController::class, 'newOtherPreference');
 $router->register(['GET'], '/preference/list', DriverController::class, 'listOtherPreferences');
 $router->register(['POST'], '/preference/delete', DriverController::class, 'deleteOtherPreference');
+$router->register(['POST'], '/carpool/approved', ReservationController::class, 'carpoolApproved');
+$router->register(['POST'], '/carpool/rejected', ReservationController::class, 'carpoolRejected');
 
-// exemple d'une route pour créer un user
-// $router->register(['GET', 'POST'], '/user/create', UserController::class, 'create');
+// carpools - action
+$router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
+$router->register(['POST'], '/reservation/check', ReservationController::class, 'checkParticipation');
+$router->register(['POST'], '/reservation/update', ReservationController::class, 'updateParticipation');
 
-/* echo '<pre>';
-print_r($router->getRoutes());
-echo '</pre>'; */
-
-echo $router->run(); //va gérer l'affichage derrière
+echo $router->run();

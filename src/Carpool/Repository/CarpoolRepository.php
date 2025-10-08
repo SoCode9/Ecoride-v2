@@ -272,4 +272,77 @@ class CarpoolRepository
             throw new Exception("Une erreur est survenue");
         }
     }
+
+
+
+
+    /**
+     * list of carpools "in validation" to be validated by the user (passenger or driver)
+     * @param string $userId
+     * @return array
+     */
+    public function getCarpoolsToValidate(string $userId): array
+    {
+        try {
+            $sql = "SELECT carpool.*, users.pseudo, users.photo, AVG(ratings.rating) AS rating, 
+                MAX(reservations.is_validated) AS is_validated,
+                MAX(reservations.id) AS reservationId
+            FROM carpool
+            LEFT JOIN reservations ON reservations.carpool_id = carpool.id AND reservations.user_id = :user1
+            JOIN driver ON driver.user_id = carpool.driver_id
+            JOIN users ON users.id = carpool.driver_id
+            LEFT JOIN ratings ON ratings.driver_id = carpool.driver_id
+            WHERE carpool.status = 'in validation' 
+              AND (
+                    (reservations.user_id = :user2 AND reservations.is_validated = 0)
+                    OR (carpool.driver_id = :user3)
+                  )
+            GROUP BY carpool.id, users.id
+            ORDER BY carpool.date ASC ";
+
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(":user1", $userId, PDO::PARAM_STR);
+            $statement->bindParam(":user2", $userId, PDO::PARAM_STR);
+            $statement->bindParam(":user3", $userId, PDO::PARAM_STR);
+            $statement->execute();
+
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database error in getCarpoolsToValidate() : " . $e->getMessage());
+            throw new Exception("Impossible d'obtenir les covoiturages à valider");
+        }
+    }
+
+    /**
+     * Update the carpool status
+     * @param string $newStatus the new statut given
+     * @param string $carpoolId the carpool id for which the status is being changed
+     * @throws \Exception If a database error occurs
+     * @return void
+     */
+    public function setCarpoolStatus(string $newStatus, string $carpoolId): void
+    {
+        try {
+            $sql = "UPDATE carpool SET status = :newStatus ";
+            if ($newStatus === 'ended') {
+                $sql .= ", validated_at = :currentDate";
+            }
+            $sql .= " WHERE id = :carpoolId";
+
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
+            $statement->bindParam(':carpoolId', $carpoolId, PDO::PARAM_STR);
+            if ($newStatus === 'ended') {
+                $today = date('Y-m-d H:i:s');
+                $statement->bindParam(':currentDate', $today, PDO::PARAM_STR);
+            }
+
+            $statement->execute();
+        } catch (Exception $e) {
+            error_log("CarpoolRepository - Database error in setCarpoolStatus(): " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
+    }
 }

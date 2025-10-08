@@ -58,28 +58,34 @@ class UserRepository
     }
 
     /**
-     * Update the user's credit in DB
-     * @param string $userId connected user id
-     * @param int $newCredit default = 20 credits
-     * @throws \Exception
+     * Adds credits to the specified user.
+     *
+     * @param string $userId The ID of the user to credit
+     * @param int $creditToSend The amount of credit to add
+     * @throws Exception If the update fails or no user is affected
      * @return void
      */
-    public function setCredit(string $userId, int $newCredit): void
+    public function setCredit(string $userId, int $creditToSend): void
     {
-        if (empty($userId)) {
-            throw new Exception("Impossible de mettre à jour les crédits sans identifiant utilisateur");
-        }
-
         try {
-            $sql = 'UPDATE users SET credit = :newCredit WHERE id = :idUser';
+            $sql = 'UPDATE users SET credit = credit + :creditToSend WHERE id = :userId';
             $pdo = DbConnection::getPdo();
             $statement = $pdo->prepare($sql);
-            $statement->bindParam('newCredit', $newCredit, PDO::PARAM_INT);
-            $statement->bindParam('idUser', $userId, PDO::PARAM_STR);
-            $statement->execute();
+            $statement->bindParam(':creditToSend', $creditToSend, PDO::PARAM_INT);
+            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+
+            if (!$statement->execute()) {
+                error_log("setCreditToUser() failed to execute query for user ID $userId");
+                throw new Exception("Échec de la mise à jour des crédits de l'utilisateur");
+            }
+
+            if ($statement->rowCount() === 0) {
+                error_log("setCreditToUser() affected 0 rows for user ID $userId");
+                throw new Exception("Aucun utilisateur trouvé avec l'ID fourni");
+            }
         } catch (PDOException $e) {
-            error_log("Database error in setCredit() (idUser: {$userId}) : " . $e->getMessage());
-            throw new Exception("Impossible de mettre à jour les crédits");
+            error_log("Database error in setCreditToUser() (user ID: $userId): " . $e->getMessage());
+            throw new Exception("Erreur lors de la mise à jour des crédits");
         }
     }
 
