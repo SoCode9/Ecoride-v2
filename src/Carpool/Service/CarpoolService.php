@@ -178,4 +178,23 @@ final class CarpoolService
             $this->router
         );
     }
+
+    /**
+     * Returns carpools completed with the correct formatting
+     * @param string $userId The UUID user
+     * @return array 
+     */
+    public function listCarpoolCompleted(string $userId): array
+    {
+        $rows = $this->repo->getCarpoolsCompleted($userId);
+
+        return CarpoolDisplay::many(
+            $rows,
+            $userId,
+            $this->driverService,
+            $this,
+            $this->userRepo,
+            $this->router
+        );
+    }
 }

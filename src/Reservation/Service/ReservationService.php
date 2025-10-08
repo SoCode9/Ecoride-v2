@@ -253,7 +253,7 @@ final class ReservationService
 
             $passengers = $this->repo->getPassengersOfTheCarpool($carpoolId);
 
-            $carpoolDate = DateFormatter::monthYear($carpool->getDate());
+            $carpoolDate = DateFormatter::long($carpool->getDate());
             $carpoolDeparture = $carpool->getDepartureCity();
             $carpoolArrival = $carpool->getArrivalCity();
             $message = "Le covoiturage du $carpoolDate de $carpoolDeparture à $carpoolArrival a été annulé par le chauffeur.";

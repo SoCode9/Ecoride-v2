@@ -170,11 +170,13 @@ class UserController extends BaseController
 
         $carpoolListToValidate = $carpoolSer->listCarpoolToValidate($userId);
         $carpoolListNotStarted = $carpoolSer->listCarpoolNotStarted($userId);
+        $carpoolListCompleted = $carpoolSer->listCarpoolCompleted($userId);
 
         return $this->render('pages/user_space/carpools.php', 'Mon espace', [
             'carpoolButton' => $carpoolButton ?? null,
             'carpoolListToValidate' => $carpoolListToValidate,
-            'carpoolListNotStarted' => $carpoolListNotStarted
+            'carpoolListNotStarted' => $carpoolListNotStarted,
+            'carpoolListCompleted' => $carpoolListCompleted
         ]);
     }
 }

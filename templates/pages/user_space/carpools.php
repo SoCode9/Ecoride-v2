@@ -32,7 +32,11 @@
 
     <!--carpool finished and validated-->
     <section id="completed" class="tab-content">
+        <h3 style="color: black ;">Covoiturages terminés</h3>
+
         <?php include TEMPLATE_PATH . '/components/user_space/carpools_completed.php'; ?>
 
     </section>
 </div>
+
+<script src="<?= ASSETS_PATH ?>js/user_space.js" defer></script>
