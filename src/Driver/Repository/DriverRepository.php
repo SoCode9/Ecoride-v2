@@ -14,7 +14,9 @@ use App\User\Repository\UserRepository;
 class DriverRepository
 {
 
-    public function __construct(private UserRepository $userRepo) {}
+    public function __construct(private UserRepository $userRepo)
+    {
+    }
 
     private function findById(string $id): array|null
     {
@@ -25,7 +27,8 @@ class DriverRepository
             $statement->bindParam(':id', $id, PDO::PARAM_STR);
             $statement->execute();
             $row = $statement->fetch(PDO::FETCH_ASSOC);
-            if (!$row) return null;
+            if (!$row)
+                return null;
 
             return array(
                 "user_id" => $row['user_id'] ?? null,
@@ -85,13 +88,70 @@ class DriverRepository
                 'id_user' => $userId
             ])->toArray();
 
-            return array_map(fn($doc) => (array)$doc, $result);
+            return array_map(fn($doc) => (array) $doc, $result);
         } catch (Exception $e) {
             error_log("Database error in findCustomPreferences() (user ID: {$userId}) : " . $e->getMessage());
             return [];
         }
     }
 
+
+    /**
+     * Add a custom preference for the driver
+     * This method inserts a new custom preference into the MongoDB collection.
+     * @param string $customPrefToAdd The new preference to insert
+     * @throws \Exception If the user ID is not set or a database error occurs
+     * @return void
+     */
+    public function newCustomPreference(string $userId, string $customPrefToAdd): void
+    {
+        if (empty($userId)) {
+            error_log("newCustomPreference() failed: user ID is empty.");
+            throw new Exception("Impossible d'ajouter une préférence sans identifiant utilisateur");
+        }
+
+        try {
+            $mongo = MongoConnection::getMongoDb();
+            $preferenceCollection = $mongo->preferences;
+            $preferenceCollection->insertOne([
+                'id_user' => $userId,
+                'custom_preference' => $customPrefToAdd,
+            ]);
+
+            return;
+        } catch (Exception $e) {
+            error_log("Database error in addCustomPreference() (user ID: {$userId}) : " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
+    }
+
+    /**
+     * Deletes a custom preference for the driver
+     * This method removes a specific custom preference from the MongoDB collection.
+     * @param string $customPrefToDelete The preference to delete
+     * @throws \Exception If the user ID is not set or a database error occurs
+     * @return void
+     */
+    public function deleteCustomPreference(string $userId, string $customPrefToDelete): void
+    {
+        if (empty($userId)) {
+            error_log("deleteCustomPreference() failed: user ID is empty.");
+            throw new Exception("Impossible de supprimer une préférence sans identifiant utilisateur");
+        }
+
+        try {
+            $mongo = MongoConnection::getMongoDb();
+            $preferenceCollection = $mongo->preferences;
+
+            $preferenceCollection->deleteOne([
+                'id_user' => $userId,
+                'custom_preference' => $customPrefToDelete,
+            ]);
+        } catch (Exception $e) {
+            error_log("Database error in deleteCustomPreference() (user ID: {$userId}) : " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
+    }
 
     /**
      * Loads all validated ratings for the current driver, including the rater's pseudo and photo.
