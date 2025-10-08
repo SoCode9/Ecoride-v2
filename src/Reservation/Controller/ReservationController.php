@@ -15,7 +15,7 @@ use App\Rating\Repository\RatingRepository;
 use App\Reservation\Service\ReservationService;
 
 use App\Utils\Formatting\DateFormatter;
-
+use App\Utils\MailService;
 class ReservationController extends BaseController
 {
     private ReservationService $service;
@@ -28,7 +28,7 @@ class ReservationController extends BaseController
         $carRepo = new CarRepository();
         $this->repo = new ReservationRepository();
 
-        $this->service = new ReservationService($this->repo, $userRepo, $carpoolRepo, $carRepo);
+        $this->service = new ReservationService($this->repo, $userRepo, $carpoolRepo, $carRepo, new MailService());
     }
 
     public function checkParticipation()

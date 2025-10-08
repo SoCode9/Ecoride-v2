@@ -20,7 +20,9 @@ use App\User\Entity\User;
 
 
 //données de test de session
-$connectedId = $_SESSION['user_id'] = '947b27ba-8a5d-11f0-be17-50ebf69c727b';
+//$connectedId = $_SESSION['user_id'] = '947b27ba-8a5d-11f0-be17-50ebf69c727b'; //test4
+$connectedId = $_SESSION['user_id'] = 'ad1c3e3f-26c9-11f0-9b59-5254007e02a0'; //test1
+
 /* $_SESSION = [];           // vide le tableau
 session_destroy();        // supprime le fichier de session
 setcookie('PHPSESSID', '', time() - 3600, '/'); // (optionnel) supprime le cookie */

@@ -14,6 +14,7 @@ use App\Car\Repository\CarRepository;
 use App\Routing\Router;
 use App\Utils\Formatting\DateFormatter;
 use App\Utils\Formatting\OtherFormatter;
+use App\Utils\MailService;
 
 final class ReservationService
 {
@@ -21,7 +22,8 @@ final class ReservationService
         private ReservationRepository $repo,
         private UserRepository $userRepo,
         private CarpoolRepository $carpoolRepo,
-        private CarRepository $carRepo
+        private CarRepository $carRepo,
+        private MailService $mailer,
     ) {}
 
 
@@ -223,7 +225,6 @@ final class ReservationService
 
             $creditSpent = (int)$this->repo->getCreditSpent($reservationId);
 
-            // recommandé: méthode incrémentale
             $this->userRepo->setCredit($userId, $creditSpent);
 
             $this->repo->delete($userId, $carpoolId);
@@ -269,13 +270,13 @@ final class ReservationService
                 $this->userRepo->setCredit($passengerId, $creditSpent);
                 $this->repo->delete($passengerId, $carpoolId);
 
-                // envoi mail optionnel (non-bloquant) — à réactiver si besoin
-                // try {
-                //     $passenger = $this->userRepo->findById($passengerId);
-                //     $this->mailer->send($passenger->getMail(), 'Annulation du covoiturage', nl2br($message), 'no-reply@ecoride.fr', 'EcoRide');
-                // } catch (\Throwable $mailErr) {
-                //     error_log("Mail annulation non envoyé à $passengerId : " . $mailErr->getMessage());
-                // }
+
+                try {
+                    $passenger = $this->userRepo->findById($passengerId);
+                    $this->mailer->send($passenger->getMail(), 'Annulation du covoiturage', nl2br($message), 'no-reply@ecoride.fr', 'EcoRide');
+                } catch (\Throwable $mailErr) {
+                    error_log("Mail annulation non envoyé à $passengerId : " . $mailErr->getMessage());
+                }
             }
 
             $this->carpoolRepo->setCarpoolStatus('cancelled', $carpoolId);
