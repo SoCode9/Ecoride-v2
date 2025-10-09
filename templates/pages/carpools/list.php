@@ -8,7 +8,7 @@
             <img class="img-width-20" src="<?= ASSETS_PATH ?>/icons/Localisation(2).png" alt="lieu de départ">
             <input type="text" id="departure-city-search" name="departure" class="font-size-small text-breakable  "
                 placeholder="Ville de départ"
-                value="<?= htmlspecialchars($filters['departure']) ?>"
+                value="<?= htmlspecialchars($filters['departure'] ?? '')  ?>"
                 required>
             <div id="departure-suggestions" class="suggestions-list"></div>
         </div>
@@ -17,7 +17,7 @@
             <img class="img-width-20" src="<?= ASSETS_PATH ?>/icons/Localisation(2).png" alt="">
             <input type="text" id="arrival-city-search" name="arrival" class="font-size-small text-breakable  "
                 placeholder="Ville d'arrivée"
-                value="<?= htmlspecialchars($filters['arrival']) ?>"
+                value="<?= htmlspecialchars($filters['arrival'] ?? '') ?>"
                 required>
             <div id="arrival-suggestions" class="suggestions-list"></div>
         </div>

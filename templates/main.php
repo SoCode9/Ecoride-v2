@@ -12,41 +12,100 @@
 
 <body>
     <header>
+
+        <?php
+        $isLoggedIn  = !empty($_SESSION['user_id'] ?? null);
+        $roleId      = $_SESSION['role_user'] ?? null;
+        ?>
+
         <div class="header">
             <a href="<?= ASSETS_PATH ?>/index.php">
                 <img src="<?= ASSETS_PATH ?>icons/Logo.png" alt="Logo" style=" width: 100px;">
             </a>
 
             <!--Navigation display for big screens-->
+
             <nav>
                 <ul class="navigation">
-                    <li><a href="<?= BASE_URL ?>/" id='home-page' class="<?= $current === '/' ? 'active' : '' ?>">Accueil</a></li>
-                    <li><a href="<?= BASE_URL ?>/covoiturages" id='carpool-button' class="<?= $current === '/covoiturages' ? 'active' : '' ?>">Covoiturages</a></li>
-                    <li><a href="" id='contact-button' class=" <?= $current === '/contact' ? 'active' : '' ?>">Contact</a></li>
-                    <li><a href="<?= BASE_URL ?>/mon-profil" id='user-space' class="btn border-white <?= ($current === '/mon-profil' || $current === '/mes-covoiturages') ? 'activeBtn' : '' ?>">Espace Utilisateur</a></li>
-                    <li><a href="" id='login-button' class="<?= $current === '/espace-utilisateur' ? 'activeBtn' : '' ?>">Connexion</a></li>
+                    <li><a href="<?= BASE_URL ?>/" class="<?= $current === '/' ? 'active' : '' ?>">Accueil</a></li>
+                    <li><a href="<?= BASE_URL ?>/covoiturages" class="<?= $current === '/covoiturages' ? 'active' : '' ?>">Covoiturages</a></li>
+                    <li><a href="<?= BASE_URL ?>/contact" class="<?= $current === '/contact' ? 'active' : '' ?>">Contact</a></li>
+
+                    <?php if (in_array((int)$roleId, [1, 2, 3], true)): ?>
+                        <li><a href="<?= BASE_URL ?>/mon-profil"
+                                class="btn border-white <?= ($current === '/mon-profil' || $current === '/mes-covoiturages') ? 'activeBtn' : '' ?>">
+                                Mon espace
+                            </a></li>
+                    <?php elseif ((int)$roleId === 4): ?>
+                        <li><a href="<?= BASE_URL ?>/espace-employe"
+                                class="btn border-white <?= $current === '/espace-employe' ? 'activeBtn' : '' ?>">
+                                Espace employé
+                            </a></li>
+                    <?php elseif ((int)$roleId === 5): ?>
+                        <li><a href="<?= BASE_URL ?>/admin"
+                                class="btn border-white <?= $current === '/admin' ? 'activeBtn' : '' ?>">
+                                Espace admin
+                            </a></li>
+                    <?php endif; ?>
+
+                    <?php if ($isLoggedIn): ?>
+                        <li>
+                            <form method="POST" action="<?= BASE_URL ?>/deconnexion" style="display:inline;">
+                                <button type="submit"><img src='<?= ASSETS_PATH ?>/icons/Deconnexion.png' alt='logout' class='logout-btn'></button>
+                            </form>
+                        </li>
+                    <?php else: ?>
+                        <li><a href="<?= BASE_URL ?>/connection"
+                                class="btn <?= ($current === '/connection') || ($current === '/deconnexion') ? 'activeBtn' : '' ?>">
+                                Connexion
+                            </a></li>
+                    <?php endif; ?>
                 </ul>
             </nav>
 
-            <!--Navigation display for small screens-->
-            <div id="my-sidenav" class="sidenav" style="display: none;">
-                <button id="close-btn" href="#" class="close">×</button>
+            <!-- Navigation mobile -->
+            <div id="my-sidenav" class="sidenav" style="display:none;">
+                <button id="close-btn" class="close">×</button>
                 <ul>
-                    <li><a href="<?= BASE_URL ?>/" id='home-page' class="<?= $current === '/' ? 'active' : '' ?>">Accueil</a></li>
-                    <li><a href="<?= BASE_URL ?>/covoiturages" id='carpool-button' class="<?= $current === '/covoiturages' ? 'active' : '' ?>">Covoiturages</a></li>
-                    <li><a href="" id='contact-button' class="<?= $current === '/contact' ? 'active' : '' ?>">Contact</a></li>
-                    <li><a href="<?= BASE_URL ?>/mon-profil" id='user-space' class="btn border-white <?= $current === '/mon-profil' ? 'activeBtn' : '' ?>">Espace Utilisateur</a></li>
-                    <li><a href="" id='login-button' class="<?= $current === '/espace-utilisateur' ? 'activeBtn' : '' ?>">Connexion</a></li>
+                    <li><a href="<?= BASE_URL ?>/" class="<?= $current === '/' ? 'active' : '' ?>">Accueil</a></li>
+                    <li><a href="<?= BASE_URL ?>/covoiturages" class="<?= $current === '/covoiturages' ? 'active' : '' ?>">Covoiturages</a></li>
+                    <li><a href="<?= BASE_URL ?>/contact" class="<?= $current === '/contact' ? 'active' : '' ?>">Contact</a></li>
+
+                    <?php if (in_array((int)$roleId, [1, 2, 3], true)): ?>
+                        <li><a href="<?= BASE_URL ?>/mon-profil"
+                                class="btn border-white <?= ($current === '/mon-profil' || $current === '/mes-covoiturages') ? 'activeBtn' : '' ?>">
+                                Mon espace
+                            </a></li>
+                    <?php elseif ((int)$roleId === 4): ?>
+                        <li><a href="<?= BASE_URL ?>/espace-employe"
+                                class="btn border-white <?= $current === '/espace-employe' ? 'activeBtn' : '' ?>">
+                                Espace employé
+                            </a></li>
+                    <?php elseif ((int)$roleId === 5): ?>
+                        <li><a href="<?= BASE_URL ?>/admin"
+                                class="btn border-white <?= $current === '/admin' ? 'activeBtn' : '' ?>">
+                                Espace admin
+                            </a></li>
+                    <?php endif; ?>
+
+                    <?php if ($isLoggedIn): ?>
+                        <li>
+                            <form method="POST" action="<?= BASE_URL ?>/deconnexion" style="display:inline;">
+                                <button type="submit" class="btn logout-btn"><img src='<?= ASSETS_PATH ?>/icons/Deconnexion.png' alt='logout' class='logout-btn'></button>
+                            </form>
+                        </li>
+                    <?php else: ?>
+                        <li><a href="<?= BASE_URL ?>/connection"
+                                class="btn <?= ($current === '/connection') || ($current === '/deconnexion') ? 'activeBtn' : '' ?>">
+                                Connexion
+                            </a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
-            <div class="current-tab hidden" id="current-tab-mobile"></div>
 
-            <button href="#" id="open-btn" style="display: none;">
-                <span class="burger-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </span>
+            <div class="current-tab hidden" id="current-tab-mobile"></div>
+            <button id="open-btn" style="display:none;">
+                <span class="burger-icon"><span></span><span></span><span></span></span>
             </button>
         </div>
     </header>
@@ -96,11 +155,11 @@
         const message = document.querySelector(".message");
         if (message) {
             setTimeout(() => {
-                message.style.opacity = "0"; 
+                message.style.opacity = "0";
                 setTimeout(() => {
-                    message.style.display = "none"; 
+                    message.style.display = "none";
                 }, 500);
-            }, 4000); 
+            }, 4000);
         }
     });
 </script>
