@@ -8,6 +8,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Carpool\Controller\CarpoolController;
+use App\Login\Controller\LoginController;
 use App\Reservation\Controller\ReservationController;
 use App\Dashboard\DashboardController;
 use App\User\Controller\UserController;
@@ -16,16 +17,6 @@ use App\Driver\Controller\DriverController;
 
 use Symfony\Component\Dotenv\Dotenv;
 use App\Routing\Router;
-use App\User\Entity\User;
-
-
-//données de test de session
-$connectedId = $_SESSION['user_id'] = '947b27ba-8a5d-11f0-be17-50ebf69c727b'; //test4
-//$connectedId = $_SESSION['user_id'] = 'ad1c3e3f-26c9-11f0-9b59-5254007e02a0'; //test1
-
-/* $_SESSION = [];           // vide le tableau
-session_destroy();        // supprime le fichier de session
-setcookie('PHPSESSID', '', time() - 3600, '/'); // (optionnel) supprime le cookie */
 
 //charge configuration
 $dotenv = new Dotenv();
@@ -42,14 +33,19 @@ define('TEMPLATE_PATH', __DIR__ . '/../templates');
 define('PHOTOS_URL', BASE_URL . '/assets/photos'); // URL publique
 define('PHOTOS_DIR', __DIR__   . '/assets/photos'); // chemin disque (public/assets/photos)
 
-$router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']); 
+$router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
 // main pages
 $router->register(['GET'], '/', DashboardController::class, 'index');
+$router->register(['GET', 'POST'], '/connection', LoginController::class, 'loginPage');
 $router->register(['GET'], '/mon-profil', UserController::class, 'profile');
 $router->register(['GET'], '/mes-covoiturages', UserController::class, 'listCarpools');
 $router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'list');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
+// login
+$router->register(['POST'], '/login', LoginController::class, 'login');
+$router->register(['POST'], '/newAccount', LoginController::class, 'newAccount');
+$router->register(['POST'], '/deconnexion', LoginController::class, 'logout');
 // userspace - action
 $router->register(['POST'], '/mon-profil/update', UserController::class, 'editProfile');
 $router->register(['POST'], '/mon-profil/photo', UserController::class, 'editPhoto');
@@ -59,7 +55,6 @@ $router->register(['POST'], '/car/delete', CarController::class, 'delete');
 $router->register(['POST'], '/preference/add', DriverController::class, 'newOtherPreference');
 $router->register(['GET'], '/preference/list', DriverController::class, 'listOtherPreferences');
 $router->register(['POST'], '/preference/delete', DriverController::class, 'deleteOtherPreference');
-
 // carpools - action
 $router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 $router->register(['POST'], '/reservation/check', ReservationController::class, 'checkParticipation');
