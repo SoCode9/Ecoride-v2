@@ -43,6 +43,42 @@ class CarpoolRepository
         }
     }
 
+    /**
+     * Creates a new carpool in the database
+     * @param string $driverId the id driver who add a carpool
+     * @param string $travelDate the date of the carpool
+     * @param string $travelDepartureCity the departure city of the carpool
+     * @param string $travelArrivalCity the arrival city of the carpool
+     * @param string $travelDepartureTime the departure time of the carpool
+     * @param string $travelArrivalTime the arrival time of the carpool
+     * @param int $travelPrice the price for each passenger of the carpool
+     * @param int $carId the is car used for the carpool
+     * @param string $travelComment the optionnal description of the carpool
+     * @throws \Exception If a database error occurs
+     * @return bool
+     */
+    public function createNewCarpool(string $driverId, string $travelDate, string $travelDepartureCity, string $travelArrivalCity, string $travelDepartureTime, string $travelArrivalTime, int $travelPrice, int $carId, ?string $travelComment = null): void
+    {
+        try {
+            $sql = "INSERT INTO carpool (id, driver_id, date, departure_city, arrival_city, departure_time, arrival_time, price, car_id, description) VALUES (UUID(), :driverId,:travel_date, :travel_departure_city,:travel_arrival_city,:travel_departure_time,:travel_arrival_time,:travel_price,:car_id,:travelComment)";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':driverId', $driverId, PDO::PARAM_STR);
+            $statement->bindParam(':travel_date', $travelDate, PDO::PARAM_STR);
+            $statement->bindParam(':travel_departure_city', $travelDepartureCity, PDO::PARAM_STR);
+            $statement->bindParam(':travel_arrival_city', $travelArrivalCity, PDO::PARAM_STR);
+            $statement->bindParam(':travel_departure_time', $travelDepartureTime, PDO::PARAM_STR);
+            $statement->bindParam(':travel_arrival_time', $travelArrivalTime, PDO::PARAM_STR);
+            $statement->bindParam(':travel_price', $travelPrice, PDO::PARAM_INT);
+            $statement->bindParam(':car_id', $carId, PDO::PARAM_INT);
+            $statement->bindParam(':travelComment', $travelComment, PDO::PARAM_STR);
+            $statement->execute();
+        } catch (PDOException $e) {
+            error_log("Database error in createNewCarpool(): " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
+    }
+
     // LISTE: des lignes “prêtes pour mapForList” (joins inclus)
     /** @return array[] */
     public function searchForList(

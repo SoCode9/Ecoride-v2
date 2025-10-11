@@ -154,7 +154,7 @@ class UserController extends BaseController
 
         if ($this->repo->isDriver($userId) && $cars !== []) {
             $carpoolButton = '<a class="btn action-btn" style="padding: 8px; text-align:right;"
-                href="<?= BASE_URL ?>/controllers/create_carpool.php">Proposer un covoiturage</a>'; // @todo remplacer lien create a carpool
+                href=' . BASE_URL . '/mes-covoiturages/nouveau>Proposer un covoiturage</a>';
         }
 
         $userRepo = new UserRepository();
