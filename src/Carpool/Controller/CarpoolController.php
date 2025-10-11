@@ -4,6 +4,7 @@ namespace App\Carpool\Controller;
 
 use App\Controller\BaseController;
 use App\Routing\Router;
+use Exception;
 
 use App\Carpool\Repository\CarpoolRepository;
 use App\Driver\Repository\DriverRepository;
@@ -134,6 +135,61 @@ class CarpoolController extends BaseController
         ]);
     }
 
+    public function newCarpool()
+    {
+        $userId  = $_SESSION['user_id'] ?? null;
+
+        $car = new CarRepository();
+        $cars = $car->findAllCars($userId);
+
+        $brands = $car->findAllBrands();
+
+        return $this->render('pages/carpools/create.php', 'Nouveau covoiturage', [
+            'cars' => $cars,
+            'brands' => $brands
+        ]);
+    }
+
+    public function new()
+    {
+
+        $driverId = $_SESSION['user_id'];
+
+        // checks for completion errors 
+        $this->service->checkNewCarpool();
+
+        // if the checks are correct
+        try {
+            $travelDate = $_POST["travel-date"];
+            $travelDepartureCity = $_POST["departure-city-search"];
+            $travelArrivalCity = $_POST["arrival-city-search"];
+            $travelDepartureTime = $_POST["travel-departure-time"];
+            $travelArrivalTime = $_POST["travel-arrival-time"];
+            $travelPrice = $_POST["travel-price"];
+            $carSelectedId = $_POST["carSelected"];
+            $travelComment = $_POST["comment"];
+
+            $this->repo->createNewCarpool(
+                $driverId,
+                $travelDate,
+                $travelDepartureCity,
+                $travelArrivalCity,
+                $travelDepartureTime,
+                $travelArrivalTime,
+                $travelPrice,
+                $carSelectedId,
+                $travelComment
+            );
+
+            $_SESSION['success_message'] = 'Le voyage a bien été publié.';
+        } catch (Exception $e) {
+            error_log("CarpoolController - Error in new() (user ID: " . ($_SESSION['user_id'] ?? 'inconnu') . ") : " . $e->getMessage());
+            $_SESSION['error_message'] = "Une erreur est survenue lors de la création du covoiturage.";
+        }
+
+        header('Location: ' . BASE_URL . '/mes-covoiturages');
+        exit;
+    }
 
     private function mergePostIntoState(array $state): array
     {

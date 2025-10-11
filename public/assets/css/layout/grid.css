@@ -55,6 +55,21 @@
   align-items: center;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.full-width-grid {
+  grid-column: 1 / -1;
+}
+
 /*SIZES*/
 
 .img-width-20 {

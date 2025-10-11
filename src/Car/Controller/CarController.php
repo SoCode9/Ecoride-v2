@@ -86,4 +86,15 @@ class CarController extends BaseController
             exit;
         }
     }
+
+    public function select()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+
+        $cars = $this->repo->findAllCars($userId);
+        
+        return $this->renderPartial('components/car/select.php', [
+            'cars' => $cars
+        ]);
+    }
 }

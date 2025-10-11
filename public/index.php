@@ -41,6 +41,7 @@ $router->register(['GET', 'POST'], '/connection', LoginController::class, 'login
 $router->register(['GET'], '/mon-profil', UserController::class, 'profile');
 $router->register(['GET'], '/mes-covoiturages', UserController::class, 'listCarpools');
 $router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'list');
+$router->register(['GET'], '/mes-covoiturages/nouveau', CarpoolController::class, 'newCarpool');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
 // login
 $router->register(['POST'], '/login', LoginController::class, 'login');
@@ -51,10 +52,13 @@ $router->register(['POST'], '/mon-profil/update', UserController::class, 'editPr
 $router->register(['POST'], '/mon-profil/photo', UserController::class, 'editPhoto');
 $router->register(['POST'], '/car/add', CarController::class, 'new');
 $router->register(['GET'], '/car/list', CarController::class, 'list');
+$router->register(['GET'], '/car/select', CarController::class, 'select');
 $router->register(['POST'], '/car/delete', CarController::class, 'delete');
 $router->register(['POST'], '/preference/add', DriverController::class, 'newOtherPreference');
 $router->register(['GET'], '/preference/list', DriverController::class, 'listOtherPreferences');
 $router->register(['POST'], '/preference/delete', DriverController::class, 'deleteOtherPreference');
+$router->register(['POST'], '/carpool/new', CarpoolController::class, 'new');
+
 // carpools - action
 $router->register(['GET'], '/covoiturages/details', CarpoolController::class, 'details');
 $router->register(['POST'], '/reservation/check', ReservationController::class, 'checkParticipation');
