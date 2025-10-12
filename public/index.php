@@ -43,6 +43,8 @@ $router->register(['GET'], '/mes-covoiturages', UserController::class, 'listCarp
 $router->register(['GET', 'POST'], '/covoiturages', CarpoolController::class, 'list');
 $router->register(['GET'], '/mes-covoiturages/nouveau', CarpoolController::class, 'newCarpool');
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
+$router->register(['GET'], '/contact', DashboardController::class, 'contact');
+$router->register(['POST'], '/contact/send', DashboardController::class, 'sendContact');
 // login
 $router->register(['POST'], '/login', LoginController::class, 'login');
 $router->register(['POST'], '/newAccount', LoginController::class, 'newAccount');
