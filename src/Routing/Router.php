@@ -1,24 +1,22 @@
 <?php
-//17.09.2025 _ Live découverte PHP Objet 4/6, 5/6 et 6/6 router
 
 namespace App\Routing;
 
 class Router
 {
     private array $routes = [];
-    private ?string $template = null;
     public function __construct(private string $method, private string $uri) {}
 
     public function register(string|array $method, string $uri, string $controller, string $action)
     {
 
         if (!is_array($method)) {
-            $method = [$method]; //se transforme en tableau
+            $method = [$method]; 
         }
 
         $uri = $this->normalizePath($uri);
 
-        $this->routes[$uri] = [ //la route s'enregistre avec l'uri en clé
+        $this->routes[$uri] = [ // the route is registered with the URI as the key
             'method' => $method,
             'uri' => $uri,
             'controller' => $controller,
@@ -26,13 +24,12 @@ class Router
         ];
     }
 
-
-    /** Construit une URL pour une route donnée + paramètres de query */
+    /** Builds a URL for a given route + query parameters */
     public function generatePath(string $uri, array $params = []): string
     {
         $path = $this->normalizePath($uri);
-        // Construit la query string à partir du tableau de paramètres.
-        // Exemple: ['id' => '42'] -> '?id=42'
+        // Builds the query string from the parameter array.
+        // Ex: ['id' => '42'] -> '?id=42'
         $qs   = $params ? ('?' . http_build_query($params)) : '';
 
         return BASE_URL . $path . $qs;
@@ -42,10 +39,6 @@ class Router
     {
         $path = $this->normalizePath($this->uri);
         $routeInfo = $this->routes[$path];
-
-        /*  echo '<pre>Informations sur la route : <pre>';
-        print_r($routeInfo);
-        echo '</pre>'; */
 
         $controller = $routeInfo['controller'];
         $action = $routeInfo['action'];
@@ -65,19 +58,7 @@ class Router
             throw new \Exception($this->method . ' n\'est pas autorisée pour cette URL');
         }
 
-        //     die($this->getCurrentPage());
-
-        return $controller->$action(); //ici va dans méthode du controller list p.ex
-    }
-
-    public function getRoutes(): array
-    {
-        return $this->routes;
-    }
-
-    public function getTemplate(): string
-    {
-        return $this->template;
+        return $controller->$action(); // go into the controller list method, for example
     }
 
     public function getCurrentPage()
@@ -85,19 +66,19 @@ class Router
         return $this->normalizePath($this->uri);
     }
 
-    /** Normalise un chemin: enlève le base path (/2coursPhp/public), la query string, gère les slashs. */
+    /** Normalizes a path: removes the base path, the query string, handles slashes. */
     private function normalizePath(string $uri): string
     {
-        // 1) garder seulement le path (sans ?query)
+        // 1) keep only the path
         $path = parse_url($uri, PHP_URL_PATH) ?? '/';
 
-        // 2) détecter le "base path" depuis SCRIPT_NAME = /2coursPhp/public/index.php
+        // 2) detect the “base path” from SCRIPT_NAME 
         $scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/'); // => /2coursPhp/public
         if ($scriptDir && $scriptDir !== '/' && str_starts_with($path, $scriptDir)) {
             $path = substr($path, strlen($scriptDir));
         }
 
-        // 3) normaliser les slashs
+        // 3) normalize slashes
         $path = '/' . ltrim($path, '/');
         if ($path !== '/' && str_ends_with($path, '/')) {
             $path = rtrim($path, '/');
