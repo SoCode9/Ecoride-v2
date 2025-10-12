@@ -8,7 +8,12 @@ class DashboardController extends BaseController
 {
     public function index()
     {
-        return $this->render('pages/index.php', 'EcoRide', []);
+        $state = $_SESSION['carpools.search'] ?? [
+            'date' => null,
+            'departure' => null,
+            'arrival' => null
+        ];
+        return $this->render('pages/index.php', 'EcoRide', ['state' => $state]);
     }
 
     public function legalInformations()
