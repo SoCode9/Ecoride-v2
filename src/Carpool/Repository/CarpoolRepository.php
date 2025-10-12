@@ -169,7 +169,7 @@ class CarpoolRepository
                 JOIN driver ON driver.user_id = carpool.driver_id 
                 JOIN cars ON cars.car_id = carpool.car_id  
                 LEFT JOIN ratings ON ratings.driver_id = driver.user_id
-                WHERE (date = :carpool_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) /* AND (status= 'not started') */";
+                WHERE (date = :carpool_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) AND (carpool.status= 'not started')";
 
         if (isset($eco)) {
             $sql .= " AND (electric = 1)";
@@ -244,7 +244,7 @@ class CarpoolRepository
             JOIN users ON users.id = carpool.driver_id JOIN driver ON driver.user_id = carpool.driver_id 
             JOIN cars ON cars.car_id = carpool.car_id  
             LEFT JOIN ratings ON ratings.driver_id = driver.user_id  
-            WHERE (date > :carpool_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) /* AND (status= 'not started') */";
+            WHERE (date > :carpool_date) AND (departure_city = :departure_city) AND (arrival_city = :arrival_city) AND (carpool.status= 'not started')";
             if (isset($eco)) {
                 $sql .= " AND (electric = 1)";
             }
