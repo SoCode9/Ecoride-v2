@@ -24,8 +24,8 @@ $dotenv->load(__DIR__ . '/../.env');
 
 // variable vers dossier assets dans public
 $baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); //enlève la dernière partie (index.php) pour ne garder que le dossier "/Ecoride-v2/public" 
-define('BASE_URL', $baseUrl); // stocke /2coursPhp/public
-define('ASSETS_PATH', BASE_URL . '/assets/');              // -> /2coursPhp/public/assets/
+define('BASE_URL', $baseUrl);
+define('ASSETS_PATH', BASE_URL . '/assets/');
 
 define('MAIN_TEMPLATE_PATH', __DIR__ . '/../templates/main.php');
 define('TEMPLATE_PATH', __DIR__ . '/../templates');

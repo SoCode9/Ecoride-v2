@@ -5,7 +5,7 @@ services:
     volumes:
       - ./:/var/www/html
       - ./storage/photos:/var/www/storage/photos
-      - ./docker/default.conf:/etc/apache2/sites-available/000-default.conf:ro
+      - ./docker/config/default.conf:/etc/apache2/sites-available/000-default.conf:ro
     ports:
       - 8090:80
     environment:
