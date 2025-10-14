@@ -106,7 +106,7 @@
                     <?php foreach ($carpools as $c): ?>
                         <div class="travel flex-column-ms"
                             onclick="window.location.href='<?= $c['detail_url'] ?>'"
-                            style="<?= $c['card_style'] ?>">
+                            style="<?= $c['owner_style'] ?>">
 
                             <?php if ($c['completed']): ?>
                                 <span class="watermark-complet">Complet</span>

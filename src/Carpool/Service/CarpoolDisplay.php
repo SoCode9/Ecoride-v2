@@ -53,7 +53,7 @@ final class CarpoolDisplay
         $driverPhoto   = is_array($c) ? ($c['driver_photo'] ?? null)         : $dataUser->getPhoto();
         $carElectric   = is_array($c) ? (bool)($c['electric'] ?? 0)      : $dataCar->isElectric();
 
-        // --- dérivés partagés ---
+        // --- variables partagées ---
         $isOwner = $currentUserId && $driverId !== '' && $driverId === (string)$currentUserId;
         $avg     = $driverId !== '' ? $driverService->getAverageRatings($driverId) : null;
         $rating  = $avg !== null
@@ -115,7 +115,7 @@ final class CarpoolDisplay
             'cancel_url'     => $router->generatePath('/carpool/cancel', ['id' => $id]),
             'start_url'      => $router->generatePath('/carpool/start', ['id' => $id]),
             'complete_url'      => $router->generatePath('/carpool/completed', ['id' => $id]),
-            'card_style'     => $isOwner ? "border:2px solid var(--col-green);cursor:pointer;" : "cursor:pointer;",
+            'owner_style'     => $isOwner ? "border:2px solid var(--col-green);cursor:pointer;" : "cursor:pointer;",
 
             // actions (null en liste)
             'participate_btn' => $participateBtn,
