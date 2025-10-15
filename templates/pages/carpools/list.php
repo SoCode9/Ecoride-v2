@@ -141,7 +141,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <span class="travel-price text-bold"><?= $c['price_label'] ?></span>
+                        <span class="travel-price text-bold"><?= htmlspecialchars($c['price_label']) ?></span>
                     </div>
                 <?php endforeach; ?>
             <?php elseif (!empty($showNoResults)): ?>
