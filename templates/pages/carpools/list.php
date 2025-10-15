@@ -118,7 +118,7 @@
                                     class="photo-user">
                             </div>
                             <div class="user-info-mobile">
-                                <span class="pseudo-user"><?= $c['driver_pseudo'] ?></span>
+                                <span class="pseudo-user"><?= htmlspecialchars($c['driver_pseudo']) ?></span>
                                 <div class="driver-rating">
                                     <div class="flex-row font-size-very-small">
                                         <?= $c['driver_rating']; ?>
@@ -127,8 +127,8 @@
                             </div>
                         </div>
 
-                        <span class="date-travel">Départ à <?= $c['departure_time'] ?></span>
-                        <span class="hours-travel">Arrivée à <?= $c['arrival_time'] ?></span>
+                        <span class="date-travel">Départ à <?= htmlspecialchars($c['departure_time']) ?></span>
+                        <span class="hours-travel">Arrivée à <?= htmlspecialchars($c['arrival_time']) ?></span>
 
                         <?php if (!empty($c['seats_label'])): ?>
                             <span class="seats-available" id="seats-bs">Encore <?= htmlspecialchars($c['seats_label']) ?></span>
