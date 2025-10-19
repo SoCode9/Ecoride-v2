@@ -19,8 +19,12 @@ use Symfony\Component\Dotenv\Dotenv;
 use App\Routing\Router;
 
 //charge configuration
-$dotenv = new Dotenv();
-$dotenv->load(__DIR__ . '/../.env');
+$envPath = dirname(__DIR__) . '/.env';
+
+// Only load .env if it is present locally.
+if (is_readable($envPath)) {
+    (new Dotenv())->usePutenv()->load($envPath);
+}
 
 // variable vers dossier assets dans public
 $baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); //enlève la dernière partie (index.php) pour ne garder que le dossier "/Ecoride-v2/public" 
