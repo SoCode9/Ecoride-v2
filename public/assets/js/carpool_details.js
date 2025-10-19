@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
               "Vous devez être connecté. Cliquer sur 'OK' pour créer un compte."
             )
           ) {
-            location.href = window.BASE_URL + "/controllers/login.php";
+            location.href = window.BASE_URL + "/connection";
           }
           return;
         }
