@@ -31,10 +31,10 @@
              <div class="flex-row">
                  <label for="electric">Electrique : </label>
                  <input type="radio" name="electric" value="yes" id="electric-yes">
-                 <label for="electric_yes">oui</label>
+                 <label for="electric-yes">oui</label>
 
                  <input type="radio" name="electric" value="no" id="electric-no">
-                 <label for="electric_no">non</label>
+                 <label for="electric-no">non</label>
 
              </div>
              <div class="flex-row flex-column-ss">

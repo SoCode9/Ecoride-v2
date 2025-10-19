@@ -34,12 +34,8 @@ class CarController extends BaseController
         $firstRegistrationDate = $_POST['first_registration_date'];
         $brand = $_POST['brand'];
         $model = $_POST['model'];
-        $electricValue = $_POST['electric'];
-        if ($electricValue === "yes") {
-            $electric = 1;
-        } elseif ($electricValue === "no") {
-            $electric = 0;
-        }
+        $electricValue = $_POST['electric'] ?? null;
+        $electric = ($electricValue === "yes") ? 1 : 0;
         $color = $_POST['color'];
         $seatOffered = $_POST['nb_passengers'];
 
@@ -60,9 +56,12 @@ class CarController extends BaseController
     public function list()
     {
         $userId = $_SESSION['user_id'] ?? null;
-
-        $cars = $this->repo->findAllCars($userId);
-
+        try {
+            $cars = $this->repo->findAllCars($userId);
+        } catch (Exception $e) {
+            error_log("CarController - error in list(): " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
         return $this->renderPartial('components/car/list.php', [
             'cars' => $cars
         ]);
@@ -92,7 +91,7 @@ class CarController extends BaseController
         $userId = $_SESSION['user_id'] ?? null;
 
         $cars = $this->repo->findAllCars($userId);
-        
+
         return $this->renderPartial('components/car/select.php', [
             'cars' => $cars
         ]);

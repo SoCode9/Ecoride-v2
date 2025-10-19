@@ -3,10 +3,8 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Carpool;
-use App\Car\Service\CarService;
 use App\Driver\Service\DriverService;
 use App\Routing\Router;
-use App\Reservation\Repository\ReservationRepository;
 use App\Car\Repository\CarRepository;
 use App\User\Repository\UserRepository;
 use App\Utils\Formatting\OtherFormatter;
@@ -15,8 +13,6 @@ use DateTime;
 
 final class CarpoolDisplay
 {
-
-
     /**
      * @param Carpool|array $c  Entité (détail) OU row SQL (liste)
      */
@@ -37,13 +33,13 @@ final class CarpoolDisplay
             $dataCar = $carRepo->findById($c->getCarId());
         }
 
-        // --- accès unifiés (entité vs row) ---
+        // --- unified access (entity vs row) ---
         $id            = is_array($c) ? (string)($c['id'] ?? '')             : (string)$c->getIdCarpool();
         $driverId      = is_array($c) ? (string)($c['driver_id'] ?? '')      : (string)$c->getIdDriver();
         $reservationId = is_array($c) ? (string)($c['reservationId'] ?? '')  : null;
         $driverpseudo  = is_array($c) ? (string)($c['pseudo'] ?? '')         : (string)$dataUser->getPseudo();
-        $depCity    = is_array($c) ? ($c['departure_city'] ?? null)       : $c->getDepartureCity();
-        $arrCity    = is_array($c) ? ($c['arrival_city'] ?? null)         : $c->getArrivalCity();
+        $depCity       = is_array($c) ? ($c['departure_city'] ?? null)       : $c->getDepartureCity();
+        $arrCity       = is_array($c) ? ($c['arrival_city'] ?? null)         : $c->getArrivalCity();
         $depTimeRaw    = is_array($c) ? ($c['departure_time'] ?? null)       : $c->getDepartureTime();
         $arrTimeRaw    = is_array($c) ? ($c['arrival_time'] ?? null)         : $c->getArrivalTime();
         $dateRaw       = is_array($c) ? ($c['date'] ?? null)                 : $c->getDate();
@@ -51,9 +47,9 @@ final class CarpoolDisplay
         $carId         = is_array($c) ? (int)($c['car_id'] ?? 0)             : (int)$c->getCarId();
         $price         = is_array($c) ? (int)($c['price'] ?? 0)              : (int)$c->getPrice();
         $driverPhoto   = is_array($c) ? ($c['driver_photo'] ?? null)         : $dataUser->getPhoto();
-        $carElectric   = is_array($c) ? (bool)($c['electric'] ?? 0)      : $dataCar->isElectric();
+        $carElectric   = is_array($c) ? (bool)($c['electric'] ?? 0)          : $dataCar->isElectric();
 
-        // --- dérivés partagés ---
+        // --- shared variables ---
         $isOwner = $currentUserId && $driverId !== '' && $driverId === (string)$currentUserId;
         $avg     = $driverId !== '' ? $driverService->getAverageRatings($driverId) : null;
         $rating  = $avg !== null
@@ -64,7 +60,7 @@ final class CarpoolDisplay
         $seatsLabel     = $seatsAvailable <= 1 ? "$seatsAvailable place" : "$seatsAvailable places";
         $departureDateTime = DateTime::createFromFormat("Y-m-d H:i:s", $dateRaw . ' ' . $depTimeRaw);
 
-        // --- actions (seulement en détail) ---
+        // --- actions (only in detail) ---
         $participateBtn = null;
         $cancelBtn      = null;
         if ($withActions) {
@@ -87,8 +83,6 @@ final class CarpoolDisplay
                 : null;
         }
 
-
-
         return [
             'id'             => $id,
             'reservationId'  => $reservationId,
@@ -104,20 +98,16 @@ final class CarpoolDisplay
             'departure_date_time' => $departureDateTime,
             'duration'       => self::carpoolDuration($depTimeRaw, $arrTimeRaw),
             'status'         => $status,
-
             'eco_label'      => OtherFormatter::formatEcoLabel($carElectric),
-
             'is_owner'       => (bool)$isOwner,
             'completed'      => $seatsAvailable === 0,
             'seats_label'    => $seatsLabel,
-
+            'owner_style'     => $isOwner ? "border:2px solid var(--col-green);cursor:pointer;" : "cursor:pointer;",
             'detail_url'     => $router->generatePath('/covoiturages/details', ['id' => $id]),
             'cancel_url'     => $router->generatePath('/carpool/cancel', ['id' => $id]),
             'start_url'      => $router->generatePath('/carpool/start', ['id' => $id]),
             'complete_url'      => $router->generatePath('/carpool/completed', ['id' => $id]),
-            'card_style'     => $isOwner ? "border:2px solid var(--col-green);cursor:pointer;" : "cursor:pointer;",
-
-            // actions (null en liste)
+            // action buttons (null in list)
             'participate_btn' => $participateBtn,
             'cancel_btn'     => $cancelBtn,
         ];
@@ -125,7 +115,7 @@ final class CarpoolDisplay
 
     /** @return array[] */
     public static function many(
-        array $rows,                       // rows SQL (pas d'entités)
+        array $rows,                       // rows SQL (not entities)
         ?string $currentUserId,
         DriverService $driverService,
         CarpoolService $carpoolService,

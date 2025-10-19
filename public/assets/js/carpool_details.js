@@ -45,8 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateParticipation(carpoolId);
       }
     } catch (err) {
-      console.error("Erreur AJAX :", err);
-      alert("Une erreur réseau est survenue.");
+      alert("Une erreur est survenue.");
     }
   });
 

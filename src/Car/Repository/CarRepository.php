@@ -111,11 +111,11 @@ class CarRepository
      * @param string $licencePlate
      * @param string $firstRegistrationDate
      * @param int $seatsOffered
-     * @param bool $electric
+     * @param int $electric
      * @param string $color
      * @return array{car_id: bool|string, message: string, success: bool|array{error: string, success: bool}} Result with success status and message
      */
-    public function new(string $driverId, string $brandId, string $model, string $licencePlate, string $firstRegistrationDate, int $seatsOffered, bool $electric, string $color): array
+    public function new(string $driverId, string $brandId, string $model, string $licencePlate, string $firstRegistrationDate, int $seatsOffered, int $electric, string $color): array
     {
         try {
             $this->ensureDriver($driverId);

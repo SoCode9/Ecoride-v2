@@ -31,7 +31,6 @@ class DbConnection
         } catch (PDOException $e) {
             error_log("Connection MySQL error : " . $e->getMessage());
             $_SESSION['error_message'] = "Une erreur est survenue";
-            //header('Location: ../index.php');
             exit;
         }
     }
@@ -42,7 +41,7 @@ class DbConnection
         return self::createOrReturnInstance();
     }
 
-    //connexion à la  base de données
+    //connection to the database
     public static function getPdo(): PDO
     {
         return self::createOrReturnInstance()->pdo;

@@ -101,75 +101,73 @@
         <!--CARPOOL'S SEARCHED BLOCK-->
         <div class="flex-column gap-12 pad-20 pad-10-ss grid-auto-columns">
 
-            <div class="flex-column gap-12 pad-20 pad-10-ss grid-auto-columns">
-                <?php if (!empty($carpools)): ?>
-                    <?php foreach ($carpools as $c): ?>
-                        <div class="travel flex-column-ms"
-                            onclick="window.location.href='<?= $c['detail_url'] ?>'"
-                            style="<?= $c['card_style'] ?>">
+            <?php if (!empty($carpools)): ?>
+                <?php foreach ($carpools as $c): ?>
+                    <div class="travel flex-column-ms"
+                        onclick="window.location.href='<?= $c['detail_url'] ?>'"
+                        style="<?= $c['owner_style'] ?>">
 
-                            <?php if ($c['completed']): ?>
-                                <span class="watermark-complet">Complet</span>
-                            <?php endif; ?>
+                        <?php if ($c['completed']): ?>
+                            <span class="watermark-complet">Complet</span>
+                        <?php endif; ?>
 
-                            <div class="user-header-mobile">
-                                <div class="photo-user-container" style="justify-self:center;">
-                                    <img src="<?= htmlspecialchars($c['driver_photo'] ?? '') ?>"
-                                        alt="Photo de l'utilisateur"
-                                        class="photo-user">
-                                </div>
-                                <div class="user-info-mobile">
-                                    <span class="pseudo-user"><?= $c['driver_pseudo'] ?></span>
-                                    <div class="driver-rating">
-                                        <div class="flex-row font-size-very-small">
-                                            <?= $c['driver_rating']; ?>
-                                        </div>
+                        <div class="user-header-mobile">
+                            <div class="photo-user-container" style="justify-self:center;">
+                                <img src="<?= htmlspecialchars($c['driver_photo'] ?? '') ?>"
+                                    alt="Photo de l'utilisateur"
+                                    class="photo-user">
+                            </div>
+                            <div class="user-info-mobile">
+                                <span class="pseudo-user"><?= htmlspecialchars($c['driver_pseudo']) ?></span>
+                                <div class="driver-rating">
+                                    <div class="flex-row font-size-very-small">
+                                        <?= $c['driver_rating']; ?>
                                     </div>
                                 </div>
                             </div>
-
-                            <span class="date-travel">Départ à <?= $c['departure_time'] ?></span>
-                            <span class="hours-travel">Arrivée à <?= $c['arrival_time'] ?></span>
-
-                            <?php if (!empty($c['seats_label'])): ?>
-                                <span class="seats-available" id="seats-bs">Encore <?= htmlspecialchars($c['seats_label']) ?></span>
-                            <?php endif; ?>
-
-                            <?php if (!empty($c['eco_label'])): ?>
-                                <div class="criteria-eco-div">
-                                    <img src="<?= ASSETS_PATH ?>icons/Arbre1.png" alt="Arbre" width="20px">
-                                    <span class="criteria-eco"><?= htmlspecialchars($c['eco_label']) ?></span>
-                                </div>
-                            <?php endif; ?>
-
-                            <span class="travel-price text-bold"><?= $c['price_label'] ?></span>
                         </div>
-                    <?php endforeach; ?>
-                <?php elseif (!empty($showNoResults)): ?>
-                    Oups.. Aucun covoiturage n'est proposé pour cette recherche.
-                <?php endif; ?>
+
+                        <span class="date-travel">Départ à <?= htmlspecialchars($c['departure_time']) ?></span>
+                        <span class="hours-travel">Arrivée à <?= htmlspecialchars($c['arrival_time']) ?></span>
+
+                        <?php if (!empty($c['seats_label'])): ?>
+                            <span class="seats-available" id="seats-bs">Encore <?= htmlspecialchars($c['seats_label']) ?></span>
+                        <?php endif; ?>
+
+                        <?php if (!empty($c['eco_label'])): ?>
+                            <div class="criteria-eco-div">
+                                <img src="<?= ASSETS_PATH ?>icons/Arbre1.png" alt="Arbre" width="20px">
+                                <span class="criteria-eco"><?= htmlspecialchars($c['eco_label']) ?></span>
+                            </div>
+                        <?php endif; ?>
+
+                        <span class="travel-price text-bold"><?= htmlspecialchars($c['price_label']) ?></span>
+                    </div>
+                <?php endforeach; ?>
+            <?php elseif (!empty($showNoResults)): ?>
+                Oups.. Aucun covoiturage n'est proposé pour cette recherche.
+            <?php endif; ?>
 
 
-                <!--Display of the date of the next carpool that matches the search criteria-->
-                <?php if (!empty($nextCarpool)): ?>
-                    <form method="POST" action="<?= BASE_URL ?>/covoiturages">
-                        <input type="hidden" name="action" value="search">
+            <!--Display of the date of the next carpool that matches the search criteria-->
+            <?php if (!empty($nextCarpool)): ?>
+                <form method="POST" action="<?= BASE_URL ?>/covoiturages">
+                    <input type="hidden" name="action" value="search">
 
-                        <input type="hidden" name="departure" value="<?= htmlspecialchars((string)($nextCarpool['filters']['departure'] ?? '')) ?>">
-                        <input type="hidden" name="arrival" value="<?= htmlspecialchars((string)($nextCarpool['filters']['arrival']   ?? '')) ?>">
-                        <input type="hidden" name="date" value="<?= htmlspecialchars((string)($nextCarpool['date_db'] ?? '')) ?>">
-                        <input type="hidden" name="eco" value="1">
-                        <input type="hidden" name="maxPrice" value="<?= (int)$nextCarpool['filters']['maxPrice'] ?>">
-                        <input type="hidden" name="maxDuration" value="<?= (int)$nextCarpool['filters']['maxDuration'] ?>">
-                        <input type="hidden" name="driverRating" value="<?= htmlspecialchars((string)$nextCarpool['filters']['driverRating']) ?>">
+                    <input type="hidden" name="departure" value="<?= htmlspecialchars((string)($nextCarpool['filters']['departure'] ?? '')) ?>">
+                    <input type="hidden" name="arrival" value="<?= htmlspecialchars((string)($nextCarpool['filters']['arrival']   ?? '')) ?>">
+                    <input type="hidden" name="date" value="<?= htmlspecialchars((string)($nextCarpool['date_db'] ?? '')) ?>">
+                    <input type="hidden" name="eco" value="1">
+                    <input type="hidden" name="maxPrice" value="<?= (int)$nextCarpool['filters']['maxPrice'] ?>">
+                    <input type="hidden" name="maxDuration" value="<?= (int)$nextCarpool['filters']['maxDuration'] ?>">
+                    <input type="hidden" name="driverRating" value="<?= htmlspecialchars((string)$nextCarpool['filters']['driverRating']) ?>">
 
-                        <button type="submit" class="btn bg-very-light-green" style="padding:10px;">
-                            Prochain itinéraire pour cette recherche le <?= htmlspecialchars((string)$nextCarpool['date_ui']) ?>
-                        </button>
-                    </form>
-                <?php endif; ?>
+                    <button type="submit" class="btn bg-very-light-green" style="padding:10px;">
+                        Prochain itinéraire pour cette recherche le <?= htmlspecialchars((string)$nextCarpool['date_ui']) ?>
+                    </button>
+                </form>
+            <?php endif; ?>
 
-            </div>
         </div>
     </div>
 

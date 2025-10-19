@@ -58,7 +58,6 @@ final class ReservationService
             $carpool = $this->carpoolRepo->findById($carpoolId);
             $seatsOffered = $this->carRepo->getSeatsOfferedByCar($carpool->getCarId());
 
-            //$seatsOffered = (int)$car->getSeatsOfferedByCar($carpool->getCarId());
             $availableSeats = max(0, $seatsOffered - $seatsAllocated);
 
             $carpoolPrice = (int)$carpool->getPrice();

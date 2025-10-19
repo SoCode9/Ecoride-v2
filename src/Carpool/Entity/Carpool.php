@@ -2,8 +2,6 @@
 
 namespace App\Carpool\Entity;
 
-use DateTime;
-
 final class Carpool
 {
     public function __construct(
