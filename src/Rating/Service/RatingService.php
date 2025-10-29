@@ -32,7 +32,7 @@ final class RatingService
                 : '<span class="italic">0 avis</span>';
             $ratingsFormatted[$userId] = [
                 'userPseudo' => $dataUser->getPseudo(),
-                'userPhoto' => OtherFormatter::displayPhoto($userId),
+                'userPhoto' => OtherFormatter::displayPhoto($dataUser->getPhoto()),
                 'createdAt'   => DateFormatter::monthYear($rating->getCreatedAt()),
                 'rating' => $ratingNote
             ];
