@@ -19,7 +19,7 @@
         ?>
 
         <div class="header">
-            <a href="<?= ASSETS_PATH ?>/index.php">
+            <a href="<?= BASE_URL ?>/">
                 <img src="<?= ASSETS_PATH ?>icons/Logo.png" alt="Logo" style=" width: 100px;">
             </a>
 
