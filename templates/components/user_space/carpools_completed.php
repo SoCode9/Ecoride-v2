@@ -4,7 +4,7 @@
 
 <div class="flex-column gap-8 grid-auto-columns">
     <?php foreach ($carpoolListCompleted as $carpool): ?>
-        <div class="travel" onclick="window.location.href='<?= $carpool['detail_url'] ?>'" style="<?= $carpool['owner_style'] ?>">
+        <div class="travel flex-column-ms" onclick="window.location.href='<?= $carpool['detail_url'] ?>'" style="<?= $carpool['owner_style'] ?>">
             <div class="user-header-mobile">
                 <div class="photo-user-container " style="justify-self:center;">
                     <img src="<?= htmlspecialchars($carpool['driver_photo']) ?>" alt="Photo de l'utilisateur" class="photo-user">

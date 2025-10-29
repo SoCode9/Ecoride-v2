@@ -132,11 +132,9 @@
         <div class="flex-column gap-8 item-center">
             <h3 class="text-green">Avis du chauffeur</h3>
             <div class="flex-row item-center gap-4" style="padding-left: 0px;">
-                <img src="<?= BASE_URL ?>/icons/EtoileJaune.png" class="img-width-20" alt="">
                 <span class="flex-row">
-                    <?= $carpoolFormatted['driver_rating'];
-                    if ($carpoolFormatted['driver_rating'] !== null) {
-                        echo  " / 5";
+                    <?php if ($carpoolFormatted['driver_rating'] !== '<span class="italic">0 avis</span>') {
+                        echo $carpoolFormatted['driver_rating'] .  " / 5";
                     }
                     ?>
                 </span>

@@ -448,7 +448,7 @@ class CarpoolRepository
             }
 
             $statement->execute();
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             error_log("CarpoolRepository - Database error in setCarpoolStatus(): " . $e->getMessage());
             throw new Exception("Une erreur est survenue");
         }

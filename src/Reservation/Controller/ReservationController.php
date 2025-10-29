@@ -52,11 +52,10 @@ class ReservationController extends BaseController
             $userId = $_SESSION['user_id'];
 
             $reservationId = $_POST['idReservation'];
-
-            $rating = $_POST['rating'] ?? null;
-            if ($rating === '')
+            $rating = $_POST['rating'];
+            if ($rating === '') {
                 $rating = null;
-
+            }
             $comment = $_POST['comment'] ?? null;
 
             $driverId = $this->repo->getDriverIdFromReservation($reservationId);
@@ -136,7 +135,7 @@ class ReservationController extends BaseController
     public function completedCarpool(): void
     {
         $carpoolId = (string)($_GET['id'] ?? '');
-        
+
         try {
             $message = $this->service->completedCarpool($carpoolId);
             $_SESSION['success_message'] = $message;
