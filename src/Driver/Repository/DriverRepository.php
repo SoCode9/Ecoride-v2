@@ -7,6 +7,7 @@ use App\Database\MongoConnection;
 use PDO;
 use PDOException;
 use Exception;
+use MongoDB\BSON\ObjectId;
 
 use App\Driver\Entity\Driver;
 use App\User\Repository\UserRepository;
@@ -67,7 +68,7 @@ class DriverRepository
     }
 
     /**
-     * find the custom preferences of the current driver.
+     * find the custom preferences of the current driver
      * @param string $userId The UUID of the user
      * @throws Exception If the preferences cannot be loaded
      * @return array 
@@ -77,11 +78,12 @@ class DriverRepository
         try {
             $mongo = MongoConnection::getMongoDb();
             $preferenceCollection = $mongo->preferences;
-            $result = $preferenceCollection->find([
-                'id_user' => $userId
-            ])->toArray();
+            $cursor = $preferenceCollection->find(['id_user' => $userId]);
 
-            return array_map(fn($doc) => (array) $doc, $result);
+            return array_map(
+                fn($doc) => (array) $doc,
+                iterator_to_array($cursor)
+            );
         } catch (Exception $e) {
             error_log("Database error in findCustomPreferences() (user ID: {$userId}) : " . $e->getMessage());
             return [];
@@ -91,7 +93,7 @@ class DriverRepository
 
     /**
      * Add a custom preference for the driver
-     * This method inserts a new custom preference into the MongoDB collection.
+     * This method inserts a new custom preference into the MongoDB collection
      * @param string $userId The UUID of the user
      * @param string $customPrefToAdd The new preference to insert
      * @throws \Exception If a database error occurs
@@ -106,8 +108,6 @@ class DriverRepository
                 'id_user' => $userId,
                 'custom_preference' => $customPrefToAdd,
             ]);
-
-            return;
         } catch (Exception $e) {
             error_log("Database error in addCustomPreference() (user ID: {$userId}) : " . $e->getMessage());
             throw new Exception("Une erreur est survenue");
@@ -116,24 +116,54 @@ class DriverRepository
 
     /**
      * Deletes a custom preference for the driver
-     * This method removes a specific custom preference from the MongoDB collection.
+     * This method removes a specific custom preference from the MongoDB collection
      * @param string $userId The UUID of the user
      * @param string $customPrefToDelete The preference to delete
      * @throws \Exception If a database error occurs
      * @return void
      */
-    public function deleteCustomPreference(string $userId, string $customPrefToDelete): void
+    public function deleteCustomPreference(string $customPrefToDelete): void
     {
         try {
             $mongo = MongoConnection::getMongoDb();
             $preferenceCollection = $mongo->preferences;
 
-            $preferenceCollection->deleteOne([
-                'id_user' => $userId,
-                'custom_preference' => $customPrefToDelete,
+            $result = $preferenceCollection->deleteOne([
+                '_id' => new ObjectId($customPrefToDelete)
             ]);
+
+            if ($result->getDeletedCount() === 0) {
+                throw new Exception('Preference not deleted');
+            }
         } catch (Exception $e) {
-            error_log("Database error in deleteCustomPreference() (user ID: {$userId}) : " . $e->getMessage());
+            error_log("Database error in deleteCustomPreference() (custom ID: {$customPrefToDelete}) : " . $e->getMessage());
+            throw new Exception("Une erreur est survenue");
+        }
+    }
+
+    /**
+     * Updates the custom preference name in the database
+     * @param string $idCustomPref The ID of the custom preference to update
+     * @param string $newCustomPref The new custom preference value
+     * @throws Exception If a database error occurs
+     * @return void
+     */
+    public function updateCustomPreference(string $idCustomPref, string $newCustomPref): void
+    {
+        try {
+            $mongo = MongoConnection::getMongoDb();
+            $preferenceCollection = $mongo->preferences;
+
+            $result = $preferenceCollection->updateOne(
+                ['_id' => new ObjectId($idCustomPref)],
+                ['$set' => ['custom_preference' => $newCustomPref]]
+            );
+
+            if ($result->getMatchedCount() === 0) {
+                throw new Exception('Preference not found');
+            }
+        } catch (Exception $e) {
+            error_log("Database error in updateCustomPreference() (custom ID: {$idCustomPref}) : " . $e->getMessage());
             throw new Exception("Une erreur est survenue");
         }
     }

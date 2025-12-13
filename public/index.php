@@ -62,6 +62,7 @@ $router->register(['GET'], '/car/select', CarController::class, 'select');
 $router->register(['POST'], '/car/delete', CarController::class, 'delete');
 $router->register(['POST'], '/preference/add', DriverController::class, 'newOtherPreference');
 $router->register(['GET'], '/preference/list', DriverController::class, 'listOtherPreferences');
+$router->register(['POST'], '/preference/update', DriverController::class, 'updateOtherPreference');
 $router->register(['POST'], '/preference/delete', DriverController::class, 'deleteOtherPreference');
 $router->register(['POST'], '/carpool/new', CarpoolController::class, 'new');
 

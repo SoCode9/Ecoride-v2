@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const saveButton = document.getElementById("save-button");
   const addCarButton = document.getElementById("add-car-button");
   const addPrefButton = document.getElementById("add-pref-button");
+  const updatePrefButton = document.getElementById("edit-pref-button");
   const updatePhoto = document.getElementById("edit-photo-icon");
 
   if (editButton && saveButton) {
@@ -58,6 +59,10 @@ document.addEventListener("DOMContentLoaded", function () {
         deleteIcon.classList.remove("hidden");
       });
 
+      document.querySelectorAll(".edit-custom-pref-img").forEach((editIcon) => {
+        editIcon.classList.remove("hidden");
+      });
+
       document.querySelectorAll('input[type="radio"]').forEach((checkbox) => {
         checkbox.classList.remove("radio-not-edit");
       });
@@ -84,6 +89,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
+
+  updatePrefButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    document.getElementById("edit-custom-pref").style.display = "block";
+  });
 
   /*if "passager" is selected-> the car and preference sections are not displayed*/
   const roleRadios = document.querySelectorAll('input[name="user_role"]');
@@ -237,8 +247,8 @@ document.addEventListener("DOMContentLoaded", function () {
   /** Refresh only Preferences' section (not full page) **/
   function refreshPrefList() {
     fetch((window.BASE_URL || "") + "/preference/list")
-      .then(response => response.text())
-      .then(html => {
+      .then((response) => response.text())
+      .then((html) => {
         let prefContainer = document.getElementById("pref-container");
         if (!prefContainer) {
           console.error("Erreur : pref-container introuvable dans le DOM !");
@@ -247,9 +257,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         prefContainer.innerHTML = html;
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Erreur de mise à jour pref-container: ", error);
-      })
+      });
   }
 
   /** Add a car **/
@@ -284,17 +294,17 @@ document.addEventListener("DOMContentLoaded", function () {
   /**Add a pref **/
   const prefForm = document.getElementById("pref-form");
   if (prefForm) {
-    prefForm.addEventListener('submit', function (event) {
+    prefForm.addEventListener("submit", function (event) {
       event.preventDefault();
 
       let formData = new FormData(prefForm);
       fetch((window.BASE_URL || "") + "/preference/add", {
         method: "POST",
-        body: formData
+        body: formData,
       })
-        .then(response => response.json())
+        .then((response) => response.json())
 
-        .then(data => {
+        .then((data) => {
           if (data.success) {
             prefForm.reset();
             refreshPrefList();
@@ -303,11 +313,10 @@ document.addEventListener("DOMContentLoaded", function () {
             alert(data.error);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Erreur AJAX :", error);
         });
-
-    })
+    });
   }
 });
 
