@@ -53,13 +53,31 @@ class DriverController extends BaseController
         ]);
     }
 
+    public function updateOtherPreference()
+    {
+        $idPrefToUpdate = $_POST['id'];
+        $newCustomPref = $_POST['newCustomPref'];
+
+        try {
+            $this->repo->updateCustomPreference($idPrefToUpdate, $newCustomPref);
+            header('Location: ' . BASE_URL . '/mon-profil');
+            $_SESSION['success_message'] = "La préférence a été modifiée";
+
+            exit;
+        } catch (Exception $e) {
+            error_log("DriverController - Database error in updateOtherPreference(): " . $e->getMessage());
+            header('Location: ' . BASE_URL . '/mon-profil');
+            $_SESSION['error_message'] = "Erreur lors de la modification de la préférence";
+            exit;
+        }
+    }
+
     public function deleteOtherPreference()
     {
-        $userId = $_SESSION['user_id'] ?? null;
-        $prefToDelete = $_POST['id'];
+        $idPrefToDelete = $_POST['id']; 
         try {
-            $this->repo->deleteCustomPreference($userId, $prefToDelete);
-            
+            $this->repo->deleteCustomPreference($idPrefToDelete);
+
             header('Location: ' . BASE_URL . '/mon-profil');
             $_SESSION['success_message'] = "La préférence a été supprimée";
 
