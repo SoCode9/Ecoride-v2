@@ -10,9 +10,9 @@
       </form>
 
 
-      <button type="button" class="edit-pref-button" data-id="<?= (string) $preference['_id'] ?>"
+      <button type="button" class="edit-pref-button " data-id="<?= (string) $preference['_id'] ?>"
         data-label="<?= htmlspecialchars($preference['custom_preference'], ENT_QUOTES, 'UTF-8') ?>">
-        <img src="<?= ASSETS_PATH ?>/icons/Modifier.png" class="img-width-20" style="cursor:pointer;">
+        <img src="<?= ASSETS_PATH ?>/icons/Modifier.png" class="img-width-20 edit-custom-pref-img hidden" style="cursor:pointer;">
       </button>
 
 
