@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const saveButton = document.getElementById("save-button");
   const addCarButton = document.getElementById("add-car-button");
   const addPrefButton = document.getElementById("add-pref-button");
-  //const updatePrefButton = document.getElementById("edit-pref-button");
   const updatePhoto = document.getElementById("edit-photo-icon");
 
   if (editButton && saveButton) {
@@ -90,19 +89,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  /*open the popup to update a custom preference*/
   document.querySelectorAll(".edit-pref-button").forEach((btn) => {
     btn.addEventListener("click", (event) => {
       event.preventDefault();
 
-      // Récupère les infos de la préférence cliquée
       const id = btn.dataset.id;
       const label = btn.dataset.label;
 
-      // Remplit le popup
       document.getElementById("edit-pref-id").value = id;
       document.getElementById("newCustomPref").value = label;
 
-      // Affiche le popup
       document.getElementById("edit-custom-pref").classList.remove("hidden");
       document.getElementById("edit-custom-pref").style.display = "block";
     });
