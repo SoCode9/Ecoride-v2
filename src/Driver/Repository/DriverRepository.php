@@ -15,7 +15,9 @@ use App\User\Repository\UserRepository;
 class DriverRepository
 {
 
-    public function __construct(private UserRepository $userRepo) {}
+    public function __construct(private UserRepository $userRepo)
+    {
+    }
 
     private function findById(string $id): array|null
     {
