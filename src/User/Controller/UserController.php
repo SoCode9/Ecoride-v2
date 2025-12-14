@@ -14,6 +14,7 @@ use App\Car\Repository\CarRepository;
 use App\Driver\Repository\DriverRepository;
 use App\Carpool\Repository\CarpoolRepository;
 use App\Reservation\Repository\ReservationRepository;
+use App\Rating\Repository\RatingRepository;
 
 use App\User\Service\UserService;
 use App\Driver\Service\DriverService;
@@ -189,9 +190,26 @@ class UserController extends BaseController
         $userId = $_SESSION['user_id'] ?? null;
         $user = $this->repo->findById($userId);
 
+        //VERIFY RATINGS TAB
+
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $ratingsPerPage = 4;
+        $offset = ($page - 1) * $ratingsPerPage;
+
+        $ratingRepo = new RatingRepository();
+        $ratingsInValidation = $ratingRepo->loadRatingsInValidation($ratingsPerPage, $offset);
+
+        // pagination
+        $totalRatings = $ratingRepo->countAllRatingsInValidation();
+
+        $totalPages = ceil($totalRatings / $ratingsPerPage);
 
         return $this->render('pages/employee_space/validate_ratings.php', 'Espace Employé', [
-            'user' => $user
+            'user' => $user,
+            'ratingsInValidation' => $ratingsInValidation,
+            'totalPages' => $totalPages,
+            'page' => $page,
+            'totalRatings' => $totalRatings
         ]);
     }
 
@@ -199,6 +217,7 @@ class UserController extends BaseController
     {
         $userId = $_SESSION['user_id'] ?? null;
         $user = $this->repo->findById($userId);
+
 
 
         return $this->render('pages/employee_space/bad_comments.php', 'Espace Employé', [
