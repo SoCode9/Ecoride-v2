@@ -5,10 +5,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const labels = {
         "": "Accueil",
         "covoiturages": "Covoiturages",
-        "covoiturages/details": "Covoiturages",
+        "details": "Covoiturages",
         "connexion": "Connexion",
         "mon-profil": "Mon profil",
-        "Espace-employe": "Mon espace",
+        "valider-avis": "Mon espace",
+        "controler": "Mon espace",
         "Espace-administratuer": "Mon espace"
     };
 

@@ -82,8 +82,8 @@
                                 Mon espace
                             </a></li>
                     <?php elseif ((int) $roleId === 4): ?>
-                        <li><a href="<?= BASE_URL ?>/espace-employe"
-                                class="btn border-white <?= $current === '/espace-employe' ? 'activeBtn' : '' ?>">
+                        <li><a href="<?= BASE_URL ?>/espace-employe/valider-avis"
+                                class="btn border-white <?= ($current === '/espace-employe/valider-avis') || ($current === '/espace-employe/controler') ? 'activeBtn' : '' ?>">
                                 Espace employé
                             </a></li>
                     <?php elseif ((int) $roleId === 5): ?>
