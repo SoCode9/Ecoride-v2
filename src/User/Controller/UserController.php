@@ -14,6 +14,7 @@ use App\Car\Repository\CarRepository;
 use App\Driver\Repository\DriverRepository;
 use App\Carpool\Repository\CarpoolRepository;
 use App\Reservation\Repository\ReservationRepository;
+use App\Rating\Repository\RatingRepository;
 
 use App\User\Service\UserService;
 use App\Driver\Service\DriverService;
@@ -34,11 +35,11 @@ class UserController extends BaseController
     public function profile()
     {
 
-        $userId  = $_SESSION['user_id'] ?? null;
+        $userId = $_SESSION['user_id'] ?? null;
         $user = $this->repo->findById($userId);
 
         $driRepo = new DriverRepository($this->repo);
-        $driver =  $driRepo->makeFromUserId($userId);
+        $driver = $driRepo->makeFromUserId($userId);
 
         $formattedUser = $this->service->displayProfil($user);
 
@@ -183,4 +184,93 @@ class UserController extends BaseController
             'now' => $now
         ]);
     }
+
+    public function employeeValidateRatings()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        $user = $this->repo->findById($userId);
+
+        //VERIFY RATINGS TAB
+
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $ratingsPerPage = 4;
+        $offset = ($page - 1) * $ratingsPerPage;
+
+        $ratingRepo = new RatingRepository();
+        $ratingsInValidation = $ratingRepo->loadRatingsInValidation($ratingsPerPage, $offset);
+
+        // pagination
+        $totalRatings = $ratingRepo->countAllRatingsInValidation();
+
+        $totalPages = ceil($totalRatings / $ratingsPerPage);
+
+        return $this->render('pages/employee_space/validate_ratings.php', 'Espace Employé', [
+            'user' => $user,
+            'ratingsInValidation' => $ratingsInValidation,
+            'totalPages' => $totalPages,
+            'page' => $page,
+            'totalRatings' => $totalRatings
+        ]);
+    }
+
+    public function employeeBadComments()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        $user = $this->repo->findById($userId);
+
+
+
+        return $this->render('pages/employee_space/bad_comments.php', 'Espace Employé', [
+            'user' => $user
+        ]);
+    }
+
+    public function validateRating()
+    {
+        $ratingId = isset($_POST['ratingId']) ? (int) $_POST['ratingId'] : 0;
+        if ($ratingId <= 0) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "ID d'avis invalide"]);
+            exit;
+        }
+
+        try {
+            $ratingRepo = new RatingRepository();
+            $ratingRepo->validateRating($ratingId, 'validated');
+
+            $_SESSION['success_message'] = "Avis validé";
+
+            echo json_encode(["success" => true, "message" => "Avis validé"]);
+            exit;
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => $e->getMessage()]);
+            exit;
+        }
+    }
+
+    public function rejectRating()
+    {
+        $ratingId = isset($_POST['ratingId']) ? (int) $_POST['ratingId'] : 0;
+        if ($ratingId <= 0) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "ID d'avis invalide"]);
+            exit;
+        }
+
+        try {
+            $ratingRepo = new RatingRepository();
+            $ratingRepo->validateRating($ratingId, 'refused');
+
+            $_SESSION['success_message'] = "Avis rejeté";
+
+            echo json_encode(["success" => true, "message" => "Avis rejeté"]);
+            exit;
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => $e->getMessage()]);
+            exit;
+        }
+    }
+
 }
