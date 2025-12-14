@@ -35,7 +35,7 @@ define('MAIN_TEMPLATE_PATH', __DIR__ . '/../templates/main.php');
 define('TEMPLATE_PATH', __DIR__ . '/../templates');
 
 define('PHOTOS_URL', BASE_URL . '/assets/photos'); // URL publique
-define('PHOTOS_DIR', __DIR__   . '/assets/photos'); // chemin disque (public/assets/photos)
+define('PHOTOS_DIR', __DIR__ . '/assets/photos'); // chemin disque (public/assets/photos)
 
 $router = new Router($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
@@ -80,5 +80,6 @@ $router->register(['GET'], '/carpool/start', ReservationController::class, 'star
 $router->register(['GET'], '/carpool/completed', ReservationController::class, 'completedCarpool');
 
 // employee space
+$router->register(['POST'], '/validate-rating', UserController::class, 'validateRating');
 
 echo $router->run();

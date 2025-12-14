@@ -10,7 +10,7 @@
     <span><?= htmlspecialchars($user->getMail()) ?></span>
 </div>
 
-<section id="validate-rating" class="tab-content active">
+<section class="tab-content active">
     <h2 class="text-green">Valider les avis des participants (<?= $totalRatings ?>)</h2>
     <?php
 
@@ -18,15 +18,13 @@
         $totalRatings = count($ratingsInValidation);
         $index = 0;
         foreach ($ratingsInValidation as $rating):
-            //$driver = new Driver($pdo, $rating['driver_id']);
             $index++;
             ?>
             <div class="flex-column gap-8 block-light-grey">
                 <div class="flex-row flex-between ">
                     <span><?= htmlspecialchars($rating['passenger_pseudo']) ?></span>
                     <div class="flex-row gap-8">
-                        <a class="btn bg-light-green"
-                            href="../back/user/employee_space.php?action=validate_rating&id=<?= $rating['id'] ?>">Valider</a>
+                        <button class="btn bg-light-green validate-rating" data-id="<?= (int) $rating['id'] ?>">Valider</button>
                         <!-- @todo -->
                         <a class="btn bg-light-red"
                             href="../back/user/employee_space.php?action=reject_rating&id=<?= $rating['id'] ?>">Refuser</a>

@@ -153,4 +153,25 @@ class RatingRepository
             throw new Exception("Impossible de compter les évaluations en attente de validation");
         }
     }
+
+    /**
+     * When an employee validate a rating, 
+     * @param int $idRating rating id that is validated
+     * @param string $newStatus Can be "refused" or "validated"
+     * @return void
+     */
+    public function validateRating(int $idRating, string $newStatus): void
+    {
+        try {
+            $sql = "UPDATE ratings SET status = :newStatus WHERE id = :idRating";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam('idRating', $idRating, PDO::PARAM_INT);
+            $statement->bindParam('newStatus', $newStatus, PDO::PARAM_STR);
+            $statement->execute();
+        } catch (PDOException $e) {
+            error_log("Database error in validateRating(): " . $e->getMessage());
+            throw new Exception("Erreur lors du changement de statut de l'avis");
+        }
+    }
 }
