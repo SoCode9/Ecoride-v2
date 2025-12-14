@@ -184,13 +184,24 @@ class UserController extends BaseController
         ]);
     }
 
-    public function profileEmployee()
+    public function employeeValidateRatings()
     {
         $userId = $_SESSION['user_id'] ?? null;
         $user = $this->repo->findById($userId);
 
 
-        return $this->render('pages/employee_space/space.php', 'Espace Employé', [
+        return $this->render('pages/employee_space/validate_ratings.php', 'Espace Employé', [
+            'user' => $user
+        ]);
+    }
+
+    public function employeeBadComments()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        $user = $this->repo->findById($userId);
+
+
+        return $this->render('pages/employee_space/bad_comments.php', 'Espace Employé', [
             'user' => $user
         ]);
     }

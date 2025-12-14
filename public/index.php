@@ -49,7 +49,8 @@ $router->register(['GET'], '/mes-covoiturages/nouveau', CarpoolController::class
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
 $router->register(['GET'], '/contact', DashboardController::class, 'contact');
 $router->register(['POST'], '/contact/send', DashboardController::class, 'sendContact');
-$router->register(['GET'], '/espace-employe', UserController::class, 'profileEmployee');
+$router->register(['GET'], '/espace-employe/valider-avis', UserController::class, 'employeeValidateRatings');
+$router->register(['GET'], '/espace-employe/controler', UserController::class, 'employeeBadComments');
 
 // login
 $router->register(['POST'], '/login', LoginController::class, 'login');
@@ -77,5 +78,7 @@ $router->register(['POST'], '/carpool/rejected', ReservationController::class, '
 $router->register(['GET'], '/carpool/cancel', ReservationController::class, 'cancelCarpool');
 $router->register(['GET'], '/carpool/start', ReservationController::class, 'startCarpool');
 $router->register(['GET'], '/carpool/completed', ReservationController::class, 'completedCarpool');
+
+// employee space
 
 echo $router->run();
