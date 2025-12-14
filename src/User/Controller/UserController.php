@@ -34,11 +34,11 @@ class UserController extends BaseController
     public function profile()
     {
 
-        $userId  = $_SESSION['user_id'] ?? null;
+        $userId = $_SESSION['user_id'] ?? null;
         $user = $this->repo->findById($userId);
 
         $driRepo = new DriverRepository($this->repo);
-        $driver =  $driRepo->makeFromUserId($userId);
+        $driver = $driRepo->makeFromUserId($userId);
 
         $formattedUser = $this->service->displayProfil($user);
 
@@ -181,6 +181,17 @@ class UserController extends BaseController
             'carpoolListNotStarted' => $carpoolListNotStarted,
             'carpoolListCompleted' => $carpoolListCompleted,
             'now' => $now
+        ]);
+    }
+
+    public function profileEmployee()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        $user = $this->repo->findById($userId);
+
+
+        return $this->render('pages/employee_space/space.php', 'Espace Employé', [
+            'user' => $user
         ]);
     }
 }

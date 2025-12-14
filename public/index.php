@@ -49,6 +49,8 @@ $router->register(['GET'], '/mes-covoiturages/nouveau', CarpoolController::class
 $router->register(['GET'], '/mentions-legales', DashboardController::class, 'legalInformations');
 $router->register(['GET'], '/contact', DashboardController::class, 'contact');
 $router->register(['POST'], '/contact/send', DashboardController::class, 'sendContact');
+$router->register(['GET'], '/espace-employe', UserController::class, 'profileEmployee');
+
 // login
 $router->register(['POST'], '/login', LoginController::class, 'login');
 $router->register(['POST'], '/newAccount', LoginController::class, 'newAccount');
