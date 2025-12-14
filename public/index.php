@@ -81,5 +81,6 @@ $router->register(['GET'], '/carpool/completed', ReservationController::class, '
 
 // employee space
 $router->register(['POST'], '/validate-rating', UserController::class, 'validateRating');
+$router->register(['POST'], '/reject-rating', UserController::class, 'rejectRating');
 
 echo $router->run();

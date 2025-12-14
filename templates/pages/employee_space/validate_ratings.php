@@ -25,10 +25,7 @@
                     <span><?= htmlspecialchars($rating['passenger_pseudo']) ?></span>
                     <div class="flex-row gap-8">
                         <button class="btn bg-light-green validate-rating" data-id="<?= (int) $rating['id'] ?>">Valider</button>
-                        <!-- @todo -->
-                        <a class="btn bg-light-red"
-                            href="../back/user/employee_space.php?action=reject_rating&id=<?= $rating['id'] ?>">Refuser</a>
-                        <!-- @todo -->
+                        <button class="btn bg-light-red rejected-rating" data-id="<?= (int) $rating['id'] ?>">Refuser</button>
                     </div>
                 </div>
                 <div class="flex-row flex-between">

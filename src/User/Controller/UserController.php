@@ -249,4 +249,28 @@ class UserController extends BaseController
         }
     }
 
+    public function rejectRating()
+    {
+        $ratingId = isset($_POST['ratingId']) ? (int) $_POST['ratingId'] : 0;
+        if ($ratingId <= 0) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "ID d'avis invalide"]);
+            exit;
+        }
+
+        try {
+            $ratingRepo = new RatingRepository();
+            $ratingRepo->validateRating($ratingId, 'refused');
+
+            $_SESSION['success_message'] = "Avis rejeté";
+
+            echo json_encode(["success" => true, "message" => "Avis rejeté"]);
+            exit;
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => $e->getMessage()]);
+            exit;
+        }
+    }
+
 }
