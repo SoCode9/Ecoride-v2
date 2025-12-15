@@ -5,6 +5,7 @@ namespace App\User\Controller;
 use App\Carpool\Service\CarpoolService;
 use Exception;
 use DateTime;
+use InvalidArgumentException;
 
 use App\Controller\BaseController;
 use App\Routing\Router;
@@ -218,10 +219,22 @@ class UserController extends BaseController
         $userId = $_SESSION['user_id'] ?? null;
         $user = $this->repo->findById($userId);
 
+        $ratingRepo = new RatingRepository();
 
+        $pageBadComments = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $badCommentsPerPage = 5;
+        $offsetBadComments = ($pageBadComments - 1) * $badCommentsPerPage;
+        $badComments = $ratingRepo->getBadComments($badCommentsPerPage, $offsetBadComments);
+        // pagination
+        $totalBadComments = $ratingRepo->countAllBadComments();
 
+        $totalPagesBadComments = ceil($totalBadComments / $badCommentsPerPage);
         return $this->render('pages/employee_space/bad_comments.php', 'Espace Employé', [
-            'user' => $user
+            'user' => $user,
+            'badComments' => $badComments,
+            'totalBadComments' => $totalBadComments,
+            'pageBadComments' => $pageBadComments,
+            'totalPagesBadComments' => $totalPagesBadComments
         ]);
     }
 
@@ -269,6 +282,30 @@ class UserController extends BaseController
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(["success" => false, "message" => $e->getMessage()]);
+            exit;
+        }
+    }
+
+    public function resolveBadComment()
+    {
+
+        $reservationId = isset($_POST['reservationId']) ? (int) $_POST['reservationId'] : 0;
+
+        try {
+            $this->service->checkResolveBadComment($reservationId);
+
+            $_SESSION['success_message'] = "Litige résolu";
+            echo json_encode(["success" => true]);
+            exit;
+
+        } catch (InvalidArgumentException $e) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => $e->getMessage()]);
+            exit;
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Erreur serveur"]);
             exit;
         }
     }

@@ -174,4 +174,77 @@ class RatingRepository
             throw new Exception("Erreur lors du changement de statut de l'avis");
         }
     }
+
+    /**
+     * Retrieves reservations that include a bad comment not yet validated
+     * @param int $limit Number of results to return (default: 5)
+     * @param int $offset Number of results to skip (default: 0)
+     * @return array Array of associative results including passenger and driver info, carpool date and cities, and reservation details
+     * @throws Exception If a database error occurs
+     */
+    public function getBadComments(int $limit = 5, int $offset = 0): array
+    {
+        try {
+            $sql = 'SELECT reservations.*,passenger.pseudo AS pseudoPassenger, passenger.mail AS mailPassenger, driver.pseudo AS pseudoDriver, driver.mail AS mailDriver, driver.id AS idDriver, carpool.date, carpool.departure_city, carpool.arrival_city, carpool.id AS carpoolId FROM reservations 
+        JOIN users AS passenger ON passenger.id = reservations.user_id
+        JOIN carpool ON carpool.id = reservations.carpool_id
+        JOIN users AS driver ON driver.id = carpool.driver_id
+        WHERE bad_comment IS NOT NULL AND bad_comment_validated =0
+        ORDER BY carpool.date ASC
+        LIMIT :limit OFFSET :offset';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $statement->bindParam(':offset', $offset, PDO::PARAM_INT);
+            $statement->execute();
+
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database error in getBadComments() : " . $e->getMessage());
+            throw new Exception("Impossible de récupérer les mauvais commentaires");
+        }
+    }
+
+    /**
+     * Count all bad comments not yet validated
+     * @return int
+     * @throws Exception If a database error occurs
+     */
+    public function countAllBadComments(): int
+    {
+        try {
+            $sql = "SELECT COUNT(*) FROM reservations  WHERE bad_comment IS NOT NULL AND bad_comment_validated =0";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->execute();
+            return (int) $statement->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("Database error in countAllBadComments() : " . $e->getMessage());
+            throw new Exception("Impossible de compter les mauvais commentaires");
+        }
+    }
+
+    /**
+     * Marks a bad comment as validated in the database.
+     *
+     * @param int $reservationId The reservation ID concerned by the bad comment
+     * @throws Exception If the update fails or no reservation is affected
+     * @return void
+     */
+    public function markBadCommentAsValidated(int $reservationId): void
+    {
+        try {
+            $sql = 'UPDATE reservations SET bad_comment_validated = 1  WHERE id = :reservationId';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':reservationId', $reservationId, PDO::PARAM_INT);
+            if (!$statement->execute()) {
+                error_log("markBadCommentAsValidated() failed to execute query for reservation ID $reservationId");
+                throw new Exception("Échec de la résolution du litige");
+            }
+        } catch (PDOException $e) {
+            error_log("Database error in markBadCommentAsValidated() (reservation ID: $reservationId): " . $e->getMessage());
+            throw new Exception("Erreur lors de la validation du mauvais commentaire");
+        }
+    }
 }

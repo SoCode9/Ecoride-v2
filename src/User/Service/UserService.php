@@ -2,20 +2,25 @@
 
 namespace App\User\Service;
 
+use App\Database\DbConnection;
 use Exception;
+use Throwable;
+use InvalidArgumentException;
 
 use App\Driver\Repository\DriverRepository;
 use App\Driver\Service\DriverService;
 use App\User\Entity\User;
-
-
 use App\User\Repository\UserRepository;
-
+use App\Carpool\Repository\CarpoolRepository;
+use App\Rating\Repository\RatingRepository;
+use App\Reservation\Repository\ReservationRepository;
 use App\Utils\Formatting\OtherFormatter;
 
 final class UserService
 {
-    public function __construct(private UserRepository $repo) {}
+    public function __construct(private UserRepository $repo)
+    {
+    }
 
     public function displayProfil(User $user)
     {
@@ -26,9 +31,9 @@ final class UserService
             $driRepo = new DriverRepository($this->repo);
             $driSer = new DriverService($driRepo);
 
-            $avg     = $driSer->getAverageRatings($userId);
-            $rating  = $avg !== null
-                ? '<img src="' . ASSETS_PATH . '/icons/EtoileJaune.png" class="img-width-20" alt="Icône étoile"> ' . number_format((float)$avg, 1, ',', '')
+            $avg = $driSer->getAverageRatings($userId);
+            $rating = $avg !== null
+                ? '<img src="' . ASSETS_PATH . '/icons/EtoileJaune.png" class="img-width-20" alt="Icône étoile"> ' . number_format((float) $avg, 1, ',', '')
                 : '<span class="italic">0 avis</span>';
         }
 
@@ -90,5 +95,45 @@ final class UserService
         }
 
         return $uniqueName;
+    }
+
+    public function checkResolveBadComment(int $reservationId)
+    {
+        if ($reservationId <= 0) {
+            throw new InvalidArgumentException("ID d'avis invalide");
+        }
+
+        $pdo = DbConnection::getPdo();
+        $ratingRepo = new RatingRepository();
+        $resRepo = new ReservationRepository();
+
+        $carpoolRepo = new CarpoolRepository();
+        try {
+            $pdo->beginTransaction();
+
+            // 1) marquer le commentaire litigieux comme validé
+            $ratingRepo->markBadCommentAsValidated($reservationId);
+
+            // 2) rendre les crédits au conducteur (creditSpent)
+            $driverId = $resRepo->getDriverIdFromReservation($reservationId);
+            $creditSpent = $resRepo->getCreditSpent($reservationId);
+            $this->repo->setCredit($driverId, $creditSpent);
+
+            // 3) si plus aucune réservation en attente => covoiturage "ended" + malus -2
+            $carpoolId = $resRepo->getCarpoolIdFromReservation($reservationId);
+            $pending = $resRepo->getReservationsNotValidatedOfACarpool($carpoolId);
+
+            if (empty($pending)) {
+                $carpoolRepo->setCarpoolStatus('ended', $carpoolId);
+                $this->repo->setCredit($driverId, -2);
+            }
+
+            $pdo->commit();
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
     }
 }
