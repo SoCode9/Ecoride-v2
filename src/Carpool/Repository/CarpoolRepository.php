@@ -21,7 +21,8 @@ class CarpoolRepository
             $statement->bindParam(':id', $id, PDO::PARAM_STR);
             $statement->execute();
             $row = $statement->fetch(PDO::FETCH_ASSOC);
-            if (!$row) return null;
+            if (!$row)
+                return null;
 
             return new Carpool(
                 $row['id'],
@@ -31,8 +32,8 @@ class CarpoolRepository
                 $row['arrival_city'],
                 $row['departure_time'],   // 'Y-m-d H:i:s' conseillé
                 $row['arrival_time'],
-                (int)$row['price'],
-                (int)$row['car_id'],
+                (int) $row['price'],
+                (int) $row['car_id'],
                 null,
                 $row['description'],
                 $row['status']
@@ -114,11 +115,11 @@ class CarpoolRepository
         }
         if ($departure) {
             $sql .= " AND c.departure_city = :dep";
-            $params[':dep']  = $departure;
+            $params[':dep'] = $departure;
         }
         if ($arrival) {
             $sql .= " AND c.arrival_city   = :arr";
-            $params[':arr']  = $arrival;
+            $params[':arr'] = $arrival;
         }
         if ($eco) {
             $sql .= " AND cars.electric = 1";
@@ -453,4 +454,62 @@ class CarpoolRepository
             throw new Exception("Une erreur est survenue");
         }
     }
+
+    /**
+     * Get the credits earned by the EcoRide platform
+     * @throws \Exception If a database error occurs
+     * @return int
+     */
+    public function getCreditsEarned(): int
+    {
+        try {
+            $sql = 'SELECT count(validated_at) AS carpoolsValidated FROM carpool';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->execute();
+
+            $nbCarpoolsValidated = $statement->fetch(PDO::FETCH_ASSOC);
+            $creditsEarnedByPlatform = $nbCarpoolsValidated['carpoolsValidated'] * 2;
+            return $creditsEarnedByPlatform;
+        } catch (PDOException $e) {
+            error_log("Database error in getCreditsEarned() : " . $e->getMessage());
+            throw new Exception("Impossible de récupérer les crédits gagnés par la plateforme");
+        }
+    }
+
+
+    public function getCarpoolPerDay()
+    {
+        try {
+            $today = date('Y-m-d');
+
+            $sql = 'SELECT date AS carpoolDate, count(id) AS nbCarpool FROM carpool WHERE (status <> "cancelled") AND date >= :today GROUP BY date ORDER BY date ASC LIMIT 10';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':today', $today, PDO::PARAM_STR);
+
+            $statement->execute();
+
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            error_log("Database error in getCarpoolPerDay() : " . $e->getMessage());
+            throw new Exception("Impossible de récupérer les covoiturages sur les prochains jours");
+        }
+    }
+    public function getValidatedCarpoolForChart()
+    {
+        try {
+            $sql = 'SELECT validated_at AS validationCarpoolDate, count(validated_at)*2 AS carpoolsValidated FROM carpool WHERE validated_at IS NOT NULL GROUP BY validationCarpoolDate ORDER BY validationCarpoolDate ASC LIMIT 10';
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->execute();
+
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database error in getValidatedCarpoolForChart() : " . $e->getMessage());
+            throw new Exception("Impossible de récupérer les gains de la plateforme");
+        }
+    }
+
 }

@@ -22,6 +22,7 @@ use App\Rating\Repository\RatingRepository;
 use App\User\Service\UserService;
 use App\Driver\Service\DriverService;
 
+use App\Utils\Formatting\DateFormatter;
 class UserController extends BaseController
 {
 
@@ -340,12 +341,18 @@ class UserController extends BaseController
     public function adminStatistics()
     {
 
+        $carpoolRepo = new CarpoolRepository();
+        $creditsEarned = $carpoolRepo->getCreditsEarned();
+
+        $passengersList = $this->repo->loadListUsersFromDB(1);
+        $driversList = $this->repo->loadListUsersFromDB(2);
+        $passengersAndDriversList = $this->repo->loadListUsersFromDB(3);
+
+        $nbUsers = count($passengersList) + count($driversList) + count($passengersAndDriversList);
         return $this->render('pages/admin_space/statistics.php', 'Espace Administrateur', [
-            /* 'user' => $user,
-            'badComments' => $badComments,
-            'totalBadComments' => $totalBadComments,
-            'pageBadComments' => $pageBadComments,
-            'totalPagesBadComments' => $totalPagesBadComments */
+            'creditsEarned' => $creditsEarned,
+            'nbUsers' => $nbUsers
+
         ]);
     }
 
@@ -462,6 +469,47 @@ class UserController extends BaseController
             http_response_code(500);
             echo json_encode(["success" => false, "message" => "Erreur serveur"]);
             exit;
+        }
+    }
+
+    public function displayChartCarpoolPerDay()
+    {
+        try {
+            $carpoolRepo = new CarpoolRepository();
+            $carpoolPerDay = $carpoolRepo->getCarpoolPerDay();
+            $data = [];
+            foreach ($carpoolPerDay as $row) {
+                $row['carpoolDate'] = DateFormatter::weekday($row['carpoolDate']);
+                array_push($data, $row);
+            }
+
+            echo json_encode($data);
+        } catch (Exception $e) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Une erreur est survenue lors du chargement des données"
+            ]);
+        }
+    }
+
+    public function displayChartCreditsEarned()
+    {
+        try {
+            $carpoolRepo = new CarpoolRepository();
+            $creditEarned = $carpoolRepo->getValidatedCarpoolForChart();
+            $data = [];
+
+            foreach ($creditEarned as $row) {
+                $row['validationCarpoolDate'] = DateFormatter::weekday($row['validationCarpoolDate']);
+                array_push($data, $row);
+            }
+
+            echo json_encode($data);
+        } catch (Exception $e) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Une erreur est survenue lors du chargement des données"
+            ]);
         }
     }
 }
