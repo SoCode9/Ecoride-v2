@@ -312,13 +312,13 @@ class UserController extends BaseController
 
     public function adminEmployeeAccount()
     {
+        $userId = $_SESSION['user_id'] ?? null;
+        $administrator = $this->repo->findById($userId);
+
+        $employeeList = $this->repo->loadListUsersFromDB(4);
 
         return $this->render('pages/admin_space/employees_account.php', 'Espace Administrateur', [
-            /* 'user' => $user,
-            'badComments' => $badComments,
-            'totalBadComments' => $totalBadComments,
-            'pageBadComments' => $pageBadComments,
-            'totalPagesBadComments' => $totalPagesBadComments */
+            'employeeList' => $employeeList
         ]);
     }
 
@@ -344,5 +344,43 @@ class UserController extends BaseController
             'pageBadComments' => $pageBadComments,
             'totalPagesBadComments' => $totalPagesBadComments */
         ]);
+    }
+
+    public function suspendEmployee()
+    {
+        $employeeId = isset($_POST['employeeId']) ? (string) $_POST['employeeId'] : null;
+
+        try {
+            $this->repo->setIsActivatedUser($employeeId, 0);
+
+            $_SESSION['success_message'] = "L'employé a bien été désactivé";
+            echo json_encode(["success" => true]);
+            exit;
+        } catch (Exception $e) {
+            $_SESSION['error_message'] = "Impossible de désactiver l'employé";
+
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Erreur serveur"]);
+            exit;
+        }
+    }
+
+    public function reactivateEmployee()
+    {
+        $employeeId = isset($_POST['employeeId']) ? (string) $_POST['employeeId'] : null;
+
+        try {
+            $this->repo->setIsActivatedUser($employeeId, 1);
+
+            $_SESSION['success_message'] = "L'employé a été réactivé avec succès";
+            echo json_encode(["success" => true]);
+            exit;
+        } catch (Exception $e) {
+            $_SESSION['error_message'] = "Impossible de réactiver l'employé";
+
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Erreur serveur"]);
+            exit;
+        }
     }
 }

@@ -88,4 +88,8 @@ $router->register(['POST'], '/validate-rating', UserController::class, 'validate
 $router->register(['POST'], '/reject-rating', UserController::class, 'rejectRating');
 $router->register(['POST'], '/resolve-bad-comment', UserController::class, 'resolveBadComment');
 
+// admin space
+$router->register(['POST'], '/suspend-employee', UserController::class, 'suspendEmployee');
+$router->register(['POST'], '/reactivate-employee', UserController::class, 'reactivateEmployee');
+
 echo $router->run();

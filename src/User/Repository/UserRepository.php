@@ -177,4 +177,52 @@ class UserRepository
             throw new Exception("Impossible de mettre à jour la photo de profil");
         }
     }
+
+    /**
+     * Loads a list of users by role
+     * @param int $idRole Role ID to filter users (1 = passenger ; 2 = driver ; 3 = both ; 4 = employee ; 5 = administrator)
+     * @throws \Exception If the query fails
+     * @return array List of users as associative arrays
+     */
+    public function loadListUsersFromDB(int $roleId): array
+    {
+        try {
+            $sql = "SELECT * FROM users WHERE id_role=:role_id ORDER BY pseudo ASC";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindParam(':role_id', $roleId, PDO::PARAM_INT);
+            $statement->execute();
+
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error loading users by role ($roleId): " . $e->getMessage());
+            throw new Exception("Impossible de charger la liste des utilisateurs");
+        }
+    }
+
+    /**
+     * Activates or deactivates a user account in the database
+     * @param string $userId The ID of the user to update
+     * @param bool $isActivated True to activate, false to deactivate
+     * @throws \Exception If the update fails or the user ID is invalid
+     * @return void
+     */
+    public function setIsActivatedUser(string $userId, bool $isActivated): void
+    {
+        if (empty($userId)) {
+            throw new Exception("Aucun ID utilisateur fourni pour l'activation");
+        }
+
+        try {
+            $sql = "UPDATE users SET is_activated = :isActivated WHERE id = :userId";
+            $pdo = DbConnection::getPdo();
+            $statement = $pdo->prepare($sql);
+            $statement->bindValue(':isActivated', $isActivated ? 1 : 0, PDO::PARAM_INT);
+            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
+            $statement->execute();
+        } catch (PDOException $e) {
+            error_log("Database error in setIsActivatedUser() (user ID: $userId) : " . $e->getMessage());
+            throw new Exception("Impossible de modifier le statut du compte utilisateur");
+        }
+    }
 }
