@@ -310,4 +310,39 @@ class UserController extends BaseController
         }
     }
 
+    public function adminEmployeeAccount()
+    {
+
+        return $this->render('pages/admin_space/employees_account.php', 'Espace Administrateur', [
+            /* 'user' => $user,
+            'badComments' => $badComments,
+            'totalBadComments' => $totalBadComments,
+            'pageBadComments' => $pageBadComments,
+            'totalPagesBadComments' => $totalPagesBadComments */
+        ]);
+    }
+
+    public function adminUserAccount()
+    {
+
+        return $this->render('pages/admin_space/users_account.php', 'Espace Administrateur', [
+            /* 'user' => $user,
+            'badComments' => $badComments,
+            'totalBadComments' => $totalBadComments,
+            'pageBadComments' => $pageBadComments,
+            'totalPagesBadComments' => $totalPagesBadComments */
+        ]);
+    }
+
+    public function adminStatistics()
+    {
+
+        return $this->render('pages/admin_space/statistics.php', 'Espace Administrateur', [
+            /* 'user' => $user,
+            'badComments' => $badComments,
+            'totalBadComments' => $totalBadComments,
+            'pageBadComments' => $pageBadComments,
+            'totalPagesBadComments' => $totalPagesBadComments */
+        ]);
+    }
 }

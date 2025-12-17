@@ -51,6 +51,10 @@ $router->register(['GET'], '/contact', DashboardController::class, 'contact');
 $router->register(['POST'], '/contact/send', DashboardController::class, 'sendContact');
 $router->register(['GET'], '/espace-employe/valider-avis', UserController::class, 'employeeValidateRatings');
 $router->register(['GET'], '/espace-employe/controler', UserController::class, 'employeeBadComments');
+$router->register(['GET'], '/espace-admin/employes', UserController::class, 'adminEmployeeAccount');
+$router->register(['GET'], '/espace-admin/utilisateurs', UserController::class, 'adminUserAccount');
+$router->register(['GET'], '/espace-admin/statistiques', UserController::class, 'adminStatistics');
+
 
 // login
 $router->register(['POST'], '/login', LoginController::class, 'login');
