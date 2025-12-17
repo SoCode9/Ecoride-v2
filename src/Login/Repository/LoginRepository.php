@@ -81,8 +81,9 @@ class LoginRepository
 
 
             $userId = $this->findUserByMail($mail);
+            $userRepo = new UserRepository();
+
             if ($roleId === 1) {
-                $userRepo = new UserRepository();
                 $userRepo->setCredit($userId, 20);
             }
             $user = $userRepo->findById($userId);

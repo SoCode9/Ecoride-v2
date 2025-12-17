@@ -91,5 +91,6 @@ $router->register(['POST'], '/resolve-bad-comment', UserController::class, 'reso
 // admin space
 $router->register(['POST'], '/suspend-employee', UserController::class, 'suspendEmployee');
 $router->register(['POST'], '/reactivate-employee', UserController::class, 'reactivateEmployee');
+$router->register(['POST'], '/new-employee', UserController::class, 'newEmployee');
 
 echo $router->run();

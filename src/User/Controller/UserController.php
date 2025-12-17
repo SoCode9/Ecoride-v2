@@ -3,6 +3,8 @@
 namespace App\User\Controller;
 
 use App\Carpool\Service\CarpoolService;
+use App\Login\Repository\LoginRepository;
+use App\Login\Service\LoginService;
 use Exception;
 use DateTime;
 use InvalidArgumentException;
@@ -380,6 +382,46 @@ class UserController extends BaseController
 
             http_response_code(500);
             echo json_encode(["success" => false, "message" => "Erreur serveur"]);
+            exit;
+        }
+    }
+
+    public function newEmployee()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!is_array($data)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'JSON invalide', 'code' => 'BAD_JSON']);
+            exit;
+        }
+
+        $pseudo = trim($data['pseudo'] ?? '');
+        $email = trim($data['email'] ?? '');
+        $password = (string) ($data['password'] ?? '');
+
+        if ($pseudo === '' || $email === '' || $password === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Champs manquants', 'code' => 'MISSING_FIELDS']);
+            exit;
+        }
+
+        try {
+            $loginRepo = new LoginRepository();
+            $loginService = new LoginService($loginRepo);
+            $loginService->register($pseudo, $email, $password, 4);
+
+            $_SESSION['success_message'] = "Compte employé créé avec succès";
+            http_response_code(201);
+            echo json_encode(['success' => true, 'message' => 'Employé créé']);
+            exit;
+        } catch (Exception $e) {
+            error_log("Erreur newEmployee() : " . $e->getMessage());
+            $_SESSION['error_message'] = "Impossible de créer un employé";
+
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erreur serveur', 'code' => 'SERVER_ERROR']);
             exit;
         }
     }

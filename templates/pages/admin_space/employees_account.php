@@ -39,4 +39,6 @@
     </div>
 </section>
 
+<?php include TEMPLATE_PATH . '/components/admin_space/new_employee.php'; ?>
+
 <script src="<?= ASSETS_PATH ?>js/admin_space.js" defer></script>
