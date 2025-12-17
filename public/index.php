@@ -94,5 +94,7 @@ $router->register(['POST'], '/reactivate-employee', UserController::class, 'reac
 $router->register(['POST'], '/new-employee', UserController::class, 'newEmployee');
 $router->register(['POST'], '/suspend-user', UserController::class, 'suspendUser');
 $router->register(['POST'], '/reactivate-user', UserController::class, 'reactivateUser');
+$router->register(['GET'], '/chart-carpool-per-day', UserController::class, 'displayChartCarpoolPerDay');
+$router->register(['GET'], '/chart-credits-earned', UserController::class, 'displayChartCreditsEarned');
 
 echo $router->run();

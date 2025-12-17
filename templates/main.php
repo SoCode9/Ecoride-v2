@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="<?php echo ASSETS_PATH ?>css/style.css">
     <script src="<?= ASSETS_PATH ?>js/burger_menu.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
