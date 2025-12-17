@@ -326,13 +326,14 @@ class UserController extends BaseController
 
     public function adminUserAccount()
     {
+        $passengersList = $this->repo->loadListUsersFromDB(1);
+        $driversList = $this->repo->loadListUsersFromDB(2);
+        $passengersAndDriversList = $this->repo->loadListUsersFromDB(3);
 
         return $this->render('pages/admin_space/users_account.php', 'Espace Administrateur', [
-            /* 'user' => $user,
-            'badComments' => $badComments,
-            'totalBadComments' => $totalBadComments,
-            'pageBadComments' => $pageBadComments,
-            'totalPagesBadComments' => $totalPagesBadComments */
+            'passengersList' => $passengersList,
+            'driversList' => $driversList,
+            'passengersAndDriversList' => $passengersAndDriversList
         ]);
     }
 
@@ -422,6 +423,44 @@ class UserController extends BaseController
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Erreur serveur', 'code' => 'SERVER_ERROR']);
+            exit;
+        }
+    }
+
+    public function suspendUser()
+    {
+        $userId = isset($_POST['userId']) ? (string) $_POST['userId'] : null;
+
+        try {
+            $this->repo->setIsActivatedUser($userId, 0);
+
+            $_SESSION['success_message'] = "L'utilisateur a bien été désactivé";
+            echo json_encode(["success" => true]);
+            exit;
+        } catch (Exception $e) {
+            $_SESSION['error_message'] = "Impossible de désactiver l'utilisateur";
+
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Erreur serveur"]);
+            exit;
+        }
+    }
+
+    public function reactivateUser()
+    {
+        $userId = isset($_POST['userId']) ? (string) $_POST['userId'] : null;
+
+        try {
+            $this->repo->setIsActivatedUser($userId, 1);
+
+            $_SESSION['success_message'] = "L'utilisateur a été réactivé avec succès";
+            echo json_encode(["success" => true]);
+            exit;
+        } catch (Exception $e) {
+            $_SESSION['error_message'] = "Impossible de réactiver l'utilisateur";
+
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Erreur serveur"]);
             exit;
         }
     }
