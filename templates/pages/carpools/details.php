@@ -156,7 +156,6 @@
                         <span><?= htmlspecialchars($rf['userPseudo']) ?></span>
                     </div>
                     <div class="flex-row item-center gap-4" style="padding-left: 0px;">
-                        <img src="<?= BASE_URL ?>/icons/EtoileJaune.png" class="img-width-20" alt="">
                         <span class="flex-row"><?= $rf['rating'] ?></span>
                     </div>
                 </div>
