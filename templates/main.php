@@ -46,7 +46,7 @@
                             </a></li>
                     <?php elseif ((int) $roleId === 5): ?>
                         <li><a href="<?= BASE_URL ?>/espace-admin/employes"
-                                class="btn border-white <?= $current === '/espace-admin/employes' ? 'activeBtn' : '' ?>">
+                                class="btn border-white <?= ($current === '/espace-admin/employes' || $current === '/espace-admin/utilisateurs' || $current === '/espace-admin/statistiques') ? 'activeBtn' : '' ?>">
                                 Espace admin
                             </a></li>
                     <?php endif; ?>
@@ -89,7 +89,7 @@
                             </a></li>
                     <?php elseif ((int) $roleId === 5): ?>
                         <li><a href="<?= BASE_URL ?>/espace-admin/employes"
-                                class="btn border-white <?= $current === '/espace-admin/employes' ? 'activeBtn' : '' ?>">
+                                class="btn border-white <?= ($current === '/espace-admin/employes' || $current === '/espace-admin/utilisateurs' || $current === '/espace-admin/statistiques') ? 'activeBtn' : '' ?>">
                                 Espace admin
                             </a></li>
                     <?php endif; ?>
