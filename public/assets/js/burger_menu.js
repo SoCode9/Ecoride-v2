@@ -10,7 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
         "mon-profil": "Mon profil",
         "valider-avis": "Mon espace",
         "controler": "Mon espace",
-        "Espace-administratuer": "Mon espace"
+        "employes": "Mon espace",
+        "utilisateurs": "Mon espace",
+        "statistiques": "Mon espace"
     };
 
     if (labels[currentPage]) {

@@ -3,6 +3,8 @@
 namespace App\User\Controller;
 
 use App\Carpool\Service\CarpoolService;
+use App\Login\Repository\LoginRepository;
+use App\Login\Service\LoginService;
 use Exception;
 use DateTime;
 use InvalidArgumentException;
@@ -310,4 +312,117 @@ class UserController extends BaseController
         }
     }
 
+    public function adminEmployeeAccount()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        $administrator = $this->repo->findById($userId);
+
+        $employeeList = $this->repo->loadListUsersFromDB(4);
+
+        return $this->render('pages/admin_space/employees_account.php', 'Espace Administrateur', [
+            'employeeList' => $employeeList
+        ]);
+    }
+
+    public function adminUserAccount()
+    {
+
+        return $this->render('pages/admin_space/users_account.php', 'Espace Administrateur', [
+            /* 'user' => $user,
+            'badComments' => $badComments,
+            'totalBadComments' => $totalBadComments,
+            'pageBadComments' => $pageBadComments,
+            'totalPagesBadComments' => $totalPagesBadComments */
+        ]);
+    }
+
+    public function adminStatistics()
+    {
+
+        return $this->render('pages/admin_space/statistics.php', 'Espace Administrateur', [
+            /* 'user' => $user,
+            'badComments' => $badComments,
+            'totalBadComments' => $totalBadComments,
+            'pageBadComments' => $pageBadComments,
+            'totalPagesBadComments' => $totalPagesBadComments */
+        ]);
+    }
+
+    public function suspendEmployee()
+    {
+        $employeeId = isset($_POST['employeeId']) ? (string) $_POST['employeeId'] : null;
+
+        try {
+            $this->repo->setIsActivatedUser($employeeId, 0);
+
+            $_SESSION['success_message'] = "L'employé a bien été désactivé";
+            echo json_encode(["success" => true]);
+            exit;
+        } catch (Exception $e) {
+            $_SESSION['error_message'] = "Impossible de désactiver l'employé";
+
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Erreur serveur"]);
+            exit;
+        }
+    }
+
+    public function reactivateEmployee()
+    {
+        $employeeId = isset($_POST['employeeId']) ? (string) $_POST['employeeId'] : null;
+
+        try {
+            $this->repo->setIsActivatedUser($employeeId, 1);
+
+            $_SESSION['success_message'] = "L'employé a été réactivé avec succès";
+            echo json_encode(["success" => true]);
+            exit;
+        } catch (Exception $e) {
+            $_SESSION['error_message'] = "Impossible de réactiver l'employé";
+
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Erreur serveur"]);
+            exit;
+        }
+    }
+
+    public function newEmployee()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!is_array($data)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'JSON invalide', 'code' => 'BAD_JSON']);
+            exit;
+        }
+
+        $pseudo = trim($data['pseudo'] ?? '');
+        $email = trim($data['email'] ?? '');
+        $password = (string) ($data['password'] ?? '');
+
+        if ($pseudo === '' || $email === '' || $password === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Champs manquants', 'code' => 'MISSING_FIELDS']);
+            exit;
+        }
+
+        try {
+            $loginRepo = new LoginRepository();
+            $loginService = new LoginService($loginRepo);
+            $loginService->register($pseudo, $email, $password, 4);
+
+            $_SESSION['success_message'] = "Compte employé créé avec succès";
+            http_response_code(201);
+            echo json_encode(['success' => true, 'message' => 'Employé créé']);
+            exit;
+        } catch (Exception $e) {
+            error_log("Erreur newEmployee() : " . $e->getMessage());
+            $_SESSION['error_message'] = "Impossible de créer un employé";
+
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erreur serveur', 'code' => 'SERVER_ERROR']);
+            exit;
+        }
+    }
 }
