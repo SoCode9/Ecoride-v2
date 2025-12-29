@@ -5,7 +5,7 @@ services:
     volumes:
       - ./:/var/www/html
       - /var/www/html/vendor
-      - ./storage/photos:/var/www/storage/photos
+      - ./public/assets/photos:/var/www/html/public/assets/photos
       - ./docker/config/default.conf:/etc/apache2/sites-available/000-default.conf:ro
     ports:
       - 8090:80
@@ -105,8 +105,7 @@ services:
     container_name: ecoride2-mailpit
     image: axllent/mailpit
     ports:
-      - "8026:8025" # UI
-      - "1026:1025" # SMTP
+      - "8026:8025"
     restart: unless-stopped
 
 volumes:
