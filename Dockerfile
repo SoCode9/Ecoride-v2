@@ -1,12 +1,13 @@
-# Dockerfile
+# Installation des dépendances PHP avec Composer
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --prefer-dist --no-progress --no-interaction --ignore-platform-req=ext-mongodb
 
+# Image finale : environnement PHP / Apache de l’application
 FROM php:8.2-apache
 
-# Paquets + extensions PHP
+# Installation des dépendances système et extensions PHP nécessaires au projet
 RUN apt-get update && apt-get install -y \
     libicu-dev libpng-dev libzip-dev unzip git \
     libssl-dev pkg-config \
@@ -16,13 +17,14 @@ RUN apt-get update && apt-get install -y \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
 
-# Copie du code
+# Déploiement du code de l’application
 WORKDIR /var/www/html
 COPY . .
 COPY --from=vendor /app/vendor /var/www/html/vendor
-## COPY docker/config/default.conf /etc/apache2/sites-available/000-default.conf
 
+# Droits adaptés pour Apache
 RUN chown -R www-data:www-data /var/www/html
 
+# Port exposé par le serveur web
 EXPOSE 80
 
