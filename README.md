@@ -60,17 +60,12 @@ docker compose up -d --build
 >- Mongo Express → http://localhost:8083
 >- Mailpit → http://localhost:8026
 
-### 4. Installer les dépendances PHP
-À exécuter lors du premier lancement du projet.
+> Les dépendances PHP sont installées automatiquement lors du build Docker
 
-Dans le conteneur applicatif :
-```bash
-docker exec -it ecoride2-app bash
-composer install
-```
+> Assurez-vous que Docker Desktop est lancé avant d’exécuter la commande Docker
 
-### 5. Installer les tables SQL
-Importer les scripts SQL fournis dans le dossier du projet afin de créer les tables, puis créer l’utilisateur administrateur à l’aide du script dédié.
+### 4. Installer les tables SQL
+Utilisez les scripts SQL fournis dans le dossier du projet afin de créer les tables, puis créer l’utilisateur administrateur à l’aide du script dédié.
 
 ## Envoi d'emails
 Les emails envoyés par l’application sont interceptés par Mailpit (service SMTP de test).
@@ -78,5 +73,5 @@ Les emails envoyés par l’application sont interceptés par Mailpit (service S
 - Paramètres SMTP : host=mailpit, port=1025.
 
 ## Démarrer l'application
-Une fois les conteneurs lancés et les dépendances installées, l’application est accessible à l’adresse :
+Une fois les conteneurs lancés, l’application est accessible à l’adresse :
 > http://localhost:8090
