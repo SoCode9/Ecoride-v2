@@ -4,6 +4,7 @@ services:
     build: .
     volumes:
       - ./:/var/www/html
+      - /var/www/html/vendor
       - ./storage/photos:/var/www/storage/photos
       - ./docker/config/default.conf:/etc/apache2/sites-available/000-default.conf:ro
     ports:
