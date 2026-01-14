@@ -7,7 +7,7 @@
         <li>Nom de l’entreprise : EcoRide</li>
         <li>Responsable de la publication : José Studi</li>
         <li>Adresse postale : 18 rue des Érables, 69007 Lyon, France</li>
-        <li>Adresse e-mail : info@ecoride.fr</li>
+        <li>Adresse e-mail : ecoride-app@alwaysdata.net</li>
         <li>Téléphone : +33 6 12 34 56 78</li>
     </ul>
     </p>
@@ -38,7 +38,7 @@
         <li>Utilisation : ces données sont utilisées uniquement pour fournir les services de la plateforme (mise en relation, gestion des trajets), pour améliorer l’expérience utilisateur.</li>
         <li>Conservation : les données sont conservées pendant la durée strictement nécessaire à la finalité des traitements.</li>
         <li>Vos droits : vous disposez d’un droit d’accès, de rectification, de suppression et de portabilité de vos données personnelles.
-            Pour exercer vos droits, vous pouvez nous écrire à : info@ecoride.fr</li>
+            Pour exercer vos droits, vous pouvez nous écrire à : ecoride-app@alwaysdata.net</li>
     </ul>
     Aucune donnée personnelle n’est cédée à des tiers sans consentement préalable.
     </p>
