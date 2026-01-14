@@ -293,7 +293,7 @@ final class ReservationService
 
                 try {
                     $passenger = $this->userRepo->findById($passengerId);
-                    $this->mailer->send($passenger->getMail(), 'Annulation du covoiturage', nl2br($message), 'no-reply@ecoride.fr', 'EcoRide');
+                    $this->mailer->send($passenger->getMail(), 'Annulation du covoiturage', nl2br($message));
                 } catch (\Throwable $mailErr) {
                     error_log("Mail annulation non envoyé à $passengerId : " . $mailErr->getMessage());
                 }
@@ -343,7 +343,7 @@ final class ReservationService
                 $subject = 'Validation du covoiturage';
                 $html = nl2br($message);
 
-                if (!$this->mailer->send($to, $subject, $html, 'no-reply@ecoride.fr', 'EcoRide')) {
+                if (!$this->mailer->send($to, $subject, $html)) {
                     error_log("Mail validation non envoyé à $to");
                 }
             }

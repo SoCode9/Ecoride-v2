@@ -148,7 +148,7 @@
                 <span>@2025 EcoRide</span>
             </div>
             <div>
-                <a href="mailto:info@ecoride.fr">info@ecoride.fr</a>
+                <a href="mailto:ecoride-app@alwaysdata.net">ecoride-app@alwaysdata.net</a>
             </div>
             <div>
                 <a href="<?= BASE_URL ?>/mentions-legales" class="nav-btn"> Mentions légales</a>

@@ -60,6 +60,6 @@ final class MailService
     {
         $subject = "Formulaire de contact complété par {$nameVisitor}";
         $html = nl2br($messageVisitor);
-        return $this->send('info@ecoride.fr', $subject, $html, $emailVisitor, $nameVisitor);
+        return $this->send('ecoride-app@alwaysdata.net', $subject, $html, $emailVisitor, $nameVisitor);
     }
 }
