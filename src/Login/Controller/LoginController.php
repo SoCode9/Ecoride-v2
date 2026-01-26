@@ -83,7 +83,7 @@ class LoginController extends BaseController
             exit();
         } catch (Exception $e) {
             error_log("Error in newAccount() : " . $e->getMessage());
-            $_SESSION['error_message'] = "Une erreur est survenue";
+            $_SESSION['error_message'] = $e->getMessage();
             header('Location:' . BASE_URL . '/connection');
             exit();
         }
